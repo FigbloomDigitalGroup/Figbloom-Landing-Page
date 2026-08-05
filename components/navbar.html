@@ -1,0 +1,111 @@
+    <header x-data="{ open: false }" class="sticky top-0 z-50 w-full bg-white">
+    <div class="container">
+        <div
+            class="flex items-center justify-between gap-5 border-b border-black/20 py-5 lg:py-0"
+        >
+            <a href="/" class=" pl-[7px]shrink-0 text-black/50 hover:text-black">
+                <img
+                    src="/assets/images/figbloom_logo.png"
+                    alt="Logo"
+                    class="w-20 sm:w-20 xl:w-20"
+                />
+            </a>
+
+            <div
+                class="fixed inset-0 z-50 bg-black/70 lg:hidden"
+                x-show="open"
+                x-transition.opacity
+                @click="open = false"
+            ></div>
+
+            <div
+                class="menu fixed inset-y-0 left-0 z-50 flex w-70 transform flex-col gap-1 overflow-y-auto bg-white p-4 transition-transform duration-300 sm:w-80 lg:static lg:z-auto lg:w-auto lg:transform-none lg:flex-row lg:items-center lg:gap-6 lg:overflow-visible lg:bg-transparent lg:p-0 xl:gap-10"
+                :class="open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+            >
+                <a
+                    href="/"
+                    class=" pl-[7px] border-gray-light mb-2 inline-block shrink-0 border-b-4 border-double pt-3 pb-5 lg:hidden"
+                >
+                    <img
+                        src="/assets/images/figbloom_logo.png"
+                        alt="Logo"
+                        class="w-20 sm:w-20"
+                    />
+                </a>
+
+                <a href="/" class="nav-link active">Home</a>
+
+
+                <div
+                    x-data="{ open: false, isDesktop: window.innerWidth >= 1024 }"
+                    x-init="
+                        window.addEventListener('resize', () => {
+                            isDesktop = window.innerWidth >= 1024;
+                        });
+                    "
+                    @mouseenter="if (isDesktop) open = true"
+                    @mouseleave="if (isDesktop) open = false"
+                    class="relative"
+                >
+                    <button
+                        @click="if (!isDesktop) open = !open"
+                        class="nav-link flex items-center gap-1.5"
+                        type="button"
+                    >
+                       Our Company
+                        <i
+                            data-lucide="chevron-down"
+                            class="size-4 shrink-0 transition-transform"
+                            :class="open && 'rotate-180'"
+                        ></i>
+                    </button>
+
+                    <div
+                        x-show="open"
+                        x-cloak
+                        x-transition
+                        @click.outside="open = false"
+                        :class="isDesktop
+                        ? 'absolute top-full left-0 w-max border border-gray-light rounded-b-lg bg-white p-4 shadow-[0_16px_32px_-12px_rgba(88,92,95,0.1)] space-y-4'
+                        : 'static w-full flex flex-col space-y-3 p-3'"
+                    >
+                        <a href="/about-us" class="submenu-nav-link">
+                            About us
+                        </a>
+
+                        <a href="/career" class="submenu-nav-link">
+                            Career
+                        </a>
+
+                       
+                    </div>
+                </div>
+
+                 <a href="/service" class="nav-link">
+                    Our Services
+                </a>
+
+                <a href="/projects" class="nav-link">
+                    Projects
+                </a>
+
+                <a href="/contact" class="nav-link">
+                    Contact
+                </a>
+
+                <a href="tel:(+254) 798941392" class="btn mt-2 pl-3">
+                    <i data-lucide="phone"></i>
+                    (+254) 798941392
+                </a>
+            </div>
+
+            <button
+                type="button"
+                class="shrink-0 text-black lg:hidden"
+                @click="open = !open"
+            >
+                <i data-lucide="text-align-justify" class="size-5"></i>
+            </button>
+        </div>
+    </div>
+</header> 

@@ -142,7 +142,24 @@
 /* ==========================================================
    HERO BACKGROUND GIFS
    ========================================================== */
+/* Clients slider */
+.clients-swiper .swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 140px;
+}
 
+.clients-swiper .swiper-slide > div {
+    width: 250px;
+    height: 140px;
+}
+
+.clients-swiper .swiper-slide img {
+    width: 180px;
+    height: 80px;
+    object-fit: contain;
+}
 .hero-gifs {
     position: absolute;
     inset: 0;

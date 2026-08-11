@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Load header.html into the <head>
 document.addEventListener("DOMContentLoaded", async () => {
     try {
-        const response = await fetch("components/header.html");
+        const response = await fetch("../components/header.html");
 
         if (!response.ok) {
             throw new Error("Could not load components/header.html");

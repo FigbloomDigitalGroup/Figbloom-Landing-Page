@@ -162,6 +162,51 @@
                         <div
                             class="bg-gray-light hidden w-px shrink-0 lg:inline-block"
                         ></div>
+                        <div class="space-y-6 lg:w-72 xl:w-80">
+                            <div class="text-primary font-semibold">
+                                Newsletter
+                            </div>
+                            <p class="text-sm text-slate-600">
+                                Get updates on new services, projects, and industry insights.
+                            </p>
+                            <form id="newsletter-form" class="space-y-3" novalidate>
+                                <div>
+                                    <label for="newsletter-name" class="sr-only">Full name</label>
+                                    <input
+                                        id="newsletter-name"
+                                        name="name"
+                                        type="text"
+                                        required
+                                        placeholder="Full name"
+                                        class="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                    />
+                                </div>
+                                <div>
+                                    <label for="newsletter-email" class="sr-only">Email address</label>
+                                    <input
+                                        id="newsletter-email"
+                                        name="email"
+                                        type="email"
+                                        required
+                                        placeholder="Email address"
+                                        class="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    class="inline-flex w-full items-center justify-center rounded-md bg-black px-4 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700"
+                                >
+                                    Subscribe
+                                </button>
+                                <p id="newsletter-success" class="hidden text-sm font-medium text-emerald-600">
+                                    Thanks for subscribing.
+                                </p>
+                                <p id="newsletter-error" class="hidden text-sm font-medium text-red-600"></p>
+                            </form>
+                        </div>
+                        <div
+                            class="bg-gray-light hidden w-px shrink-0 lg:inline-block"
+                        ></div>
                         <div class="space-y-6 lg:w-40 xl:w-50">
                             <div class="text-primary font-semibold">
                                 Support
@@ -201,6 +246,64 @@
                 Figbloom 
             </div>
         </footer>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const form = document.getElementById('newsletter-form');
+                const success = document.getElementById('newsletter-success');
+                const error = document.getElementById('newsletter-error');
+
+                if (!form) return;
+
+                form.addEventListener('submit', async function (event) {
+                    event.preventDefault();
+
+                    const name = document.getElementById('newsletter-name').value.trim();
+                    const email = document.getElementById('newsletter-email').value.trim();
+
+                    success.classList.add('hidden');
+                    error.classList.add('hidden');
+                    error.textContent = '';
+
+                    if (!name || !email) {
+                        error.textContent = 'Please enter your name and email address.';
+                        error.classList.remove('hidden');
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('name', name);
+                    formData.append('email', email);
+
+                    try {
+                        const csrfToken = document.cookie
+                            .split('; ')
+                            .find((row) => row.startsWith('csrftoken='))
+                            ?.split('=')[1] || '';
+
+                        const response = await fetch('/newsletter/subscribe/', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: {
+                                'X-CSRFToken': csrfToken
+                            },
+                            body: formData
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Unable to submit subscription');
+                        }
+
+                        form.reset();
+                        success.classList.remove('hidden');
+                    } catch (fetchError) {
+                        console.error('Newsletter subscription error:', fetchError);
+                        error.textContent = 'Unable to subscribe right now. Please try again later.';
+                        error.classList.remove('hidden');
+                    }
+                });
+            });
+        </script>
 
         <!-- Contact modal -->
         <div

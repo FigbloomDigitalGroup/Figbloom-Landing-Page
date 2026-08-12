@@ -1,3 +1,7 @@
+// ============================================================
+// SHARED COMPONENT LOADER
+// ============================================================
+
 async function loadComponent(elementId, componentPath) {
     const element = document.getElementById(elementId);
 
@@ -27,60 +31,91 @@ async function loadComponent(elementId, componentPath) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadComponent("navbar", "/components/navbar.html");
-});
 
+// ============================================================
+// NEWSLETTER FORM
+// Must run AFTER footer.html is injected, and must be attached
+// here (not inside footer.html) because <script> tags inserted
+// via innerHTML never execute in the browser.
+// ============================================================
 
+function initNewsletterForm() {
+    const form = document.getElementById('newsletter-form');
 
+    if (!form || form.dataset.bound) return;
+    form.dataset.bound = 'true';
 
-//footer 
+    const success = document.getElementById('newsletter-success');
+    const error = document.getElementById('newsletter-error');
 
-async function loadComponent(elementId, componentPath) {
-    const element = document.getElementById(elementId);
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
 
-    if (!element) {
-        console.error(`Element #${elementId} not found`);
-        return;
-    }
+        const name = document.getElementById('newsletter-name').value.trim();
+        const email = document.getElementById('newsletter-email').value.trim();
 
-    try {
-        const response = await fetch(componentPath);
+        success.classList.add('hidden');
+        error.classList.add('hidden');
+        error.textContent = '';
 
-        if (!response.ok) {
-            throw new Error(`Failed to load ${componentPath}`);
+        if (!name || !email) {
+            error.textContent = 'Please enter your name and email address.';
+            error.classList.remove('hidden');
+            return;
         }
 
-        element.innerHTML = await response.text();
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('email', email);
 
-        // Reinitialize Alpine.js for the newly loaded component
-        if (window.Alpine) {
-            Alpine.initTree(element);
+        try {
+            const csrfToken = document.cookie
+                .split('; ')
+                .find((row) => row.startsWith('csrftoken='))
+                ?.split('=')[1] || '';
+
+            const response = await fetch('/api/newsletter/subscribe/', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Unable to submit subscription');
+            }
+
+            form.reset();
+            success.classList.remove('hidden');
+        } catch (fetchError) {
+            console.error('Newsletter subscription error:', fetchError);
+            error.textContent = 'Unable to subscribe right now. Please try again later.';
+            error.classList.remove('hidden');
         }
-
-        // Reinitialize Lucide icons
-        if (window.lucide) {
-            lucide.createIcons();
-        }
-
-    } catch (error) {
-        console.error("Component loading error:", error);
-    }
+    });
 }
 
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadComponent("navbar", "/components/navbar.html");
-    loadComponent("footer", "/components/footer.html");
+// ============================================================
+// LOAD NAVBAR + FOOTER (every page that has these containers)
+// ============================================================
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadComponent("navbar", "/components/navbar.html");
+    await loadComponent("footer", "/components/footer.html");
+    initNewsletterForm();
 });
 
 
+// ============================================================
+// LOAD HEADER
+// ============================================================
 
-//header
-// Load header.html into the <head>
 document.addEventListener("DOMContentLoaded", async () => {
     try {
-        const response = await fetch("../components/header.html");
+        const response = await fetch("/components/header.html");
 
         if (!response.ok) {
             throw new Error("Could not load components/header.html");
@@ -96,76 +131,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
+// ============================================================
+// LOAD PRICES COMPONENT (only present on pages with #prices)
+// ============================================================
 
-//prices 
-// Main Alpine data
 function mainFunction() {
     return {
         contactModal: false,
     };
 }
 
-
-// Load HTML components
-async function loadComponent(elementId, componentPath) {
-    const element = document.getElementById(elementId);
-
-    if (!element) return;
-
-    try {
-        const response = await fetch(componentPath);
-
-        if (!response.ok) {
-            throw new Error(`Failed to load ${componentPath}`);
-        }
-
-        element.innerHTML = await response.text();
-
-        // Initialize Alpine on the newly loaded component
-        if (window.Alpine) {
-            Alpine.initTree(element);
-        }
-
-        // Re-render Lucide icons
-        if (window.lucide) {
-            lucide.createIcons();
-        }
-
-    } catch (error) {
-        console.error("Component loading error:", error);
-    }
-}
-
-
-// Load components
 document.addEventListener("DOMContentLoaded", () => {
-
-    loadComponent(
-        "prices",
-        "/components/prices.html"
-    );
-
+    loadComponent("prices", "/components/prices.html");
 });
 
 
-
-
-
-
-
-
-
-/* =========================================================
-   FLOATING WHATSAPP + SCROLL TO TOP BUTTONS
-   ========================================================= */
+// ============================================================
+// FLOATING WHATSAPP + SCROLL TO TOP BUTTONS
+// ============================================================
 
 document.addEventListener("DOMContentLoaded", function () {
-    /*
-    ---------------------------------------------------------
-    1. FLOATING ACTION BUTTON CONTAINER
-    ---------------------------------------------------------
-    */
-
     const floatingButtons = document.createElement("div");
 
     floatingButtons.className = "floating-action-buttons";
@@ -200,16 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.body.appendChild(floatingButtons);
 
-
-    /*
-    ---------------------------------------------------------
-    2. SCROLL TO TOP FUNCTIONALITY
-    ---------------------------------------------------------
-    */
-
-    const scrollTopButton = document.querySelector(
-        ".floating-scroll-top"
-    );
+    const scrollTopButton = document.querySelector(".floating-scroll-top");
 
     window.addEventListener("scroll", function () {
         if (window.scrollY > 400) {
@@ -227,10 +203,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-
-/* =========================================================
-   FLOATING BUTTON STYLES
-   ========================================================= */
 
 const floatingButtonStyles = document.createElement("style");
 
@@ -255,10 +227,6 @@ floatingButtonStyles.innerHTML = `
         justify-content: center;
         border-radius: 50%;
         transition: all 0.3s ease;
-    }
-
-    .floating-whatsapp {
-      
     }
 
     .floating-whatsapp img {
@@ -319,4 +287,3 @@ floatingButtonStyles.innerHTML = `
 `;
 
 document.head.appendChild(floatingButtonStyles);
-

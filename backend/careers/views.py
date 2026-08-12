@@ -1,8 +1,14 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets, permissions
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from .models import Job, JobApplication, NewsletterSubscriber
-from .serializers import JobSerializer, JobApplicationSerializer, NewsletterSubscriberSerializer
+from .serializers import (
+    JobSerializer,
+    JobApplicationSerializer,
+    NewsletterSubscriberSerializer,
+    JobApplicationAdminSerializer,
+)
 from django.contrib import messages
 from .forms import JobApplicationForm
 
@@ -81,4 +87,33 @@ def apply_for_job(request, slug):
     else:
         form = JobApplicationForm()
 
-    return render(request, "career/apply.html", {"job": job, "form": form})        
+    return render(request, "career/apply.html", {"job": job, "form": form})
+
+
+# --- Admin dashboard API ---
+# All views below require an authenticated, staff-level Django user
+# (session cookie based, since the admin dashboard is served by this
+# same Django app). Public visitors never reach these.
+
+class JobAdminViewSet(viewsets.ModelViewSet):
+    """Full CRUD on jobs for the admin dashboard (create/edit/close postings)."""
+    queryset = Job.objects.all().order_by('-created_at')
+    serializer_class = JobSerializer
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class ApplicationAdminViewSet(viewsets.ModelViewSet):
+    """Full CRUD on applications for the admin dashboard (view/update status)."""
+    queryset = JobApplication.objects.all().order_by('-applied_at')
+    serializer_class = JobApplicationAdminSerializer
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class NewsletterAdminViewSet(viewsets.ReadOnlyModelViewSet):
+    """Read-only list of newsletter subscribers for the admin dashboard."""
+    queryset = NewsletterSubscriber.objects.all().order_by('-subscribed_at')
+    serializer_class = NewsletterSubscriberSerializer
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]

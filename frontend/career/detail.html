@@ -1,256 +1,481 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" content="#FF9400" />
-        <meta name="author" content="Figbloom Digital Group" />
-        <meta name="description" content="Job details and application form for career opportunities at Figbloom Digital Group." />
-        <title>Job Details | Figbloom Digital Group</title>
-        <link rel="stylesheet" href="../assets/css/style.css" />
-        <script src="../assets/js/alpine.min.js" defer></script>
-        <script src="../assets/js/lucide.min.js" defer></script>
-    </head>
-    <body x-data="mainFunction()">
-        <div id="navbar"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#FF9400" />
+    <meta name="author" content="Figbloom Digital Group" />
+    <meta
+      name="description"
+      content="Job details and application form for career opportunities at Figbloom Digital Group."
+    />
+    <title>Job Details | Figbloom Digital Group</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <style>
+      @keyframes figbloom-spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <script src="../assets/js/alpine.min.js" defer></script>
+    <script src="../assets/js/lucide.min.js" defer></script>
+  </head>
+  <body x-data="mainFunction()">
+    <div id="navbar"></div>
 
-        <main class="container py-12 lg:py-16">
-            <div id="job-detail-loader" class="rounded-xl border border-slate-200 bg-slate-50 p-6 text-slate-600">
-                Loading job details...
+    <main class="container py-12 lg:py-16">
+      <div
+        id="job-detail-loader"
+        class="rounded-xl border border-slate-200 bg-slate-50 p-6 text-slate-600"
+      >
+        Loading job details...
+      </div>
+
+      <div
+        id="job-detail"
+        class="hidden space-y-8"
+        style="max-width: 512px;"
+      >
+        <div
+          class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8"
+        >
+          <div
+            class="mb-4 flex flex-wrap items-center gap-2 text-sm text-slate-600"
+          >
+            <span
+              id="job-department"
+              class="rounded-full bg-slate-100 px-3 py-1"
+            ></span>
+            <span
+              id="job-location"
+              class="rounded-full bg-slate-100 px-3 py-1"
+            ></span>
+          </div>
+
+          <h1
+            id="job-title"
+            class="text-3xl font-bold text-slate-900 md:text-4xl"
+          ></h1>
+
+          <div class="mt-6 prose max-w-none text-slate-700">
+            <div id="job-description" class="space-y-4"></div>
+          </div>
+
+          <div class="mt-8">
+            <button
+              id="show-application-form"
+              type="button"
+              class="btn"
+            >
+              Apply for this role
+            </button>
+          </div>
+        </div>
+
+        <section
+          id="application-form-section"
+          class="hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8"
+        >
+          <div id="application-form-header">
+            <h2 class="text-2xl font-semibold text-slate-900">
+              Apply for this position
+            </h2>
+            <p class="mt-2 text-slate-600">
+              Tell us a little about yourself and upload your details.
+            </p>
+          </div>
+
+          <form id="job-application-form" class="mt-6 flex flex-col gap-5">
+            <input id="application-job" type="hidden" name="job" />
+            <input id="application-slug" type="hidden" name="slug" />
+
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label
+                  for="full_name"
+                  class="mb-2 block text-sm font-medium text-slate-700"
+                  >Full name</label
+                >
+                <input
+                  id="full_name"
+                  name="full_name"
+                  type="text"
+                  required
+                  class="w-full rounded-md border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                  placeholder="Jane Doe"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="email"
+                  class="mb-2 block text-sm font-medium text-slate-700"
+                  >Email address</label
+                >
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  class="w-full rounded-md border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                  placeholder="jane@example.com"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="phone"
+                  class="mb-2 block text-sm font-medium text-slate-700"
+                  >Phone number</label
+                >
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  class="w-full rounded-md border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                  placeholder="+254 700 000 000"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="portfolio"
+                  class="mb-2 block text-sm font-medium text-slate-700"
+                  >Portfolio / LinkedIn</label
+                >
+                <input
+                  id="portfolio"
+                  name="portfolio"
+                  type="url"
+                  class="w-full rounded-md border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                  placeholder="https://linkedin.com/in/jane-doe"
+                />
+              </div>
             </div>
 
-            <div id="job-detail" class="hidden space-y-8">
-                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
-                    <div class="mb-4 flex flex-wrap items-center gap-2 text-sm text-slate-600">
-                        <span id="job-department" class="rounded-full bg-slate-100 px-3 py-1"></span>
-                        <span id="job-location" class="rounded-full bg-slate-100 px-3 py-1"></span>
-                    </div>
-
-                    <h1 id="job-title" class="text-3xl font-bold text-slate-900 md:text-4xl"></h1>
-
-                    <div class="mt-6 prose max-w-none text-slate-700">
-                        <div id="job-description" class="space-y-4"></div>
-                    </div>
-
-                    <div class="mt-8">
-                        <button
-                            id="show-application-form"
-                            type="button"
-                            class="inline-flex items-center rounded-md bg-black p-2 px-5 py-3 text-sm font-medium text-white transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-                        >
-                            Apply for this role
-                        </button>
-                    </div>
-                </div>
-
-                <section id="application-form-section" class="hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
-                    <h2 class="text-2xl font-semibold text-slate-900">Apply for this position</h2>
-                    <p class="mt-2 text-slate-600">Tell us a little about yourself and upload your details.</p>
-
-                    <form id="job-application-form" class="mt-6 space-y-5">
-                        <input id="application-job" type="hidden" name="job" />
-                        <input id="application-slug" type="hidden" name="slug" />
-
-                        <div class="grid gap-5 md:grid-cols-2">
-                            <div>
-                                <label for="full_name" class="mb-2 block text-sm font-medium text-slate-700">Full name</label>
-                                <input id="full_name" name="full_name" type="text" required class="w-full rounded-md border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200" placeholder="Jane Doe" />
-                            </div>
-
-                            <div>
-                                <label for="email" class="mb-2 block text-sm font-medium text-slate-700">Email address</label>
-                                <input id="email" name="email" type="email" required class="w-full rounded-md border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200" placeholder="jane@example.com" />
-                            </div>
-
-                            <div>
-                                <label for="phone" class="mb-2 block text-sm font-medium text-slate-700">Phone number</label>
-                                <input id="phone" name="phone" type="tel" class="w-full rounded-md border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200" placeholder="+254 700 000 000" />
-                            </div>
-
-                            <div>
-                                <label for="portfolio" class="mb-2 block text-sm font-medium text-slate-700">Portfolio / LinkedIn</label>
-                                <input id="portfolio" name="portfolio" type="url" class="w-full rounded-md border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200" placeholder="https://linkedin.com/in/jane-doe" />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="cover_letter" class="mb-2 block text-sm font-medium text-slate-700">Cover letter</label>
-                            <textarea id="cover_letter" name="cover_letter" rows="5" class="w-full rounded-md border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200" placeholder="Tell us why you're a good fit for this role."></textarea>
-                        </div>
-
-                        <div>
-                            <label for="cv_file" class="mb-2 block text-sm font-medium text-slate-700">CV / Resume</label>
-                            <input id="cv_file" name="cv_file" type="file" accept=".pdf,.doc,.docx" class="block w-full text-sm text-slate-600 file:mr-4 file:rounded-md file:border-0 file:bg-slate-100 file:px-4 file:py-2 file:text-sm file:font-medium file:text-slate-700" />
-                        </div>
-
-                        <div class="flex items-center gap-4">
-                            <button onclick="window.location.href='http://127.0.0.1:8000/admin/jobs/'" type="submit" class="inline-flex items-center rounded-md bg-emerald-600 px-5 py-3 text-sm p-2 font-medium text-white rounded-md bg-black transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
-                                Submit application
-                            </button>
-                            <span id="success-message" class="hidden text-sm font-medium text-emerald-600">Application submitted successfully.</span>
-                        </div>
-                    </form>
-                </section>
-
-                <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
-                    <h2 class="text-xl font-semibold text-slate-900">Recent submissions</h2>
-                    <div id="recent-applications" class="mt-4 space-y-3"></div>
-                </section>
+            <div>
+              <label
+                for="cover_letter"
+                class="mb-2 block text-sm font-medium text-slate-700"
+                >Cover letter</label
+              >
+              <textarea
+                id="cover_letter"
+                name="cover_letter"
+                rows="5"
+                class="w-full rounded-md border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                placeholder="Tell us why you're a good fit for this role."
+              ></textarea>
             </div>
-        </main>
 
-        <div id="footer"></div>
+            <div>
+              <label
+                class="mb-2 block text-sm font-medium text-slate-700"
+                >CV / Resume</label
+              >
+              <div class="flex items-center gap-3">
+                <label
+                  for="cv_file"
+                  class="btn"
+                  style="cursor: pointer; padding: 7px 14px; font-size: 13px;"
+                >
+                  Choose file
+                </label>
+                <span
+                  id="cv_file_name"
+                  class="text-sm text-slate-500"
+                  >No file chosen</span
+                >
+              </div>
+              <input
+                id="cv_file"
+                name="cv_file"
+                type="file"
+                accept=".pdf,.doc,.docx"
+                class="sr-only"
+              />
+            </div>
 
-        <script>
-            const JOBS_API_URL = window.JOBS_API_URL ||
-                (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                    ? 'http://127.0.0.1:8000/api/jobs/?format=json'
-                    : '/api/jobs/?format=json');
+            <div>
+              <button
+                id="submit-application-btn"
+                type="submit"
+                class="btn"
+                style="white-space: nowrap;"
+              >
+                <svg
+                  id="submit-spinner"
+                  class="hidden"
+                  style="width: 16px; height: 16px; animation: figbloom-spin 0.8s linear infinite;"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    style="opacity: 0.25;"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    style="opacity: 0.75;"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                <span id="submit-btn-label">Submit application</span>
+              </button>
+            </div>
+          </form>
 
-            const STORAGE_KEY = 'figbloom-job-applications';
+          <div id="application-success" class="hidden py-6 text-center">
+            <div
+              style="margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 9999px; background-color: #d1fae5;"
+            >
+              <svg
+                style="width: 28px; height: 28px; color: #059669;"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M5 13l4 4L19 7"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-900">
+              Application submitted successfully
+            </h3>
+            <p class="mt-1 text-sm text-slate-600">
+              Thanks for applying — our team will be in touch if there's a
+              match.
+            </p>
+          </div>
+        </section>
 
-            function slugify(value) {
-                return String(value || '')
-                    .trim()
-                    .toLowerCase()
-                    .replace(/[^a-z0-9\s-]/g, '')
-                    .replace(/\s+/g, '-')
-                    .replace(/-+/g, '-')
-                    .replace(/^-|-$/g, '');
-            }
+        <!-- <section
+          class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8"
+        >
+          <h2 class="text-xl font-semibold text-slate-900">
+            Recent submissions
+          </h2>
+          <div id="recent-applications" class="mt-4 space-y-3"></div>
+        </section> -->
+      </div>
+    </main>
 
-            function getSlugFromUrl() {
-                const params = new URLSearchParams(window.location.search);
-                return params.get('slug');
-            }
+    <div id="footer"></div>
 
-            async function loadComponent(elementId, componentPath) {
-                const element = document.getElementById(elementId);
-                if (!element) return;
+    <script>
+      const JOBS_API_URL =
+        window.JOBS_API_URL ||
+        (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://127.0.0.1:8000/api/jobs/?format=json"
+          : "/api/jobs/?format=json");
 
-                try {
-                    const response = await fetch(componentPath);
-                    if (!response.ok) throw new Error('Failed to load component');
-                    element.innerHTML = await response.text();
-                    if (window.Alpine) Alpine.initTree(element);
-                    if (window.lucide) lucide.createIcons();
-                } catch (error) {
-                    console.error('Component loading error:', error);
-                }
-            }
+      const APPLICATIONS_API_URL =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://127.0.0.1:8000/api/applications/"
+          : "/api/applications/";
 
-            function renderJobDetails(job) {
-                const detailSection = document.getElementById('job-detail');
-                const loader = document.getElementById('job-detail-loader');
+      function slugify(value) {
+        return String(value || "")
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "");
+      }
 
-                loader.classList.add('hidden');
-                detailSection.classList.remove('hidden');
+      function getSlugFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("slug");
+      }
 
-                document.getElementById('job-title').textContent = job.title || job.name || job.role || 'Open position';
-                document.getElementById('job-department').textContent = job.department || job.category || 'General';
-                document.getElementById('job-location').textContent = job.location || 'Remote';
+      async function loadComponent(elementId, componentPath) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
 
-                const descriptionRoot = document.getElementById('job-description');
-                const descriptionText = job.description || 'This role is currently open. Please apply below.';
-                descriptionRoot.innerHTML = `<p>${descriptionText}</p>`;
+        try {
+          const response = await fetch(componentPath);
+          if (!response.ok) throw new Error("Failed to load component");
+          element.innerHTML = await response.text();
+          if (window.Alpine) Alpine.initTree(element);
+          if (window.lucide) lucide.createIcons();
+        } catch (error) {
+          console.error("Component loading error:", error);
+        }
+      }
 
-                document.getElementById('application-job').value = job.title || job.name || job.role || 'Open position';
-                document.getElementById('application-slug').value = job.slug || slugify(job.title || job.name || job.role || 'position');
-            }
+      function renderJobDetails(job) {
+        const detailSection = document.getElementById("job-detail");
+        const loader = document.getElementById("job-detail-loader");
 
-            function renderRecentApplications(jobSlug) {
-                const container = document.getElementById('recent-applications');
-                const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-                const filtered = stored.filter((entry) => entry.slug === jobSlug);
+        loader.classList.add("hidden");
+        detailSection.classList.remove("hidden");
 
-                if (!filtered.length) {
-                    container.innerHTML = '<p class="text-sm text-slate-500">No submissions yet for this role.</p>';
-                    return;
-                }
+        document.getElementById("job-title").textContent =
+          job.title || job.name || job.role || "Open position";
+        document.getElementById("job-department").textContent =
+          job.department || job.category || "General";
+        document.getElementById("job-location").textContent =
+          job.location || "Remote";
 
-                container.innerHTML = filtered
-                    .slice()
-                    .reverse()
-                    .map((entry) => `
-                        <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                            <div class="flex items-center justify-between gap-3">
-                                <p class="font-medium text-slate-900">${entry.full_name}</p>
-                                <span class="text-xs text-slate-500">${new Date(entry.submitted_at).toLocaleDateString()}</span>
-                            </div>
-                            <p class="mt-1 text-sm text-slate-600">${entry.email}</p>
-                            <p class="mt-1 text-sm text-slate-600">${entry.phone || 'No phone provided'}</p>
-                        </div>
-                    `)
-                    .join('');
-            }
+        const descriptionRoot = document.getElementById("job-description");
+        const descriptionText =
+          job.description || "This role is currently open. Please apply below.";
+        descriptionRoot.innerHTML = `<p>${descriptionText}</p>`;
 
-            document.addEventListener('DOMContentLoaded', async () => {
-                await loadComponent('navbar', '/components/navbar.html');
-                await loadComponent('footer', '/components/footer.html');
+        document.getElementById("application-job").value = job.id;
+        document.getElementById("application-slug").value =
+          job.slug || slugify(job.title || job.name || job.role || "position");
+      }
 
-                const currentSlug = getSlugFromUrl();
-                if (!currentSlug) {
-                    document.getElementById('job-detail-loader').textContent = 'No job selected.';
-                    return;
-                }
+      function renderRecentApplications(jobSlug) {
+        // Placeholder panel; real submissions now live in Django admin.
+        // const container = document.getElementById("recent-applications");
+        // container.innerHTML =
+        //   '<p class="text-sm text-slate-500">Submissions are reviewed by our team — check the admin panel for records.</p>';
+      }
 
-                try {
-                    const response = await fetch(JOBS_API_URL);
-                    if (!response.ok) throw new Error('Failed to load jobs');
+      document.addEventListener("DOMContentLoaded", async () => {
+        await loadComponent("navbar", "/components/navbar.html");
+        await loadComponent("footer", "/components/footer.html");
 
-                    const payload = await response.json();
-                    const jobs = Array.isArray(payload) ? payload : (Array.isArray(payload.results) ? payload.results : []);
-                    const selectedJob = jobs.find((job) => {
-                        const candidateSlug = String(job.slug || slugify(job.title || job.name || job.role || 'position'));
-                        return candidateSlug === currentSlug;
-                    });
+        const currentSlug = getSlugFromUrl();
+        if (!currentSlug) {
+          document.getElementById("job-detail-loader").textContent =
+            "No job selected.";
+          return;
+        }
 
-                    if (!selectedJob) {
-                        document.getElementById('job-detail-loader').textContent = 'This job could not be found.';
-                        return;
-                    }
+        try {
+          const response = await fetch(JOBS_API_URL);
+          if (!response.ok) throw new Error("Failed to load jobs");
 
-                    renderJobDetails(selectedJob);
-                    renderRecentApplications(currentSlug);
+          const payload = await response.json();
+          const jobs = Array.isArray(payload)
+            ? payload
+            : Array.isArray(payload.results)
+              ? payload.results
+              : [];
+          const selectedJob = jobs.find((job) => {
+            const candidateSlug = String(
+              job.slug ||
+                slugify(job.title || job.name || job.role || "position"),
+            );
+            return candidateSlug === currentSlug;
+          });
 
-                    document.getElementById('show-application-form').addEventListener('click', () => {
-                        document.getElementById('application-form-section').classList.remove('hidden');
-                        document.getElementById('application-form-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    });
+          if (!selectedJob) {
+            document.getElementById("job-detail-loader").textContent =
+              "This job could not be found.";
+            return;
+          }
 
-                    document.getElementById('job-application-form').addEventListener('submit', (event) => {
-                        event.preventDefault();
+          renderJobDetails(selectedJob);
+          renderRecentApplications(currentSlug);
 
-                        const formData = new FormData(event.target);
-                        const application = {
-                            slug: currentSlug,
-                            job: formData.get('job'),
-                            full_name: formData.get('full_name'),
-                            email: formData.get('email'),
-                            phone: formData.get('phone') || '',
-                            portfolio: formData.get('portfolio') || '',
-                            cover_letter: formData.get('cover_letter') || '',
-                            submitted_at: new Date().toISOString()
-                        };
-
-                        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-                        saved.push(application);
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
-
-                        const successMessage = document.getElementById('success-message');
-                        successMessage.classList.remove('hidden');
-                        event.target.reset();
-                        renderRecentApplications(currentSlug);
-                    });
-                } catch (error) {
-                    console.error('Error loading job details:', error);
-                    document.getElementById('job-detail-loader').textContent = 'Unable to load this job at the moment.';
-                }
+          document
+            .getElementById("show-application-form")
+            .addEventListener("click", () => {
+              document
+                .getElementById("application-form-section")
+                .classList.remove("hidden");
+              document
+                .getElementById("application-form-section")
+                .scrollIntoView({ behavior: "smooth", block: "start" });
             });
 
-            function mainFunction() {
-                return {};
-            }
-        </script>
-    </body>
+          const cvFileInput = document.getElementById("cv_file");
+          const cvFileName = document.getElementById("cv_file_name");
+          if (cvFileInput) {
+            cvFileInput.addEventListener("change", () => {
+              cvFileName.textContent =
+                cvFileInput.files && cvFileInput.files.length
+                  ? cvFileInput.files[0].name
+                  : "No file chosen";
+            });
+          }
+
+          document
+  .getElementById("job-application-form")
+  .addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const formEl = event.target;
+    const submitBtn = document.getElementById("submit-application-btn");
+    const submitLabel = document.getElementById("submit-btn-label");
+    const submitSpinner = document.getElementById("submit-spinner");
+
+    // Prevent double submission
+    if (submitBtn.disabled) return;
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = "0.6";
+    submitBtn.style.cursor = "not-allowed";
+    submitSpinner.classList.remove("hidden");
+    submitLabel.textContent = "Submitting...";
+
+    const formData = new FormData(formEl);
+
+    const csrfToken = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('csrftoken='))
+      ?.split('=')[1] || '';
+
+    try {
+      const response = await fetch(APPLICATIONS_API_URL, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          'X-CSRFToken': csrfToken
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Validation error:", errorData);
+        throw new Error("Submission failed");
+      }
+
+      formEl.reset();
+      cvFileName.textContent = "No file chosen";
+      formEl.classList.add("hidden");
+      document.getElementById("application-form-header").classList.add("hidden");
+      document.getElementById("application-success").classList.remove("hidden");
+      document
+        .getElementById("application-success")
+        .scrollIntoView({ behavior: "smooth", block: "center" });
+    } catch (error) {
+      console.error("Application submission error:", error);
+      alert(
+        "There was a problem submitting your application. Please check the console for details.",
+      );
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = "";
+      submitBtn.style.cursor = "";
+      submitSpinner.classList.add("hidden");
+      submitLabel.textContent = "Submit application";
+    }
+  });
+        } catch (error) {
+          console.error("Error loading job details:", error);
+          document.getElementById("job-detail-loader").textContent =
+            "An error occurred while loading job details.";
+        }
+      });
+
+      function mainFunction() {
+        return {};
+      }
+    </script>
+  </body>
 </html>

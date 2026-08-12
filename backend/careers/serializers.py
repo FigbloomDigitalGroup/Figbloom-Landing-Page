@@ -52,4 +52,17 @@ class NewsletterSubscriberSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsletterSubscriber
         fields = ["id", "email", "subscribed_at"]
-        read_only_fields = ["id", "subscribed_at"]       
+        read_only_fields = ["id", "subscribed_at"]
+
+
+# --- Admin-facing serializers ---
+# Used by the protected /api/admin/... endpoints. Unlike the public
+# serializers above, these expose all fields (including status) and are
+# writable, since only authenticated staff can reach these views.
+
+class JobApplicationAdminSerializer(serializers.ModelSerializer):
+    job_title = serializers.CharField(source='job.title', read_only=True)
+
+    class Meta:
+        model = JobApplication
+        fields = '__all__'

@@ -39,6 +39,10 @@ urlpatterns = [
     path('service', views.service, name='service'),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static('/assets/', document_root=settings.BASE_DIR.parent / 'frontend' / 'assets')
-    urlpatterns += static('/components/', document_root=settings.BASE_DIR.parent / 'frontend' / 'components')
+# /assets/, /components/, robots.txt and sitemap.xml are served straight out of
+# frontend/ by WhiteNoise (settings.WHITENOISE_ROOT) in both dev and production.
+
+# Uploaded CVs only need a Django-served URL when object storage is not
+# configured; with S3 the storage backend returns signed absolute URLs.
+if settings.DEBUG and not settings.USE_S3:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,70 @@
+# Render Blueprint for the Figbloom landing page.
+#
+# One web service: Django serves the API *and* the static landing pages,
+# so there is nothing to deploy separately.
+#
+# Deploy: Render Dashboard → New → Blueprint → pick this repo.
+
+databases:
+  - name: figbloom-db
+    databaseName: figbloom
+    user: figbloom
+    plan: free # free Postgres expires after 30 days — upgrade to `basic-256mb` for anything real
+    region: oregon
+
+services:
+  - type: web
+    name: figbloom
+    runtime: python
+    plan: free
+    region: oregon # must match the database region
+    rootDir: backend
+    buildCommand: >-
+      pip install --upgrade pip &&
+      pip install -r requirements.txt &&
+      python manage.py collectstatic --no-input &&
+      python manage.py migrate --no-input &&
+      (python manage.py createsuperuser --no-input || true)
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13.4"
+
+      - key: DJANGO_SECRET_KEY
+        generateValue: true # Render generates a strong value on first deploy
+
+      - key: DJANGO_DEBUG
+        value: "false"
+
+      - key: DATABASE_URL
+        fromDatabase:
+          name: figbloom-db
+          property: connectionString
+
+      # Comma-separated custom domains, e.g. "figbloom.com,www.figbloom.com".
+      # The *.onrender.com hostname is added automatically.
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false
+
+      # --- Applicant CV storage (S3-compatible: AWS S3, Cloudflare R2, B2, Spaces) ---
+      # Uploads fall back to the ephemeral local disk until these are set.
+      - key: AWS_STORAGE_BUCKET_NAME
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_S3_REGION_NAME
+        sync: false # "auto" for R2, e.g. "eu-west-1" for AWS S3
+      - key: AWS_S3_ENDPOINT_URL
+        sync: false # leave blank for AWS S3; required for R2/B2/Spaces
+
+      # --- First admin user (free plan has no shell to run createsuperuser) ---
+      # Set these, deploy once, then clear them and change the password.
+      - key: DJANGO_SUPERUSER_USERNAME
+        sync: false
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false

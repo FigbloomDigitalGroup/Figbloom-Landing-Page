@@ -14,9 +14,8 @@ whitenoise==6.9.0
 dj-database-url==3.0.1
 psycopg[binary]==3.3.4
 
-# S3-compatible object storage for applicant CV uploads
-django-storages==1.14.6
-boto3==1.40.11
+# Cloudinary storage for applicant CV uploads
+django-cloudinary-storage==0.3.0
 
 # Optional: loads backend/.env for local development
 python-dotenv==1.1.1

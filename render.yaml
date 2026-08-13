@@ -47,18 +47,12 @@ services:
       - key: DJANGO_ALLOWED_HOSTS
         sync: false
 
-      # --- Applicant CV storage (S3-compatible: AWS S3, Cloudflare R2, B2, Spaces) ---
-      # Uploads fall back to the ephemeral local disk until these are set.
-      - key: AWS_STORAGE_BUCKET_NAME
+      # --- Applicant CV storage (Cloudinary) ---
+      # Copy the "API Environment variable" value from the Cloudinary dashboard
+      # (cloudinary://<api_key>:<api_secret>@<cloud_name>). Uploads fall back to
+      # the ephemeral local disk until this is set.
+      - key: CLOUDINARY_URL
         sync: false
-      - key: AWS_ACCESS_KEY_ID
-        sync: false
-      - key: AWS_SECRET_ACCESS_KEY
-        sync: false
-      - key: AWS_S3_REGION_NAME
-        sync: false # "auto" for R2, e.g. "eu-west-1" for AWS S3
-      - key: AWS_S3_ENDPOINT_URL
-        sync: false # leave blank for AWS S3; required for R2/B2/Spaces
 
       # --- First admin user (free plan has no shell to run createsuperuser) ---
       # Set these, deploy once, then clear them and change the password.

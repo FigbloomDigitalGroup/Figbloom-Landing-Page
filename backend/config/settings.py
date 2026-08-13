@@ -66,7 +66,6 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders',
-    'storages',
     'careers',
 ]
 
@@ -153,13 +152,12 @@ WHITENOISE_AUTOREFRESH = DEBUG
 # --- Media / applicant CV uploads --------------------------------------
 
 # Render's filesystem is ephemeral, so uploads must go to object storage in
-# production. Setting AWS_STORAGE_BUCKET_NAME switches JobApplication.cv_file
-# over to S3; without it (local dev) uploads land in backend/media/.
+# production. Setting CLOUDINARY_URL switches JobApplication.cv_file over to
+# Cloudinary; without it (local dev) uploads land in backend/media/.
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', '')
-USE_S3 = bool(AWS_STORAGE_BUCKET_NAME)
+USE_CLOUDINARY = bool(os.environ.get('CLOUDINARY_URL'))
 
 STORAGES = {
     'default': {
@@ -172,27 +170,13 @@ STORAGES = {
     },
 }
 
-if USE_S3:
+if USE_CLOUDINARY:
+    INSTALLED_APPS += ['cloudinary_storage', 'cloudinary']
     STORAGES['default'] = {
-        'BACKEND': 'storages.backends.s3.S3Storage',
-        'OPTIONS': {
-            'bucket_name': AWS_STORAGE_BUCKET_NAME,
-            'access_key': os.environ.get('AWS_ACCESS_KEY_ID'),
-            'secret_key': os.environ.get('AWS_SECRET_ACCESS_KEY'),
-            # 'auto' for Cloudflare R2; a real region for AWS S3.
-            'region_name': os.environ.get('AWS_S3_REGION_NAME', 'auto'),
-            # Leave unset for AWS S3; set it for R2 / B2 / Spaces.
-            'endpoint_url': os.environ.get('AWS_S3_ENDPOINT_URL') or None,
-            'signature_version': 's3v4',
-            'location': 'media',
-            # CVs are personal data: keep the bucket private and hand out
-            # short-lived signed URLs instead of public links.
-            'default_acl': None,
-            'querystring_auth': True,
-            'querystring_expire': 3600,
-            'file_overwrite': False,
-        },
+        'BACKEND': 'cloudinary_storage.storage.RawMediaCloudinaryStorage',
     }
+    # CLOUDINARY_URL (cloudinary://<key>:<secret>@<cloud_name>) is read
+    # automatically by the cloudinary SDK — no extra config needed here.
 
 
 # --- Email --------------------------------------------------------------

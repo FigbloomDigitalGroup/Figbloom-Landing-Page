@@ -51,25 +51,26 @@ same URLs they had on Vercel. No HTML changes were needed.
 
 Render wipes the container filesystem on every deploy and restart. Applicant CVs
 written to local disk would be **silently lost**, so `JobApplication.cv_file` is
-pointed at an S3-compatible bucket whenever `AWS_STORAGE_BUCKET_NAME` is set:
+pointed at Cloudinary whenever `CLOUDINARY_URL` is set:
 
 ```
-AWS_STORAGE_BUCKET_NAME=figbloom-uploads
-AWS_ACCESS_KEY_ID=…
-AWS_SECRET_ACCESS_KEY=…
-AWS_S3_REGION_NAME=auto                                    # "auto" for R2; a real region for AWS S3
-AWS_S3_ENDPOINT_URL=https://<account>.r2.cloudflarestorage.com   # omit entirely for AWS S3
+CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>
 ```
 
-Cloudflare R2 is the cheapest fit (10 GB free, no egress fees, S3 API); AWS S3,
-Backblaze B2 and DigitalOcean Spaces work through the same settings.
+Get this from the Cloudinary dashboard home page — it has a "Django" tab that
+shows this exact variable, already assembled from your account's API key/secret/
+cloud name. Paste the whole string as one env var.
 
-**Keep the bucket private.** CVs are personal data. The storage config uses
-`querystring_auth`, so the admin dashboard's *View* link is a presigned URL that
-expires after an hour — do not enable public read on the bucket.
+CVs (PDF/DOCX) are uploaded as Cloudinary's "raw" resource type, since Cloudinary
+otherwise assumes uploads are images.
 
-Until these vars are set, uploads fall back to local disk and will disappear on the
-next deploy.
+**Cloudinary's free tier serves files at public, guessable URLs** — anyone with the
+link can view a CV; there's no built-in access control like S3's presigned URLs.
+That's an acceptable tradeoff for now, but worth revisiting if CVs need to stay
+private.
+
+Until `CLOUDINARY_URL` is set, uploads fall back to local disk and will disappear on
+the next deploy.
 
 ## Local development
 
@@ -82,8 +83,8 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-With no `DATABASE_URL` and no `AWS_STORAGE_BUCKET_NAME`, this keeps using
-`db.sqlite3` and `backend/media/` exactly as before.
+With no `DATABASE_URL` and no `CLOUDINARY_URL`, this keeps using `db.sqlite3` and
+`backend/media/` exactly as before.
 
 `DJANGO_DEBUG` defaults to **false** so that a missing env var can never expose
 tracebacks in production — which is why `.env` matters locally.
@@ -96,7 +97,7 @@ tracebacks in production — which is why `.env` matters locally.
 | `DATABASE_URL` | yes | from `figbloom-db`; falls back to SQLite if unset |
 | `DJANGO_DEBUG` | — | defaults to `false` |
 | `DJANGO_ALLOWED_HOSTS` | custom domains only | comma separated |
-| `AWS_STORAGE_BUCKET_NAME` + keys | for CV uploads | see above |
+| `CLOUDINARY_URL` | for CV uploads | see above |
 | `DJANGO_EMAIL_BACKEND` | — | defaults to the console backend; nothing is actually emailed yet |
 | `DJANGO_SECURE_SSL_REDIRECT` | — | defaults to `true` when `DEBUG=false` |
 | `DJANGO_SUPERUSER_*` | first deploy | remove after use |

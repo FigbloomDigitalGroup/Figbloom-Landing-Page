@@ -43,6 +43,6 @@ urlpatterns = [
 # frontend/ by WhiteNoise (settings.WHITENOISE_ROOT) in both dev and production.
 
 # Uploaded CVs only need a Django-served URL when object storage is not
-# configured; with S3 the storage backend returns signed absolute URLs.
-if settings.DEBUG and not settings.USE_S3:
+# configured; with Cloudinary the storage backend returns absolute URLs.
+if settings.DEBUG and not settings.USE_CLOUDINARY:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

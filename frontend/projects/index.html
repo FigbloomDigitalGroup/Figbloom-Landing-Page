@@ -1,0 +1,416 @@
+<html lang="en">
+   
+       <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#FF9400" />
+        <meta name="author" content="Figbloom Digital Group" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="description" content="Browse selected Figbloom Digital Group projects that showcase connected, secure, and innovative technology solutions for businesses." />
+        <meta name="keywords" content="Figbloom projects, technology implementation projects, software and networking solutions Kenya" />
+        <link rel="canonical" href="https://www.figbloomdigitalgroup.com/projects/" />
+        <meta property="og:locale" content="en_KE" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Projects | Figbloom Digital Group" />
+        <meta property="og:description" content="See examples of how Figbloom Digital Group helps businesses modernize operations with reliable technology." />
+        <meta property="og:url" content="https://www.figbloomdigitalgroup.com/projects/" />
+        <meta property="og:site_name" content="Figbloom Digital Group" />
+        <meta property="og:image" content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Projects | Figbloom Digital Group" />
+        <meta name="twitter:description" content="A portfolio of technology projects focused on connectivity, security, and digital growth." />
+        <meta name="twitter:image" content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png" />
+
+        <title>Projects | Figbloom Digital Group</title>
+
+        <link
+            rel="stylesheet"
+            href="../assets/css/swiper-bundle.min.css"
+        />
+
+        <link
+            rel="stylesheet"
+            href="../assets/css/style.css"
+        />
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebPage",
+                "name": "Figbloom Digital Group Projects",
+                "url": "https://www.figbloomdigitalgroup.com/projects/",
+                "description": "A showcase of Figbloom Digital Group's completed technology projects."
+            }
+        </script>
+    </head>
+    <body x-data="mainFunction()">
+        <div id="navbar"></div>
+        <div
+            class="relative"
+            x-data="{ isLoading: true }"
+            x-init="setTimeout(() => {isLoading = false }, 1500)" >
+            <div
+                id="preloader"
+                x-show="isLoading"
+                class="fixed inset-0 z-60 flex h-dvh w-full items-center justify-center bg-white"
+                style="display: none"  >
+                <span
+                    class="from-background to-background absolute inset-0 animate-pulse bg-linear-to-br via-white"
+                ></span>
+
+                <div
+                    class="border-t-gray/70 border-b-gray-light absolute top-1/2 left-1/2 grid size-10 -translate-1/2 animate-spin place-content-center rounded-full border-y-8 sm:size-14"
+                ></div>
+            </div>
+        </div>
+
+    
+    <div id="navbar"></div>
+
+        <div class="grow">
+            <div
+                class="relative z-1 h-60 overflow-hidden bg-[url('../images/main-banner.jpg')] bg-cover bg-center bg-no-repeat lg:h-85"
+            >
+                <span
+                    class="sm:from-secondary from-secondary/90 to-secondary/60 absolute inset-0 -z-1 bg-linear-to-r from-50% sm:to-transparent lg:from-28%"
+                ></span>
+                <div
+                    class="container flex h-full flex-col justify-end gap-3 py-8 text-white sm:gap-4 lg:gap-6 lg:py-16"
+                >
+                    <h1 class="text-white">Our Projects</h1>
+                    <p class="text-gray-light max-w-275">
+                        A collection of the work we’ve delivered, helping
+                        businesses innovate, scale, and achieve measurable
+                        results across industries.
+                    </p>
+                </div>
+            </div>
+            <div class="container py-14 lg:py-16" x-data="projectsList()">
+                <!-- FILTER TABS -->
+                <div
+                    class="flex items-center gap-6 overflow-x-auto pb-1.5 text-base/4 sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0"
+                >
+                    <template x-for="cat in categories" :key="cat">
+                        <button
+                            type="button"
+                            @click="activeCategory = cat"
+                            class="shrink-0 border-b-2 pb-2.5 font-medium uppercase transition"
+                            :class="activeCategory === cat
+                    ? 'border-primary text-primary'
+                    : 'border-transparent hover:border-primary hover:text-primary'"
+                            x-text="cat"
+                        ></button>
+                    </template>
+                </div>
+
+                <!-- PROJECT GRID -->
+                <div
+                    class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:mt-12 xl:grid-cols-3"
+                >
+                    <template
+                        x-for="project in filteredProjects"
+                        :key="project.id"
+                    >
+                        <div
+                            class="border-gray-light group relative flex flex-col gap-4 overflow-hidden rounded-lg border bg-white p-4 lg:p-6"
+                        >
+                            <div class="space-y-2 sm:space-y-4">
+                                <h3
+                                    class="text-xl font-medium text-black lg:text-2xl"
+                                    x-text="project.title"
+                                ></h3>
+                                <p
+                                    x-text="project.description"
+                                    class="line-clamp-2"
+                                ></p>
+                            </div>
+
+                            <div
+                                class="relative mt-auto h-60 overflow-hidden rounded-lg sm:h-75 xl:h-105"
+                            >
+                                <img
+                                    :src="project.image"
+                                    :alt="project.title"
+                                    loading="lazy"
+                                    class="size-full object-cover"
+                                />
+                                <div
+                                    class="bg-primary/0 group-hover:bg-primary/50 absolute inset-0 grid place-content-center duration-300"
+                                >
+                                    <button
+                                        type="button"
+                                        class="btn btn-secondary invisible opacity-0 duration-300 group-hover:visible group-hover:opacity-100"
+                                    >
+                                        View Project
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div
+                                class="flex items-center justify-between gap-2"
+                            >
+                                <a
+                                    href="/projects"
+                                    x-text="project.category"
+                                    class="h4 text-gray relative z-1 line-clamp-1 transition hover:text-black lg:text-lg"
+                                ></a>
+
+                                <div
+                                    class="bg-primary-light text-primary ring-primary/20 shrink-0 rounded p-1 text-xs font-medium ring-1 sm:px-2 sm:text-sm"
+                                    x-text="project.tag"
+                                ></div>
+                            </div>
+
+                            <a
+                                :href="project.url"
+                                class="absolute inset-0"
+                                aria-label="View project"
+                            ></a>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div
+                class="bg-secondary py-14 text-center font-medium text-white lg:py-16"
+            >
+                <div class="container">
+                    <div
+                        class="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4"
+                    >
+                        <div class="space-y-2">
+                            <div
+                                x-data="counter(250)"
+                                x-init="observe()"
+                                class="text-primary text-3xl sm:text-4xl xl:text-5xl/14"
+                            >
+                                <span x-text="count"></span>+
+                            </div>
+                            <div>Successful Projects</div>
+                        </div>
+                        <div class="space-y-2">
+                            <div
+                                x-data="counter(98)"
+                                x-init="observe()"
+                                class="text-primary text-3xl sm:text-4xl xl:text-5xl/14"
+                            >
+                                <span x-text="count"></span>%
+                            </div>
+                            <div>Client Satisfaction</div>
+                        </div>
+                        <div class="space-y-2">
+                            <div
+                                x-data="counter(10)"
+                                x-init="observe()"
+                                class="text-primary text-3xl sm:text-4xl xl:text-5xl/14"
+                            >
+                                <span x-text="count"></span>+ Years
+                            </div>
+                            <div>Industry Experience</div>
+                        </div>
+                        <div class="space-y-2">
+                            <div
+                                x-data="counter(40)"
+                                x-init="observe()"
+                                class="text-primary text-3xl sm:text-4xl xl:text-5xl/14"
+                            >
+                                <span x-text="count"></span>+
+                            </div>
+                            <div>Global Clients</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="relative overflow-hidden py-14 shadow-[0_16px_40px_-8px_rgba(13,13,13,0.2)] lg:py-16"
+            >
+                <img
+                    src="/assets/images/cta-banner.png"
+                    alt="graphy"
+                    class="absolute inset-0 size-full object-cover"
+                />
+                <div class="relative z-1 container text-center">
+                    <img
+                        src="/assets/images/circle-star.png"
+                        alt="circle-star"
+                        class="absolute -bottom-16 left-0 -z-1 h-auto w-20 md:w-35 xl:w-65"
+                    />
+                    <img
+                        src="/assets/images/circle-half.png"
+                        alt="circle-star"
+                        class="absolute -top-16 right-0 -z-1 h-auto w-20 md:w-35 xl:w-65"
+                    />
+                    <div class="section-heading text-white">
+                        <h2 class="text-white">
+                            Ready to Build Something Better?
+                        </h2>
+                        <p>
+                            Let’s discuss your goals and create a tailored
+                            solution that helps your business grow with
+                            confidence.
+                        </p>
+                    </div>
+                    <div
+                        class="mt-6 flex justify-center gap-2 sm:gap-4 lg:gap-6"
+                    >
+                        <button
+                            type="button"
+                            class="btn btn-secondary px-2.5 whitespace-nowrap sm:px-4.75"
+                            @click="contactModal = true"
+                        >
+                            Get a quote
+                        </button>
+                        <a
+                            href="/contact"
+                            class="btn btn-secondary bg-transparent px-2.5 whitespace-nowrap text-white sm:px-4.75"
+                            >Book a free consultation</a
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="footer"></div>
+                            
+                 
+                        
+      
+
+        <script defer src="/assets/js/alpine.min.js"></script>
+        <script src="/assets/js/swiper-bundle.min.js"></script>
+        <script src="/assets/js/lucide.min.js"></script>
+
+        <script>
+            function projectsList() {
+                return {
+                    activeCategory: 'All',
+                    projects: [
+                        {
+                            id: 1,
+                            title: 'Movecconnect ',
+                            description:
+                                'MovecConnect provides reliable Starlink-powered internet solutions, connecting homes and businesses with fast, affordable, and dependable broadband access',
+                            image: '/assets/images/project-1.jpg',
+                            url: '/',
+                            category: 'Web Development',
+                            tag: '+42% conversion',
+                        },
+                        {
+                            id: 2,
+                            title: 'Figbloom Ecommerce App',
+                            description:
+                                 'Figbloom E-commerce supplies Starlink kits, security cameras, networking equipment, and smart technology solutions for homes and businesses.',
+                            image: '/assets/images/project-2.jpg',
+                            url: '/',
+                            category: 'Web App Development',
+                            tag: '−38% user drop-off',
+                        },
+                        {
+                            id: 3,
+                            title: 'Figbloom Brand Identity',
+                            description:
+                                'A modern visual identity crafted to reflect trust and innovation.',
+                            image: '/assets/images/project-3.jpg',
+                            url: '/',
+                            category: 'Branding',
+                            tag: '2× brand recall',
+                        },
+                        {
+                            id: 4,
+                            title: 'GrowFast Campaign',
+                            description:
+                                'A performance-driven digital campaign optimized for qualified leads.',
+                            image: '/assets/images/project-4.jpg',
+                            url: '/',
+                            category: 'Digital Marketing',
+                            tag: '+61% lead growth',
+                        },
+                        {
+                            id: 5,
+                            title: 'Pulse SaaS Product',
+                            description:
+                                'An end-to-end SaaS product designed and developed from idea to launch.',
+                            image: '/assets/images/project-5.jpg',
+                            url: '/',
+                            category: 'Product Development',
+                            tag: 'Launched in 90 days',
+                        },
+                        {
+                            id: 6,
+                            title: 'SSa Flight Automation System',
+                            description:
+                                'Automated internal workflows to eliminate manual processes and delays.',
+                            image: '/assets/images/project-3.jpg',
+                            url: '/',
+                            category: 'Automation',
+                            tag: '−55% operational time',
+                        },
+                    ],
+                    get categories() {
+                        return [
+                            'All',
+                            ...new Set(this.projects.map((p) => p.category)),
+                        ]
+                    },
+
+                    get filteredProjects() {
+                        if (this.activeCategory === 'All') {
+                            return this.projects
+                        }
+                        return this.projects.filter(
+                            (p) => p.category === this.activeCategory,
+                        )
+                    },
+                }
+            }
+            function mainFunction() {
+                return {
+                    init() {
+                        this.$nextTick(() => lucide.createIcons())
+                    },
+                    contactModal: false,
+                }
+            }
+
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('counter', (target) => ({
+                    count: 0,
+                    started: false,
+
+                    observe() {
+                        const observer = new IntersectionObserver(
+                            ([entry]) => {
+                                if (entry.isIntersecting && !this.started) {
+                                    this.started = true
+                                    this.start()
+                                    observer.disconnect()
+                                }
+                            },
+                            { threshold: 0.5 },
+                        )
+
+                        observer.observe(this.$el)
+                    },
+
+                    start() {
+                        const duration = 1200
+                        const stepTime = Math.max(
+                            Math.floor(duration / target),
+                            10,
+                        )
+
+                        const interval = setInterval(() => {
+                            if (this.count < target) {
+                                this.count++
+                            } else {
+                                clearInterval(interval)
+                            }
+                        }, stepTime)
+                    },
+                }))
+            })
+        </script>
+        
+
+<script src="/assets/js/components.js"></script>
+    </body>
+</html>

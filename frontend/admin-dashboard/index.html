@@ -1,0 +1,1230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Admin Dashboard | Figbloom Digital Group</title>
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <style>
+      :root {
+        --fb-green: #1a3a1a;
+        --fb-orange: #ff9400;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: #fafafa;
+        color: #1f2937;
+      }
+
+      .db-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.75rem;
+        background: #ffffff;
+        border-bottom: 1px solid #eaeaea;
+      }
+
+      .db-header-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .db-header-left img {
+        width: 42px;
+      }
+
+      .db-header-left span {
+        font-weight: 700;
+        color: var(--fb-green);
+        font-size: 1.05rem;
+      }
+
+      .db-logout {
+        border: 1px solid #d1d5db;
+        background: #ffffff;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        color: #374151;
+      }
+
+      .db-logout:hover {
+        border-color: var(--fb-orange);
+        color: var(--fb-orange);
+      }
+
+      .db-tabs {
+        display: flex;
+        gap: 0.5rem;
+        padding: 1rem 1.75rem 0;
+        background: #ffffff;
+        border-bottom: 1px solid #eaeaea;
+      }
+
+      .db-tab {
+        padding: 0.6rem 1.1rem;
+        border-radius: 8px 8px 0 0;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #6b7280;
+        border: 1px solid transparent;
+      }
+
+      .db-tab.active {
+        color: var(--fb-green);
+        border: 1px solid #eaeaea;
+        border-bottom: 1px solid #ffffff;
+        background: #ffffff;
+        margin-bottom: -1px;
+      }
+
+      .db-content {
+        padding: 1.75rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .db-panel {
+        display: none;
+      }
+
+      .db-panel.active {
+        display: block;
+      }
+
+      .db-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.25rem;
+      }
+
+      .db-panel-header h2 {
+        margin: 0;
+        color: var(--fb-green);
+        font-size: 1.25rem;
+      }
+
+      .db-btn-primary {
+        background: var(--fb-orange);
+        color: #ffffff;
+        border: none;
+        padding: 0.55rem 1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .db-btn-primary:hover {
+        opacity: 0.9;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #ffffff;
+        border: 1px solid #eaeaea;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      thead {
+        background: #f9fafb;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      th {
+        color: #6b7280;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.03em;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      .badge-open {
+        background: #ecfdf5;
+        color: #047857;
+      }
+
+      .badge-closed {
+        background: #fef2f2;
+        color: #b91c1c;
+      }
+
+      .status-select {
+        padding: 0.3rem 0.5rem;
+        border-radius: 6px;
+        border: 1px solid #d1d5db;
+        font-size: 0.8rem;
+      }
+
+      .db-action-link {
+        color: var(--fb-orange);
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: none;
+        border: none;
+        padding: 0;
+      }
+
+      .db-action-link:hover {
+        text-decoration: underline;
+      }
+
+      .db-empty {
+        padding: 2rem;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 0.9rem;
+      }
+
+      /* Modal for job create/edit */
+      .db-modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        padding: 1rem;
+      }
+
+      .db-modal-backdrop.active {
+        display: flex;
+      }
+
+      .db-modal {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 1.75rem;
+        width: 100%;
+        max-width: 520px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .db-modal h3 {
+        margin-top: 0;
+        color: var(--fb-green);
+      }
+
+      .db-field {
+        margin-bottom: 1rem;
+      }
+
+      .db-field label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.35rem;
+      }
+
+      .db-field input,
+      .db-field select,
+      .db-field textarea {
+        width: 100%;
+        padding: 0.55rem 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-family: inherit;
+      }
+
+      .db-field textarea {
+        resize: vertical;
+        min-height: 70px;
+      }
+
+      .db-modal-actions {
+        display: flex;
+        gap: 0.6rem;
+        margin-top: 1.25rem;
+      }
+
+      .db-btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: none;
+        padding: 0.55rem 1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        flex: 1;
+      }
+
+      .db-modal-actions .db-btn-primary {
+        flex: 1;
+      }
+
+      .db-row-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+      .newsletter-panel {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.newsletter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.newsletter-header h2 {
+    margin: 0;
+    color: #1a3a1a;
+    font-size: 24px;
+}
+
+.newsletter-header p {
+    margin: 6px 0 0;
+    color: #6b7280;
+}
+
+.subscriber-count {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 22px;
+    background: #f5f7f5;
+    border-radius: 12px;
+}
+
+.subscriber-count strong {
+    color: #1a3a1a;
+    font-size: 24px;
+}
+
+.subscriber-count span {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.newsletter-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+}
+
+.newsletter-composer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.newsletter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.newsletter-field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.newsletter-field input,
+.newsletter-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+.newsletter-field input:focus,
+.newsletter-field textarea:focus {
+    border-color: #ff9400;
+    box-shadow: 0 0 0 3px rgba(255,148,0,.12);
+}
+
+.newsletter-field textarea {
+    min-height: 300px;
+    resize: vertical;
+}
+
+.newsletter-label-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+#newsletter-word-count {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.newsletter-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.newsletter-preview {
+    background: #f5f7f5;
+    border-radius: 14px;
+    padding: 18px;
+}
+
+.preview-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 14px;
+}
+
+.email-preview-card {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,.06);
+}
+
+.email-preview-brand {
+    background: #1a3a1a;
+    padding: 24px;
+    text-align: center;
+}
+
+.email-preview-brand img {
+    width: 110px;
+}
+
+.email-preview-content {
+    padding: 30px;
+    min-height: 260px;
+}
+
+.email-preview-content h2 {
+    color: #1a3a1a;
+    margin-top: 0;
+}
+
+.email-preview-content p {
+    color: #4b5563;
+    line-height: 1.7;
+}
+
+.email-preview-footer {
+    background: #f8f9f8;
+    text-align: center;
+    padding: 20px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.email-preview-footer p {
+    margin: 6px 0 0;
+}
+    </style>
+  </head>
+  <body>
+    <header class="db-header">
+      <div class="db-header-left">
+        <img src="/assets/images/figbloom_logo.png" alt="Figbloom" />
+        <span>Admin Dashboard</span>
+      </div>
+      <button class="db-logout" id="logout-btn">Log out</button>
+    </header>
+
+    <div class="db-tabs">
+
+    <div class="db-tab active" data-panel="jobs">
+        Jobs
+    </div>
+
+    <div class="db-tab" data-panel="applications">
+        Applications
+    </div>
+
+    <div class="db-tab" data-panel="newsletter">
+        Newsletter
+    </div>
+
+</div>
+
+
+</div>
+
+
+    <div class="db-content">
+      <!-- JOBS PANEL -->
+      <section id="panel-jobs" class="db-panel active">
+        <div class="db-panel-header">
+          <h2>Job Postings</h2>
+          <button class="db-btn-primary" id="new-job-btn">+ New Job</button>
+        </div>
+        <div id="jobs-table-wrap">
+          <div class="db-empty">Loading jobs...</div>
+        </div>
+      </section>
+
+      <!-- APPLICATIONS PANEL -->
+      <section id="panel-applications" class="db-panel">
+        <div class="db-panel-header">
+          <h2>Job Applications</h2>
+        </div>
+        <div id="applications-table-wrap">
+          <div class="db-empty">Loading applications...</div>
+        </div>
+      </section>
+
+      <!-- NEWSLETTER PANEL -->
+     <section id="panel-newsletter" class="db-panel newsletter-panel">
+  <div class="newsletter-header">
+    <div>
+      <h2>Newsletter</h2>
+      <p>
+        Create and send updates to your subscribers.
+      </p>
+    </div>
+
+    <div class="subscriber-count">
+      <strong id="subscriber-count">0</strong>
+      <span>Active Subscribers</span>
+    </div>
+  </div>
+
+  <div class="newsletter-layout">
+
+    <!-- COMPOSER -->
+    <div class="newsletter-composer">
+
+      <div class="newsletter-field">
+        <label for="newsletter-subject">
+          Subject
+        </label>
+
+        <input
+          id="newsletter-subject"
+          type="text"
+          placeholder="e.g. Exciting updates from Figbloom"
+          maxlength="200"
+        />
+      </div>
+
+      <div class="newsletter-field">
+
+        <div class="newsletter-label-row">
+          <label for="newsletter-content">
+            Newsletter Content
+          </label>
+
+          <span id="newsletter-word-count">
+            0 words
+          </span>
+        </div>
+
+        <textarea
+          id="newsletter-content"
+          placeholder="Write your newsletter here..."
+        ></textarea>
+
+      </div>
+
+      <div class="newsletter-actions">
+
+        <button
+          type="button"
+          class="db-btn-secondary"
+          id="newsletter-preview-btn"
+        >
+          Preview
+        </button>
+
+        <button
+          type="button"
+          class="db-btn-primary"
+          id="newsletter-send-btn"
+        >
+          Send Newsletter
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- LIVE PREVIEW -->
+    <div class="newsletter-preview">
+
+      <div class="preview-header">
+        Email Preview
+      </div>
+
+      <div class="email-preview-card">
+
+        <div class="email-preview-brand">
+          <img
+            src="/assets/images/figbloom_logo.png"
+            alt="Figbloom"
+          />
+        </div>
+
+        <div class="email-preview-content">
+
+          <h2 id="preview-subject">
+            Your newsletter subject
+          </h2>
+
+          <div id="preview-content">
+            <p>
+              Your newsletter content will appear here.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="email-preview-footer">
+          <strong>Figbloom Digital Group</strong>
+          <p>
+            Thank you for being part of our community.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+      </div>
+</section>
+    </div>
+
+    <!-- JOB CREATE/EDIT MODAL -->
+    <div class="db-modal-backdrop" id="job-modal-backdrop">
+      <div class="db-modal">
+        <h3 id="job-modal-title">New Job</h3>
+
+        <form id="job-form">
+          <input type="hidden" id="job-id" />
+
+          <div class="db-field">
+            <label for="job-title">Title</label>
+            <input id="job-title" required />
+          </div>
+
+          <div class="db-row-grid">
+            <div class="db-field">
+              <label for="job-department">Department</label>
+              <input id="job-department" required />
+            </div>
+            <div class="db-field">
+              <label for="job-location">Location</label>
+              <select id="job-location">
+                <option value="onsite">Onsite</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="remote">Remote</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="db-row-grid">
+            <div class="db-field">
+              <label for="job-employment-type">Employment Type</label>
+              <select id="job-employment-type">
+                <option value="full_time">Full Time</option>
+                <option value="part_time">Part Time</option>
+                <option value="contract">Contract</option>
+                <option value="internship">Internship</option>
+              </select>
+            </div>
+            <div class="db-field">
+              <label for="job-experience">Experience</label>
+              <input id="job-experience" placeholder="e.g. 3 years" />
+            </div>
+          </div>
+
+          <div class="db-row-grid">
+            <div class="db-field">
+              <label for="job-salary">Salary</label>
+              <input id="job-salary" placeholder="e.g. 100000" />
+            </div>
+            <div class="db-field">
+              <label for="job-deadline">Deadline</label>
+              <input id="job-deadline" type="date" />
+            </div>
+          </div>
+
+          <div class="db-field">
+            <label for="job-description">Description</label>
+            <textarea id="job-description" required></textarea>
+          </div>
+
+          <div class="db-field">
+            <label for="job-requirements">Requirements</label>
+            <textarea id="job-requirements" required></textarea>
+          </div>
+
+          <div class="db-field">
+            <label for="job-is-open">Status</label>
+            <select id="job-is-open">
+              <option value="true">Open</option>
+              <option value="false">Closed</option>
+            </select>
+          </div>
+
+          <div class="db-modal-actions">
+            <button type="button" class="db-btn-secondary" id="job-cancel-btn">Cancel</button>
+            <button type="submit" class="db-btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function getCsrfToken() {
+        return (
+          document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('csrftoken='))
+            ?.split('=')[1] || ''
+        );
+      }
+
+      async function apiFetch(url, options = {}) {
+        const response = await fetch(url, {
+          credentials: 'same-origin',
+          ...options,
+          headers: {
+            'X-CSRFToken': getCsrfToken(),
+            ...(options.headers || {}),
+          },
+        });
+
+        const responseText = await response.clone().text();
+
+    if (response.status === 401 || response.status === 403) {
+        // TEMPORARILY DON'T REDIRECT
+        alert(
+            `Request failed: ${response.status}\n\n${responseText}`
+        );
+
+        throw new Error(`Request failed: ${response.status}`);
+    }
+
+    return response;
+}
+
+      // --- Tabs ---
+      document.querySelectorAll('.db-tab').forEach((tab) => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.db-tab').forEach((t) => t.classList.remove('active'));
+          document.querySelectorAll('.db-panel').forEach((p) => p.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+        });
+      });
+
+      // --- Logout ---
+      document.getElementById('logout-btn').addEventListener('click', async () => {
+        await apiFetch('/api/auth/logout/', { method: 'POST' });
+        window.location.href = '/admin-dashboard/login';
+      });
+
+      // --- JOBS ---
+      let jobsCache = [];
+
+      async function loadJobs() {
+        const wrap = document.getElementById('jobs-table-wrap');
+        try {
+          const res = await apiFetch('/api/admin/jobs/');
+          const data = await res.json();
+          jobsCache = Array.isArray(data) ? data : data.results || [];
+
+          if (!jobsCache.length) {
+            wrap.innerHTML = '<div class="db-empty">No jobs posted yet.</div>';
+            return;
+          }
+
+          wrap.innerHTML = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Department</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Deadline</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${jobsCache
+                  .map(
+                    (job) => `
+                  <tr>
+                    <td>${job.title}</td>
+                    <td>${job.department}</td>
+                    <td>${job.location}</td>
+                    <td><span class="badge ${job.is_open ? 'badge-open' : 'badge-closed'}">${job.is_open ? 'Open' : 'Closed'}</span></td>
+                    <td>${job.deadline || '—'}</td>
+                    <td>
+                      <button class="db-action-link" onclick="editJob(${job.id})">Edit</button>
+                      &nbsp;&middot;&nbsp;
+                      <button class="db-action-link" onclick="deleteJob(${job.id})">Delete</button>
+                    </td>
+                  </tr>
+                `,
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+          `;
+        } catch (error) {
+          if (error.message !== 'Not authenticated') {
+            wrap.innerHTML = '<div class="db-empty">Unable to load jobs.</div>';
+            console.error(error);
+          }
+        }
+      }
+
+      function openJobModal() {
+        document.getElementById('job-modal-backdrop').classList.add('active');
+      }
+
+      function closeJobModal() {
+        document.getElementById('job-modal-backdrop').classList.remove('active');
+        document.getElementById('job-form').reset();
+        document.getElementById('job-id').value = '';
+        document.getElementById('job-modal-title').textContent = 'New Job';
+      }
+
+      document.getElementById('new-job-btn').addEventListener('click', () => {
+        closeJobModal();
+        openJobModal();
+      });
+
+      document.getElementById('job-cancel-btn').addEventListener('click', closeJobModal);
+
+      window.editJob = function (id) {
+        const job = jobsCache.find((j) => j.id === id);
+        if (!job) return;
+
+        document.getElementById('job-id').value = job.id;
+        document.getElementById('job-title').value = job.title;
+        document.getElementById('job-department').value = job.department;
+        document.getElementById('job-location').value = job.location;
+        document.getElementById('job-employment-type').value = job.employment_type;
+        document.getElementById('job-experience').value = job.experience || '';
+        document.getElementById('job-salary').value = job.salary || '';
+        document.getElementById('job-deadline').value = job.deadline || '';
+        document.getElementById('job-description').value = job.description;
+        document.getElementById('job-requirements').value = job.requirements;
+        document.getElementById('job-is-open').value = job.is_open ? 'true' : 'false';
+        document.getElementById('job-modal-title').textContent = 'Edit Job';
+
+        openJobModal();
+      };
+
+      window.deleteJob = async function (id) {
+        if (!confirm('Delete this job posting? This cannot be undone.')) return;
+
+        try {
+          await apiFetch(`/api/admin/jobs/${id}/`, { method: 'DELETE' });
+          loadJobs();
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      document.getElementById('job-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const id = document.getElementById('job-id').value;
+        const payload = {
+          title: document.getElementById('job-title').value,
+          department: document.getElementById('job-department').value,
+          location: document.getElementById('job-location').value,
+          employment_type: document.getElementById('job-employment-type').value,
+          experience: document.getElementById('job-experience').value,
+          salary: document.getElementById('job-salary').value,
+          deadline: document.getElementById('job-deadline').value || null,
+          description: document.getElementById('job-description').value,
+          requirements: document.getElementById('job-requirements').value,
+          is_open: document.getElementById('job-is-open').value === 'true',
+        };
+
+        try {
+          const url = id ? `/api/admin/jobs/${id}/` : '/api/admin/jobs/';
+          const method = id ? 'PATCH' : 'POST';
+
+          const res = await apiFetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+          const resData = await res.json().catch(() => ({}));
+
+          if (!res.ok) {
+            alert('Error saving job: ' + JSON.stringify(resData));
+            return;
+          }
+
+          // After successful create/update, close modal and refresh admin list
+          closeJobModal();
+          loadJobs();
+          
+        } catch (error) {
+          console.error(error);
+        }
+      });
+
+      // --- APPLICATIONS ---
+      async function loadApplications() {
+        const wrap = document.getElementById('applications-table-wrap');
+        try {
+          const res = await apiFetch('/api/admin/applications/');
+          const data = await res.json();
+          const applications = Array.isArray(data) ? data : data.results || [];
+
+          if (!applications.length) {
+            wrap.innerHTML = '<div class="db-empty">No applications yet.</div>';
+            return;
+          }
+
+          const statuses = ['new', 'reviewed', 'shortlisted', 'interview', 'rejected', 'hired'];
+
+          wrap.innerHTML = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Applicant</th>
+                  <th>Job</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>CV</th>
+                  <th>Status</th>
+                  <th>Applied</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${applications
+                  .map(
+                    (app) => `
+                  <tr>
+                    <td>${app.full_name}</td>
+                    <td>${app.job_title || app.job}</td>
+                    <td>${app.email}</td>
+                    <td>${app.phone || '—'}</td>
+                    <td> <button type="button" class="db-action-link" onclick="viewApplication(${app.id})" >
+                     View Application </button> </td>
+                    <td>
+                      <select class="status-select" onchange="updateApplicationStatus(${app.id}, this.value)">
+                        ${statuses
+                          .map(
+                            (s) =>
+                              `<option value="${s}" ${s === app.status ? 'selected' : ''}>${s.charAt(0).toUpperCase() + s.slice(1)}</option>`,
+                          )
+                          .join('')}
+                      </select>
+                    </td>
+                    <td>${new Date(app.applied_at).toLocaleDateString()}</td>
+                  </tr>
+                `,
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+          `;
+        } catch (error) {
+          if (error.message !== 'Not authenticated') {
+            wrap.innerHTML = '<div class="db-empty">Unable to load applications.</div>';
+            console.error(error);
+          }
+        }
+      }
+
+      window.updateApplicationStatus = async function (id, status) {
+        try {
+          await apiFetch(`/api/admin/applications/${id}/`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status }),
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      function viewApplication(id) {
+    window.location.href = `/admin-dashboard/application-detail?id=${id}`;
+}
+
+      // --- NEWSLETTER ---
+async function loadNewsletter() {
+    const wrap = document.getElementById('newsletter-table-wrap');
+    const countElement = document.getElementById('subscriber-count');
+
+    try {
+        const res = await apiFetch('/api/admin/newsletter/');
+        const data = await res.json();
+
+        const subs = Array.isArray(data)
+            ? data
+            : data.results || [];
+
+        console.log('Newsletter subscribers:', subs);
+
+        // Update active subscriber count
+        if (countElement) {
+            const activeCount = subs.filter(
+                sub => sub.is_active === true
+            ).length;
+
+            countElement.textContent = activeCount;
+        }
+
+        // If newsletter table doesn't exist, stop here
+        if (!wrap) {
+            console.warn(
+                'newsletter-table-wrap element was not found.'
+            );
+            return;
+        }
+
+        if (!subs.length) {
+            wrap.innerHTML =
+                '<div class="db-empty">No subscribers yet.</div>';
+            return;
+        }
+
+        wrap.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Subscribed</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${subs.map(sub => `
+                        <tr>
+                            <td>${sub.email}</td>
+
+                            <td>
+                                ${new Date(
+                                    sub.subscribed_at
+                                ).toLocaleDateString()}
+                            </td>
+
+                            <td>
+                                ${sub.is_active
+                                    ? '<span class="status-active">Active</span>'
+                                    : '<span class="status-inactive">Inactive</span>'
+                                }
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+
+    } catch (error) {
+        console.error('Newsletter error:', error);
+
+        if (wrap) {
+            wrap.innerHTML =
+                '<div class="db-empty">Unable to load subscribers.</div>';
+        }
+    }
+}
+
+const newsletterSubject =
+    document.getElementById('newsletter-subject');
+
+const newsletterContent =
+    document.getElementById('newsletter-content');
+
+const previewSubject =
+    document.getElementById('preview-subject');
+
+const previewContent =
+    document.getElementById('preview-content');
+
+const wordCount =
+    document.getElementById('newsletter-word-count');
+
+
+function updateNewsletterPreview() {
+
+    const subject =
+        newsletterSubject.value.trim();
+
+    const content =
+        newsletterContent.value.trim();
+
+    previewSubject.textContent =
+        subject || 'Your newsletter subject';
+
+    previewContent.innerHTML =
+        content
+            ? content.replace(/\n/g, '<br>')
+            : '<p>Your newsletter content will appear here.</p>';
+
+    const words =
+        content
+            ? content.split(/\s+/).length
+            : 0;
+
+    wordCount.textContent =
+        `${words} ${words === 1 ? 'word' : 'words'}`;
+}
+
+
+newsletterSubject.addEventListener(
+    'input',
+    updateNewsletterPreview
+);
+
+newsletterContent.addEventListener(
+    'input',
+    updateNewsletterPreview
+);
+document
+    .getElementById('newsletter-send-btn')
+    .addEventListener('click', async () => {
+
+        const subject =
+            newsletterSubject.value.trim();
+
+        const content =
+            newsletterContent.value.trim();
+
+        if (!subject) {
+            alert('Please enter a newsletter subject.');
+            newsletterSubject.focus();
+            return;
+        }
+
+        if (!content) {
+            alert('Please enter newsletter content.');
+            newsletterContent.focus();
+            return;
+        }
+
+        const subscriberCount =
+            document.getElementById('subscriber-count')
+                .textContent;
+
+        const confirmed = confirm(
+            `Send this newsletter to ${subscriberCount} active subscribers?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const button =
+            document.getElementById('newsletter-send-btn');
+
+        button.disabled = true;
+        button.textContent = 'Sending...';
+
+        try {
+
+            const response = await apiFetch(
+                '/api/admin/newsletter/send/',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subject,
+                        content
+                    })
+                }
+            );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.detail ||
+                    'Failed to send newsletter.'
+                );
+            }
+
+            alert(
+                `Newsletter sent!\n\n` +
+                `Sent: ${data.sent}\n` +
+                `Failed: ${data.failed}\n` +
+                `Total: ${data.total}`
+            );
+
+            newsletterSubject.value = '';
+            newsletterContent.value = '';
+
+            updateNewsletterPreview();
+
+        } catch (error) {
+
+            console.error(
+                'Newsletter error:',
+                error
+            );
+
+            alert(
+                'Unable to send newsletter: ' +
+                error.message
+            );
+
+        } finally {
+
+            button.disabled = false;
+            button.textContent = 'Send Newsletter';
+        }
+    });
+
+      // --- Init ---
+      loadJobs();
+      loadApplications();
+      loadNewsletter();
+    </script>
+  </body>
+</html>

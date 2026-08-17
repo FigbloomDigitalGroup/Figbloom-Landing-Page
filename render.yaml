@@ -1,0 +1,64 @@
+# Render Blueprint for the Figbloom landing page.
+#
+# One web service: Django serves the API *and* the static landing pages,
+# so there is nothing to deploy separately.
+#
+# Deploy: Render Dashboard → New → Blueprint → pick this repo.
+
+databases:
+  - name: figbloom-db
+    databaseName: figbloom
+    user: figbloom
+    plan: free # free Postgres expires after 30 days — upgrade to `basic-256mb` for anything real
+    region: oregon
+
+services:
+  - type: web
+    name: figbloom
+    runtime: python
+    plan: free
+    region: oregon # must match the database region
+    rootDir: backend
+    buildCommand: >-
+      pip install --upgrade pip &&
+      pip install -r requirements.txt &&
+      python manage.py collectstatic --no-input &&
+      python manage.py migrate --no-input &&
+      (python manage.py createsuperuser --no-input || true)
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13.4"
+
+      - key: DJANGO_SECRET_KEY
+        generateValue: true # Render generates a strong value on first deploy
+
+      - key: DJANGO_DEBUG
+        value: "false"
+
+      - key: DATABASE_URL
+        fromDatabase:
+          name: figbloom-db
+          property: connectionString
+
+      # Comma-separated custom domains, e.g. "figbloom.com,www.figbloom.com".
+      # The *.onrender.com hostname is added automatically.
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false
+
+      # --- Applicant CV storage (Cloudinary) ---
+      # Copy the "API Environment variable" value from the Cloudinary dashboard
+      # (cloudinary://<api_key>:<api_secret>@<cloud_name>). Uploads fall back to
+      # the ephemeral local disk until this is set.
+      - key: CLOUDINARY_URL
+        sync: false
+
+      # --- First admin user (free plan has no shell to run createsuperuser) ---
+      # Set these, deploy once, then clear them and change the password.
+      - key: DJANGO_SUPERUSER_USERNAME
+        sync: false
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false

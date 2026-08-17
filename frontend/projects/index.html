@@ -32,6 +32,7 @@
             rel="stylesheet"
             href="../assets/css/style.css"
         />
+        <link rel="stylesheet" href="/assets/css/motion.css" />
         <script type="application/ld+json">
             {
                 "@context": "https://schema.org",
@@ -43,7 +44,7 @@
         </script>
     </head>
     <body x-data="mainFunction()">
-        <div id="navbar"></div>
+        {% include "components/navbar.html" %}
         <div
             class="relative"
             x-data="{ isLoading: true }"
@@ -64,7 +65,6 @@
         </div>
 
     
-    <div id="navbar"></div>
 
         <div class="grow">
             <div
@@ -199,7 +199,7 @@
                         </div>
                         <div class="space-y-2">
                             <div
-                                x-data="counter(10)"
+                                x-data="counter(35)"
                                 x-init="observe()"
                                 class="text-primary text-3xl sm:text-4xl xl:text-5xl/14"
                             >
@@ -269,7 +269,7 @@
                 </div>
             </div>
         </div>
-        <div id="footer"></div>
+        {% include "components/footer.html" %}
                             
                  
                         

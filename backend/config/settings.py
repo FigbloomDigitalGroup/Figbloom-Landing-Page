@@ -49,12 +49,28 @@ RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-# Any custom domain(s) pointed at the service, comma separated.
+# Every *.onrender.com host, so the service works even when
+# RENDER_EXTERNAL_HOSTNAME is not present in the runtime environment.
+# Without this, a deploy where that variable is missing answers HTTP 400
+# (DisallowedHost) to *every* request — including Render's health check on "/",
+# so the deploy never goes live and is shut down. Relying on the variable alone
+# is a single point of failure for the whole service.
+ALLOWED_HOSTS.append('.onrender.com')
+
+# The production domain, defaulted here rather than left to the dashboard so a
+# missing env var can never take the site down again. DJANGO_ALLOWED_HOSTS below
+# still works for anything additional.
+ALLOWED_HOSTS += ['figbloom.org', 'www.figbloom.org']
+
+# Any further custom domain(s) pointed at the service, comma separated.
 ALLOWED_HOSTS += env_list('DJANGO_ALLOWED_HOSTS')
 
 # Django requires an explicit scheme here for cross-origin POSTs over HTTPS.
+# A leading-dot wildcard host ('.onrender.com') has to be written as
+# 'https://*.onrender.com' for CSRF — the bare dotted form is not accepted.
 CSRF_TRUSTED_ORIGINS = [
-    f'https://{host}' for host in ALLOWED_HOSTS
+    'https://{}'.format('*' + host if host.startswith('.') else host)
+    for host in ALLOWED_HOSTS
     if host not in ('127.0.0.1', 'localhost')
 ]
 CSRF_TRUSTED_ORIGINS += ['http://127.0.0.1:8000', 'http://localhost:8000']

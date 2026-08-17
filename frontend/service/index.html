@@ -33,6 +33,7 @@
             rel="stylesheet"
             href="../assets/css/style.css"
         />
+        <link rel="stylesheet" href="/assets/css/motion.css" />
         <script type="application/ld+json">
             {
                 "@context": "https://schema.org",
@@ -44,7 +45,7 @@
         </script>
     </head>
     <body x-data="mainFunction()">
-        <div id="navbar"></div>
+        {% include "components/navbar.html" %}
         <div
             class="relative"
             x-data="{ isLoading: true }"
@@ -66,7 +67,6 @@
             </div>
         </div>
 
-            <div id="navbar"></div>                       
 
         <div class="grow">
             <div
@@ -457,7 +457,7 @@
                 </div>
             </div>
 
-           <div id="prices"></div>
+           {% include "components/prices.html" %}
 
 
 
@@ -573,7 +573,7 @@
             </div>
         </div>
 
-               <div id="footer"></div>
+               {% include "components/footer.html" %}
         <script src="/assets/js/swiper-bundle.min.js"></script>
         <script src="/assets/js/lucide.min.js"></script>
         <script src="/assets/js/collapse.min.js" defer></script>

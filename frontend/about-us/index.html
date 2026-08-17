@@ -33,6 +33,63 @@
             rel="stylesheet"
             href="../assets/css/style.css"
         />
+        <link rel="stylesheet" href="/assets/css/motion.css" />
+
+        <!--
+            "Our values" card background photos. Written as plain CSS rather than
+            Tailwind utilities because this project ships a prebuilt stylesheet —
+            classes that weren't in the original source aren't compiled and would
+            silently do nothing.
+        -->
+        <style>
+            .values-grid .value-photo {
+                position: absolute;
+                inset: 0;
+                z-index: -1;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                pointer-events: none;
+                /* Inactive: a faint desaturated texture under the light surface. */
+                filter: grayscale(1) contrast(1.04);
+                opacity: 0.16;
+                transition: opacity 0.5s ease, filter 0.5s ease;
+            }
+
+            /*
+                Active card keeps the brand orange. mix-blend-mode: luminosity
+                means the photo contributes only its light and shade while taking
+                the hue from the orange surface underneath — so the card still
+                reads as orange, with the image showing through as tone.
+                (A negative z-index child paints above its parent's background but
+                below the content, which is what makes the blend hit the orange.)
+            */
+            .values-grid .value-photo.is-active {
+                filter: none;
+                opacity: 0.5;
+                mix-blend-mode: luminosity;
+            }
+
+            .values-grid .value-scrim {
+                position: absolute;
+                inset: 0;
+                z-index: -1;
+                pointer-events: none;
+                /* Dark *orange* rather than neutral black, so the bottom of the
+                   card darkens for text contrast without going muddy grey. */
+                background: linear-gradient(
+                    180deg,
+                    rgba(140, 74, 0, 0) 38%,
+                    rgba(120, 62, 0, 0.34) 72%,
+                    rgba(96, 49, 0, 0.62) 100%
+                );
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .values-grid .value-photo { transition-duration: 0.01ms; }
+            }
+        </style>
+
         <script type="application/ld+json">
             {
                 "@context": "https://schema.org",
@@ -44,7 +101,7 @@
         </script>
     </head>
     <body x-data="mainFunction()">
-        <div id="navbar"></div>
+        {% include "components/navbar.html" %}
         <div
             class="relative"
             x-data="{ isLoading: true }"
@@ -66,7 +123,6 @@
             </div>
         </div>
 
-        <div id="navbar"></div>
 
 
         <div class="grow">
@@ -188,7 +244,7 @@
         </div>
 
         <div
-            class="mt-12 grid flex-col gap-4 sm:grid-cols-2 xl:flex xl:flex-row"
+            class="values-grid mt-12 grid flex-col gap-4 sm:grid-cols-2 xl:flex xl:flex-row"
             x-data="valuesList()"
         >
             <template
@@ -208,6 +264,28 @@
                         class="absolute inset-0 -z-1 h-full w-full object-cover opacity-50"
                         loading="lazy"
                     />
+
+                    <!--
+                        Per-value background photo. Decorative, so alt is empty.
+                        On the active card it blends with the orange surface
+                        (see .values-grid rules in <style>) so the card keeps its
+                        orange hue instead of turning into a photo tile.
+                    -->
+                    <img
+                        :src="value.image"
+                        alt=""
+                        class="value-photo"
+                        :class="activeIndex === index && 'is-active'"
+                        loading="lazy"
+                        decoding="async"
+                    />
+
+                    <!-- Warm scrim: guarantees the white text stays legible over
+                         the lighter parts of the photo on the active card. -->
+                    <span
+                        class="value-scrim"
+                        :class="activeIndex !== index && 'hidden'"
+                    ></span>
 
                     <span
                         class="from-background absolute inset-0 -z-1 h-full w-full bg-linear-to-t object-cover ease-out"
@@ -779,7 +857,7 @@ We understand the connectivity gaps, security challenges, and operational frustr
             </div>
         </div>
 
-      <div id="footer"></div>
+      {% include "components/footer.html" %}
         <script src="/assets/js/swiper-bundle.min.js"></script>
         <script src="/assets/js/lucide.min.js"></script>
         <script src="/assets/js/alpine.min.js" defer></script>
@@ -850,6 +928,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 id: 1,
                 number: '01',
                 title: 'Excellence',
+                image: '/assets/images/service-6.jpg',
                 icon: '/assets/images/excellence.svg',
                 description: 'We hold ourselves to a high standard in every solution we design, build, and deliver.',
             },
@@ -857,6 +936,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 id: 2,
                 number: '02',
                 title: 'Collaboration',
+                image: '/assets/images/gallery3.jpg',
                 icon: '/assets/images/support.svg',
                 description: 'We work closely with our clients and each other to solve problems better and build stronger solutions.',
             },
@@ -864,6 +944,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 id: 3,
                 number: '03',
                 title: 'Innovation',
+                image: '/assets/images/sticky-notes.jpg',
                 icon: '/assets/images/innovation.svg',
                 description: 'We explore better ways to use technology, solve complex problems, and create meaningful progress.',
             },
@@ -871,6 +952,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 id: 4,
                 number: '04',
                 title: 'Integrity',
+                image: '/assets/images/gallery4.jpg',
                 icon: '/assets/images/shield-security.svg',
                 description: 'We communicate honestly, take responsibility for our work, and build relationships based on trust.',
             },
@@ -965,9 +1047,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         },
                         {
                             id:5,
-                            image:'/assets/images/Cozy-dev.jpeg',
+                            image:'/assets/images/cozy-dev.jpeg',
                             name: 'Morris Maina',
-                            designation: 'Software Engineer',
+                            designation: 'Senior Software Engineer',
 
                         },
                         {

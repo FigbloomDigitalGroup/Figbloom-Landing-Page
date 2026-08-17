@@ -42,6 +42,34 @@
             rel="stylesheet"
             href="/assets/css/landing.css"
         />
+        <link
+            rel="stylesheet"
+            href="/assets/css/motion.css"
+        />
+        <!--
+            Gate for all entrance/reveal animations. Runs before first paint so
+            there is no flash, and only opts in when JS is alive and the visitor
+            hasn't asked for reduced motion. Without this class nothing is
+            hidden, so any failure degrades to plain visible content.
+        -->
+        <script>
+            (function () {
+                try {
+                    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                        document.documentElement.classList.add('fb-anim');
+
+                        // If the reveal observer never gets going (script error,
+                        // blocked file), drop the gate so nothing stays hidden.
+                        // Cancelled by that script once it's set up.
+                        window.fbAnimFallback = setTimeout(function () {
+                            document.documentElement.classList.remove('fb-anim');
+                        }, 4000);
+                    }
+                } catch (e) {
+                    /* no motion, content stays visible */
+                }
+            })();
+        </script>
         <script src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
         <script type="application/ld+json">
             {
@@ -70,33 +98,14 @@
     </head>
      
     <body x-data="mainFunction()">
-        <div id="navbar"></div>
-        <div
-            class="relative"
-            x-data="{ isLoading: true }"
-            x-init="setTimeout(() => {isLoading = false }, 1500)"
-        >
-            <div
-                id="preloader"
-                x-show="isLoading"
-                class="fixed inset-0 z-60 flex h-dvh w-full items-center justify-center bg-white"
-                style="display: none"
-            >
-                <span
-                    class="from-background to-background absolute inset-0 animate-pulse bg-linear-to-br via-white"
-                ></span>
+        <!--
+            The .fb-nav wrapper is the hook landing.css uses to make this page's
+            navbar transparent and fixed over the hero gradient. Homepage only —
+            the other pages include the same partial without this wrapper and
+            keep the standard white sticky bar.
+        -->
+        <div class="fb-nav">{% include "components/navbar.html" %}</div>
 
-                <div
-                    class="border-t-gray/70 border-b-gray-light absolute top-1/2 left-1/2 grid size-10 -translate-1/2 animate-spin place-content-center rounded-full border-y-8 sm:size-14"
-                ></div>
-            </div>
-        </div>
-
-          
-
-    <div id="navbar"></div>
-                  
-                   
         <div class="grow" >
             <!--
                 Hero and the metrics counters share one background container so
@@ -203,7 +212,7 @@
                         </div>
                         <div class="space-y-2">
                             <div
-                                x-data="counter(10)"
+                                x-data="counter(35)"
                                 x-init="observe()"
                                 class="text-primary text-3xl sm:text-4xl xl:text-5xl/14"
                             >
@@ -245,7 +254,9 @@
                 <div class="fb-services__grid">
                     <div class="fb-service">
                         <div class="fb-service__top">
-                            <img src="/assets/images/ISP.svg" alt="" />
+                            <span class="fb-service__tile">
+                                <span class="fb-service__icon" style="--icon: url('/assets/images/ISP.svg')"></span>
+                            </span>
                             <span class="fb-service__num">01</span>
                         </div>
                         <h3 class="fb-service__name">Internet connectivity</h3>
@@ -257,7 +268,9 @@
 
                     <div class="fb-service">
                         <div class="fb-service__top">
-                            <img src="/assets/images/camera.svg" alt="" />
+                            <span class="fb-service__tile">
+                                <span class="fb-service__icon" style="--icon: url('/assets/images/camera.svg')"></span>
+                            </span>
                             <span class="fb-service__num">02</span>
                         </div>
                         <h3 class="fb-service__name">CCTV &amp; security</h3>
@@ -269,7 +282,9 @@
 
                     <div class="fb-service">
                         <div class="fb-service__top">
-                            <img src="/assets/images/ai.svg" alt="" />
+                            <span class="fb-service__tile">
+                                <span class="fb-service__icon" style="--icon: url('/assets/images/ai.svg')"></span>
+                            </span>
                             <span class="fb-service__num">03</span>
                         </div>
                         <h3 class="fb-service__name">AI automation</h3>
@@ -281,7 +296,9 @@
 
                     <div class="fb-service">
                         <div class="fb-service__top">
-                            <img src="/assets/images/web.svg" alt="" />
+                            <span class="fb-service__tile">
+                                <span class="fb-service__icon" style="--icon: url('/assets/images/web.svg')"></span>
+                            </span>
                             <span class="fb-service__num">04</span>
                         </div>
                         <h3 class="fb-service__name">Software &amp; platforms</h3>
@@ -293,7 +310,9 @@
 
                     <div class="fb-service">
                         <div class="fb-service__top">
-                            <img src="/assets/images/brand-wire.svg" alt="" />
+                            <span class="fb-service__tile">
+                                <span class="fb-service__icon" style="--icon: url('/assets/images/brand-wire.svg')"></span>
+                            </span>
                             <span class="fb-service__num">05</span>
                         </div>
                         <h3 class="fb-service__name">Brand &amp; growth</h3>
@@ -399,35 +418,129 @@
                 </div>
             </div>
 
-            <div class="border-gray/20 border-y bg-[#FAFAFA] pt-14 lg:pt-16">
+            <section class="fb fb-clients">
                 <div class="container">
-                    <div class="section-heading">
-                        <div>Clients</div>
-                        <h2>The businesses already building with us</h2>
+                    <div class="fb-clients__head">
+                        <div class="fb-eyebrow">Clients</div>
+                        <h2 class="fb-title">The businesses already building with us</h2>
                     </div>
                 </div>
-                <div
-                    x-data="clientsSlider()"
-                    x-init="init()"
-                    class="swiper clients-swiper pt-12! pb-14! lg:pb-16!"
-                >
-                    <div class="swiper-wrapper">
-                        <template x-for="logo in logos">
-                            <div class="swiper-slide">
-                                <div
-                                    class="flex h-[140px] w-[250px] items-center justify-center rounded-xl border border-gray-200 bg-white p-4"
-                                >
-                                    <img
-                                        :src="logo"
-                                        alt="Logo"
-                                        class="h-[72px] w-full max-w-[180px] object-contain"
-                                    />
-                                </div>
-                            </div>
-                        </template>
+
+                <!--
+                    Continuous CSS marquee (replaced a stepping Swiper autoplay).
+                    The track holds two identical rows and slides by exactly one
+                    row width (-50%), which makes the loop seamless. Each row
+                    repeats the four logos 4x so it is always wider than the
+                    viewport — a row narrower than the screen would show a gap on
+                    every cycle. The second row is aria-hidden so screen readers
+                    announce each client once. Adding a client means adding it to
+                    BOTH rows.
+                -->
+                <div class="fb-marquee">
+                    <div class="fb-marquee__track">
+                    <ul class="fb-marquee__row">
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="CapitalPay" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="Mali Cash" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="SSCAA" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="Mular Credit Ltd" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="CapitalPay" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="Mali Cash" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="SSCAA" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="Mular Credit Ltd" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="CapitalPay" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="Mali Cash" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="SSCAA" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="Mular Credit Ltd" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="CapitalPay" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="Mali Cash" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="SSCAA" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="Mular Credit Ltd" loading="lazy" decoding="async" />
+                        </li>
+                    </ul>
+                    <ul class="fb-marquee__row" aria-hidden="true">
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                    </ul>
                     </div>
                 </div>
-            </div>
+            </section>
 
 
 
@@ -480,38 +593,54 @@
                 </div>
              </div>
            </section>
-            <div
-                class="hero-pic relative  bg-[url('../images/teams12.jpeg')] bg-cover bg-center bg-no-repeat py-14 lg:py-16"
-            >
-                <div
-                    class="from-secondary via-secondary to-secondary absolute inset-0 bg-linear-to-r opacity-80 lg:to-transparent lg:opacity-100"
-                ></div>
+            <!--
+                About band. Split panel: copy on the green field, the team photo
+                in its own framed figure so it reads as a deliberate image rather
+                than washed-out wallpaper behind the text.
+            -->
+            <section class="fb fb-about">
                 <div class="container">
-                    <div
-                        class="relative flex flex-col items-center gap-14 lg:flex-row lg:items-end lg:justify-between"
-                    >
-                        <div class="section-heading lg:text-left">
-                            <div>About us</div>
-                            <h2 class="text-white lg:max-w-122 lg:pb-33">
-                                Your business shouldn't have to adapt to technology that doesn't fit.
+                    <div class="fb-about__grid">
+                        <div class="fb-about__copy">
+                            <div class="fb-about__eyebrow">About us</div>
+
+                            <h2 class="fb-about__title">
+                                Your business shouldn't have to adapt to technology that
+                                doesn't fit.
                             </h2>
-                            <p
-                                class="border-white/30 font-medium text-white/80 sm:max-w-3xl lg:mt-0 lg:border-t lg:pt-4 lg:text-2xl/10"
-                            >
-                               
-                                Figbloom builds the connectivity, security, software, and AI solutions that adapt to how you actually work, helping businesses replace friction with systems that work.
+
+                            <p class="fb-about__lede">
+                                Figbloom builds the connectivity, security, software, and AI
+                                solutions that adapt to how you actually work, helping
+                                businesses replace friction with systems that work.
                             </p>
+
+                            <ul class="fb-about__points">
+                                <li>One team across connectivity, security and software</li>
+                                <li>Nairobi-based engineers, on site the same day</li>
+                                <li>Support that still answers after handover</li>
+                            </ul>
+
+                            <a href="/about-us" class="fb-btn fb-btn--orange fb-about__cta">
+                                Know more about us
+                            </a>
                         </div>
-                        <a
-                            href="/about-us"
-                            class="btn btn-secondary shrink-0 pr-3"
-                        >
-                            Know more about us
-                            <i data-lucide="chevron-right" class="size-5"></i>
-                        </a>
+
+                        <figure class="fb-about__media">
+                            <img
+                                src="/assets/images/aboutus.jpg"
+                                alt="The Figbloom team working together at the Nairobi office"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                            <figcaption class="fb-about__caption">
+                                <span class="fb-about__caption-label">Our office</span>
+                                <span class="fb-about__caption-value">Enterprise Road, Nairobi</span>
+                            </figcaption>
+                        </figure>
                     </div>
                 </div>
-            </div>
+            </section>
             <div
                 x-data="testimonialsData()"
                 x-init="initSwiper()"
@@ -611,7 +740,7 @@
                 </div>
             </div>
 
-           <div id="prices"></div>
+           {% include "components/prices.html" %}
 
             <div
                 class="relative overflow-hidden py-14 shadow-[0_16px_40px_-8px_rgba(13,13,13,0.2)] lg:py-16"
@@ -660,7 +789,7 @@
                 </div>
             </div>
         </div>
-         <div id="footer"></div>
+         {% include "components/footer.html" %}
     
                            
 
@@ -697,71 +826,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
         <script>
-            function clientsSlider() {
-                return {
-                    swiper: null,
-
-                    logos: [
-                        '/assets/images/capital_pay.svg',
-                        '/assets/images/mali-cash.png',
-                        '/assets/images/ssudanaviation.png',
-                        '/assets/images/mulacredit.png',
-                         '/assets/images/capital_pay.svg',
-                        '/assets/images/mali-cash.png',
-                        '/assets/images/ssudanaviation.png',
-                        '/assets/images/mulacredit.png',
-                          '/assets/images/capital_pay.svg',
-                        '/assets/images/mali-cash.png',
-                        '/assets/images/ssudanaviation.png',
-                        '/assets/images/mulacredit.png',
-                         '/assets/images/capital_pay.svg',
-                        '/assets/images/mali-cash.png',
-                        '/assets/images/ssudanaviation.png',
-                        '/assets/images/mulacredit.png',
-                          '/assets/images/capital_pay.svg',
-                        '/assets/images/mali-cash.png',
-                        '/assets/images/ssudanaviation.png',
-                        '/assets/images/mulacredit.png',
-
-                       
-                    ],
-
-                 
-
-                    init() {
-                        // Wait until Alpine renders slides
-                        this.$nextTick(() => {
-                            this.initSwiper()
-                        })
-                    },
-
-                    initSwiper() {
-                        this.swiper = new Swiper(this.$el, {
-                            slidesPerView: 2,
-                            spaceBetween: 16,
-                            loop: true,
-                            centeredSlides: true,
-                            speed: 1000,
-
-                            autoplay: {
-                                delay: 1000,
-                                disableOnInteraction: false,
-                            },
-
-                            breakpoints: {
-                                768: { slidesPerView: 4, spaceBetween: 16 },
-                                1024: { slidesPerView: 5, spaceBetween: 30 },
-                                1280: { slidesPerView: 6, spaceBetween: 30 },
-                                1568: { slidesPerView: 8, spaceBetween: 48 },
-                            },
-
-                            observer: true,
-                            observeParents: true,
-                        })
-                    },
-                }
-            }
-
             function testimonialsData() {
                 return {
                     swiper: null,
@@ -1050,22 +1114,19 @@ document.addEventListener("DOMContentLoaded", () => {
         <script src="assets/js/components.js"></script>
 
         <!--
-            Homepage navbar state. The navbar starts transparent so the hero
-            gradient runs to the top of the page, then gets a solid backdrop
-            once scrolled. components.js injects the navbar asynchronously, so
-            we wait for it before the first sync.
+            Homepage navbar state: transparent over the hero so the gradient runs
+            to the top of the page, then picks up a solid backdrop as soon as the
+            visitor scrolls. The navbar is server-rendered now, so it's in the DOM
+            at parse time — no waiting on injection.
         -->
         <script>
             (function () {
-                var header = null;
+                var header = document.querySelector('.fb-nav header');
+
+                if (!header) return;
 
                 function sync() {
-                    if (!header) {
-                        header = document.querySelector('#navbar header');
-                        if (!header) return;
-                    }
-
-                    if (window.scrollY > 60) {
+                    if (window.scrollY > 8) {
                         header.classList.add('is-scrolled');
                     } else {
                         header.classList.remove('is-scrolled');
@@ -1073,23 +1134,73 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 window.addEventListener('scroll', sync, { passive: true });
+                sync();
+            })();
+        </script>
 
-                document.addEventListener('DOMContentLoaded', function () {
-                    var host = document.getElementById('navbar');
+        <!--
+            Scroll reveals. The hidden state is applied by landing.css under
+            html.fb-anim; this only adds .is-in as elements come into view.
+            Selector list mirrors the one in landing.css.
+        -->
+        <script>
+            (function () {
+                var SELECTOR = [
+                    '.fb-services__head > *',
+                    '.fb-service',
+                    '.fb-why__copy',
+                    '.fb-why__card',
+                    '.fb-about__copy',
+                    '.fb-about__media',
+                ].join(',');
 
-                    if (host && !document.querySelector('#navbar header')) {
-                        var observer = new MutationObserver(function (records, obs) {
-                            if (document.querySelector('#navbar header')) {
-                                sync();
-                                obs.disconnect();
-                            }
-                        });
+                function revealAll(nodes) {
+                    for (var i = 0; i < nodes.length; i++) {
+                        nodes[i].classList.add('is-in');
+                    }
+                }
 
-                        observer.observe(host, { childList: true, subtree: true });
+                function init() {
+                    var nodes = document.querySelectorAll(SELECTOR);
+
+                    if (!nodes.length) return;
+
+                    // No observer support, or motion opted out: show everything
+                    // immediately rather than leaving it hidden.
+                    if (
+                        !('IntersectionObserver' in window) ||
+                        !document.documentElement.classList.contains('fb-anim')
+                    ) {
+                        revealAll(nodes);
+                        return;
                     }
 
-                    sync();
-                });
+                    var observer = new IntersectionObserver(
+                        function (entries) {
+                            entries.forEach(function (entry) {
+                                if (entry.isIntersecting) {
+                                    entry.target.classList.add('is-in');
+                                    observer.unobserve(entry.target);
+                                }
+                            });
+                        },
+                        { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+                    );
+
+                    for (var i = 0; i < nodes.length; i++) {
+                        observer.observe(nodes[i]);
+                    }
+
+                    // Observer is live, so the head script's un-hide fallback is
+                    // no longer needed.
+                    clearTimeout(window.fbAnimFallback);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', init);
+                } else {
+                    init();
+                }
             })();
         </script>
     </body>

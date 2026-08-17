@@ -183,12 +183,7 @@ if USE_CLOUDINARY:
 
 
 # --- Email --------------------------------------------------------------
-
-EMAIL_BACKEND = os.environ.get(
-    'DJANGO_EMAIL_BACKEND',
-    'django.core.mail.backends.console.EmailBackend',
-)
-DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', 'noreply@figbloom.com')
+# Superseded by MAILERS below (Django 6.1 forbids defining both).
 
 
 # --- CORS ---------------------------------------------------------------

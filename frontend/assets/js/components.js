@@ -181,6 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 alt="Scroll to top"
             />
         </button>
+        
     `;
 
     document.body.appendChild(floatingButtons);
@@ -259,6 +260,30 @@ floatingButtonStyles.innerHTML = `
     .floating-whatsapp:hover,
     .floating-scroll-top:hover {
         transform: translateY(-4px);
+    }
+
+    .floating-admin {
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #111827;
+        color: #fff;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .floating-admin span {
+        font-size: 12px;
+        line-height: 1;
+    }
+
+    .floating-admin:hover {
+        transform: translateY(-4px) scale(1.02);
     }
 
     @media (max-width: 640px) {

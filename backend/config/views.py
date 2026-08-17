@@ -57,3 +57,15 @@ def admin_logout_api(request):
 @login_required(login_url='/admin-dashboard/login')
 def admin_dashboard_page(request):
     return render(request, 'admin-dashboard/index.html')
+
+
+@ensure_csrf_cookie
+def admin_user_api(request):
+    """Return basic info about the current session user for front-end visibility checks."""
+    user = getattr(request, 'user', None)
+    is_auth = bool(user and user.is_authenticated)
+    return JsonResponse({
+        'is_authenticated': is_auth,
+        'is_staff': user.is_staff if is_auth else False,
+        'username': user.username if is_auth else '',
+    })

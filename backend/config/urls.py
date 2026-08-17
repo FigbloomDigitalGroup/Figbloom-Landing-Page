@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+
+from careers.views import admin_application_detail
 from . import views
 
 urlpatterns = [
@@ -28,6 +30,7 @@ urlpatterns = [
     path('admin-dashboard/login', views.admin_login_page, name='admin-login-page'),
     path('api/auth/login/', views.admin_login_api, name='admin-login-api'),
     path('api/auth/logout/', views.admin_logout_api, name='admin-logout-api'),
+    path('api/auth/user/', views.admin_user_api, name='admin-user-api'),
     path('admin-dashboard/', views.admin_dashboard_page, name='admin-dashboard'),
 
     path('', views.home, name='home'),
@@ -37,8 +40,11 @@ urlpatterns = [
     path('contact', views.contact, name='contact'),
     path('projects', views.projects, name='projects'),
     path('service', views.service, name='service'),
+    path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'
+),
 ]
 
 if settings.DEBUG:
     urlpatterns += static('/assets/', document_root=settings.BASE_DIR.parent / 'frontend' / 'assets')
     urlpatterns += static('/components/', document_root=settings.BASE_DIR.parent / 'frontend' / 'components')
+    urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

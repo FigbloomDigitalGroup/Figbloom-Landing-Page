@@ -109,3 +109,28 @@
         </div>
     </div>
 </header> 
+<script>
+    (async function () {
+        try {
+            const res = await fetch('/api/auth/user/', { credentials: 'same-origin' });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data.is_staff) {
+                const menu = document.querySelector('.menu');
+                if (!menu) return;
+
+                // Create admin link and insert before the phone button if present
+                const adminLink = document.createElement('a');
+                adminLink.href = '/admin-dashboard/';
+                adminLink.className = 'nav-link';
+                adminLink.textContent = 'Admin';
+
+                const phoneBtn = menu.querySelector('.btn');
+                if (phoneBtn) menu.insertBefore(adminLink, phoneBtn);
+                else menu.appendChild(adminLink);
+            }
+        } catch (e) {
+            // silent fail
+        }
+    })();
+</script>

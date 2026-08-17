@@ -51,7 +51,7 @@ ApplicationSerializer = JobApplicationSerializer
 class NewsletterSubscriberSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsletterSubscriber
-        fields = ["id", "email", "subscribed_at"]
+        fields = ["id", "email", "is_active", "subscribed_at"]
         read_only_fields = ["id", "subscribed_at"]
 
 

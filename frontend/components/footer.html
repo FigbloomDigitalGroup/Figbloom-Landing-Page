@@ -21,7 +21,7 @@
                                 class="border-gray-light flex items-center justify-center gap-4 lg:justify-start lg:border-b lg:pb-6"
                             >
                                 <a
-                                    href="#"
+                                    href="https://www.instagram.com/figbloomdigital/"
                                     target="_blank"
                                     class="border-gray-light hover:bg-primary hover:border-primary grid size-10 place-content-center rounded-lg border hover:text-white"
                                 >
@@ -32,7 +32,7 @@
                                     <span class="sr-only">Instagram</span>
                                 </a>
                                 <a
-                                    href="#"
+                                    href="https://www.facebook.com/figbloomdigital/"
                                     target="_blank"
                                     class="border-gray-light hover:bg-primary hover:border-primary grid size-10 place-content-center rounded-lg border hover:text-white"
                                 >
@@ -42,19 +42,18 @@
                                     ></i>
                                     <span class="sr-only">Facebook</span>
                                 </a>
+
+                              <a
+    href= "https://www.linkedin.com/company/figbloom-digital-group/"
+    target=""
+    rel="noopener noreferrer"
+    class="border-gray-light hover:bg-primary hover:border-primary grid size-10 place-content-center rounded-lg border hover:text-white"
+>
+    <i data-lucide="linkedin" class="size-6"></i>
+    <span class="sr-only">LinkedIn</span>
+</a>
                                 <a
-                                    href="#"
-                                    target="_blank"
-                                    class="border-gray-light hover:bg-primary hover:border-primary grid size-10 place-content-center rounded-lg border hover:text-white"
-                                >
-                                    <i
-                                        data-lucide="linkedin"
-                                        class="size-6"
-                                    ></i>
-                                    <span class="sr-only">LinkedIn</span>
-                                </a>
-                                <a
-                                    href="#"
+                                    href="https://x.com/FigbloomDigital/"
                                     target="_blank"
                                     class="border-gray-light hover:bg-primary hover:border-primary grid size-10 place-content-center rounded-lg border hover:text-white"
                                 >
@@ -157,6 +156,7 @@
                                     class="hover:text-primary transition"
                                     >Career</a
                                 >
+                                                   
                             </div>
                         </div>
                         <div
@@ -204,9 +204,11 @@
                                 <p id="newsletter-error" class="hidden text-sm font-medium text-red-600"></p>
                             </form>
                         </div>
+
                         <div
                             class="bg-gray-light hidden w-px shrink-0 lg:inline-block"
                         ></div>
+
                         <div class="space-y-6 lg:w-40 xl:w-50">
                             <div class="text-primary font-semibold">
                                 Support
@@ -217,7 +219,7 @@
                                     class="hover:text-primary transition"
                                     >Contact</a
                                 >
-                            
+
                                 <a
                                     href="/"
                                     class="hover:text-primary transition"
@@ -228,7 +230,9 @@
                                     class="hover:text-primary transition"
                                     >Terms & Conditions</a
                                 >
+                             
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -302,6 +306,25 @@
                         error.classList.remove('hidden');
                     }
                 });
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', async function () {
+                try {
+                    const res = await fetch('/api/auth/user/', { credentials: 'same-origin' });
+                    if (!res.ok) return;
+                    const data = await res.json().catch(() => ({}));
+                    const adminLink = document.getElementById('footer-admin-link');
+                    if (!adminLink) return;
+                    if (data.is_staff) {
+                        adminLink.style.display = '';
+                    } else {
+                        adminLink.style.display = 'none';
+                    }
+                } catch (e) {
+                    // silent
+                }
             });
         </script>
 

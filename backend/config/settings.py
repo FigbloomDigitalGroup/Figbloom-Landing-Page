@@ -1,4 +1,8 @@
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()    
 
 BASE_DIR = Path(__file__).resolve().parent.parent          # → backend/
 FRONTEND_DIR = BASE_DIR.parent / 'frontend'                  # → frontend/
@@ -90,3 +94,25 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",   
     "http://localhost:8000",
 ]
+CORS_ALLOW_CREDENTIALS = True
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+X_FRAME_OPTIONS = "SAMEORIGIN"
+
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "OPTIONS": {
+            "host": os.getenv("EMAIL_HOST", "smtp.gmail.com"),
+            "port": int(os.getenv("EMAIL_PORT", "587")),
+            "username": os.getenv("EMAIL_HOST_USER"),
+            "password": os.getenv("EMAIL_HOST_PASSWORD"),
+            "use_tls": True,
+        },
+    },
+}
+
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "Figbloom Digital Group <support@figbloom.org>"
+)

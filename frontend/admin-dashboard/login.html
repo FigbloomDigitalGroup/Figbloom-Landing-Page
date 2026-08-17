@@ -136,12 +136,18 @@
         </div>
 
         <button type="submit" class="login-submit">Sign in</button>
-
         <div id="login-error" class="login-error"></div>
       </form>
     </div>
 
     <script>
+        initializeCsrf().catch(console.error);
+      async function initializeCsrf() {
+    await fetch('http://127.0.0.1:8000/api/auth/csrf/', {
+        method: 'GET',
+        credentials: 'include',
+    });
+}
       function getCsrfToken() {
         return (
           document.cookie
@@ -152,38 +158,46 @@
       }
 
       document.getElementById('login-form').addEventListener('submit', async (event) => {
-        event.preventDefault();
+    event.preventDefault();
 
-        const errorBox = document.getElementById('login-error');
-        errorBox.style.display = 'none';
+    const errorBox = document.getElementById('login-error');
+    errorBox.style.display = 'none';
+
+    try {
+        // Get CSRF cookie from Django first
+        await initializeCsrf();
 
         const formData = new FormData(event.target);
 
-        try {
-          const response = await fetch('/api/auth/login/', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {
-              'X-CSRFToken': getCsrfToken(),
-            },
-            body: formData,
-          });
+        const response = await fetch(
+            'http://127.0.0.1:8000/api/auth/login/',
+            {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'X-CSRFToken': getCsrfToken(),
+                },
+                body: formData,
+            }
+        );
 
-          const data = await response.json().catch(() => ({}));
+        const data = await response.json().catch(() => ({}));
 
-          if (!response.ok) {
-            errorBox.textContent = data.detail || 'Invalid username or password.';
+        if (!response.ok) {
+            errorBox.textContent =
+                data.detail || 'Invalid username or password.';
             errorBox.style.display = 'block';
             return;
-          }
-
-          window.location.href = '/admin-dashboard/';
-        } catch (error) {
-          console.error('Login error:', error);
-          errorBox.textContent = 'Unable to reach the server. Please try again.';
-          errorBox.style.display = 'block';
         }
-      });
-    </script>
+
+        window.location.href = '/admin-dashboard/';
+    } catch (error) {
+        console.error('Login error:', error);
+        errorBox.textContent =
+            'Unable to reach the server. Please try again.';
+        errorBox.style.display = 'block';
+    }
+});
+  </script>
   </body>
 </html>

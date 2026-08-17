@@ -295,6 +295,169 @@
         grid-template-columns: 1fr 1fr;
         gap: 0.75rem;
       }
+      .newsletter-panel {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.newsletter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.newsletter-header h2 {
+    margin: 0;
+    color: #1a3a1a;
+    font-size: 24px;
+}
+
+.newsletter-header p {
+    margin: 6px 0 0;
+    color: #6b7280;
+}
+
+.subscriber-count {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 22px;
+    background: #f5f7f5;
+    border-radius: 12px;
+}
+
+.subscriber-count strong {
+    color: #1a3a1a;
+    font-size: 24px;
+}
+
+.subscriber-count span {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.newsletter-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+}
+
+.newsletter-composer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.newsletter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.newsletter-field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.newsletter-field input,
+.newsletter-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+.newsletter-field input:focus,
+.newsletter-field textarea:focus {
+    border-color: #ff9400;
+    box-shadow: 0 0 0 3px rgba(255,148,0,.12);
+}
+
+.newsletter-field textarea {
+    min-height: 300px;
+    resize: vertical;
+}
+
+.newsletter-label-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+#newsletter-word-count {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.newsletter-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.newsletter-preview {
+    background: #f5f7f5;
+    border-radius: 14px;
+    padding: 18px;
+}
+
+.preview-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 14px;
+}
+
+.email-preview-card {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,.06);
+}
+
+.email-preview-brand {
+    background: #1a3a1a;
+    padding: 24px;
+    text-align: center;
+}
+
+.email-preview-brand img {
+    width: 110px;
+}
+
+.email-preview-content {
+    padding: 30px;
+    min-height: 260px;
+}
+
+.email-preview-content h2 {
+    color: #1a3a1a;
+    margin-top: 0;
+}
+
+.email-preview-content p {
+    color: #4b5563;
+    line-height: 1.7;
+}
+
+.email-preview-footer {
+    background: #f8f9f8;
+    text-align: center;
+    padding: 20px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.email-preview-footer p {
+    margin: 6px 0 0;
+}
     </style>
   </head>
   <body>
@@ -307,10 +470,24 @@
     </header>
 
     <div class="db-tabs">
-      <div class="db-tab active" data-panel="jobs">Jobs</div>
-      <div class="db-tab" data-panel="applications">Applications</div>
-      <div class="db-tab" data-panel="newsletter">Newsletter</div>
+
+    <div class="db-tab active" data-panel="jobs">
+        Jobs
     </div>
+
+    <div class="db-tab" data-panel="applications">
+        Applications
+    </div>
+
+    <div class="db-tab" data-panel="newsletter">
+        Newsletter
+    </div>
+
+</div>
+
+
+</div>
+
 
     <div class="db-content">
       <!-- JOBS PANEL -->
@@ -335,20 +512,131 @@
       </section>
 
       <!-- NEWSLETTER PANEL -->
-      <section id="panel-newsletter" class="db-panel">
-        <div class="db-panel-header">
-          <h2>Newsletter Subscribers</h2>
+     <section id="panel-newsletter" class="db-panel newsletter-panel">
+  <div class="newsletter-header">
+    <div>
+      <h2>Newsletter</h2>
+      <p>
+        Create and send updates to your subscribers.
+      </p>
+    </div>
+
+    <div class="subscriber-count">
+      <strong id="subscriber-count">0</strong>
+      <span>Active Subscribers</span>
+    </div>
+  </div>
+
+  <div class="newsletter-layout">
+
+    <!-- COMPOSER -->
+    <div class="newsletter-composer">
+
+      <div class="newsletter-field">
+        <label for="newsletter-subject">
+          Subject
+        </label>
+
+        <input
+          id="newsletter-subject"
+          type="text"
+          placeholder="e.g. Exciting updates from Figbloom"
+          maxlength="200"
+        />
+      </div>
+
+      <div class="newsletter-field">
+
+        <div class="newsletter-label-row">
+          <label for="newsletter-content">
+            Newsletter Content
+          </label>
+
+          <span id="newsletter-word-count">
+            0 words
+          </span>
         </div>
-        <div id="newsletter-table-wrap">
-          <div class="db-empty">Loading subscribers...</div>
+
+        <textarea
+          id="newsletter-content"
+          placeholder="Write your newsletter here..."
+        ></textarea>
+
+      </div>
+
+      <div class="newsletter-actions">
+
+        <button
+          type="button"
+          class="db-btn-secondary"
+          id="newsletter-preview-btn"
+        >
+          Preview
+        </button>
+
+        <button
+          type="button"
+          class="db-btn-primary"
+          id="newsletter-send-btn"
+        >
+          Send Newsletter
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- LIVE PREVIEW -->
+    <div class="newsletter-preview">
+
+      <div class="preview-header">
+        Email Preview
+      </div>
+
+      <div class="email-preview-card">
+
+        <div class="email-preview-brand">
+          <img
+            src="/assets/images/figbloom_logo.png"
+            alt="Figbloom"
+          />
         </div>
-      </section>
+
+        <div class="email-preview-content">
+
+          <h2 id="preview-subject">
+            Your newsletter subject
+          </h2>
+
+          <div id="preview-content">
+            <p>
+              Your newsletter content will appear here.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="email-preview-footer">
+          <strong>Figbloom Digital Group</strong>
+          <p>
+            Thank you for being part of our community.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+      </div>
+</section>
     </div>
 
     <!-- JOB CREATE/EDIT MODAL -->
     <div class="db-modal-backdrop" id="job-modal-backdrop">
       <div class="db-modal">
         <h3 id="job-modal-title">New Job</h3>
+
         <form id="job-form">
           <input type="hidden" id="job-id" />
 
@@ -435,23 +723,32 @@
         );
       }
 
-      async function apiFetch(url, options = {}) {
-        const response = await fetch(url, {
-          credentials: 'same-origin',
-          headers: {
-            'X-CSRFToken': getCsrfToken(),
+async function apiFetch(url, options = {}) {
+    const csrfToken = getCsrfToken();
+
+    const response = await fetch(`http://127.0.0.1:8000${url}`, {
+        ...options,
+        credentials: 'include',
+        headers: {
             ...(options.headers || {}),
-          },
-          ...options,
-        });
+            'X-CSRFToken': csrfToken,
+        },
+    });
 
-        if (response.status === 401 || response.status === 403) {
-          window.location.href = '/admin-dashboard/login';
-          throw new Error('Not authenticated');
-        }
 
-        return response;
-      }
+    const responseText = await response.clone().text();
+
+    if (response.status === 401 || response.status === 403) {
+        // TEMPORARILY DON'T REDIRECT
+        alert(
+            `Request failed: ${response.status}\n\n${responseText}`
+        );
+
+        throw new Error(`Request failed: ${response.status}`);
+    }
+
+    return response;
+}
 
       // --- Tabs ---
       document.querySelectorAll('.db-tab').forEach((tab) => {
@@ -602,14 +899,17 @@
             body: JSON.stringify(payload),
           });
 
+          const resData = await res.json().catch(() => ({}));
+
           if (!res.ok) {
-            const errData = await res.json().catch(() => ({}));
-            alert('Error saving job: ' + JSON.stringify(errData));
+            alert('Error saving job: ' + JSON.stringify(resData));
             return;
           }
 
+          // After successful create/update, close modal and refresh admin list
           closeJobModal();
           loadJobs();
+          
         } catch (error) {
           console.error(error);
         }
@@ -652,7 +952,8 @@
                     <td>${app.job_title || app.job}</td>
                     <td>${app.email}</td>
                     <td>${app.phone || '—'}</td>
-                    <td>${app.cv_file ? `<a href="${app.cv_file}" target="_blank" class="db-action-link">View</a>` : '—'}</td>
+                    <td> <button type="button" class="db-action-link" onclick="viewApplication(${app.id})" >
+                     View Application </button> </td>
                     <td>
                       <select class="status-select" onchange="updateApplicationStatus(${app.id}, this.value)">
                         ${statuses
@@ -690,49 +991,238 @@
           console.error(error);
         }
       };
+      function viewApplication(id) {
+    window.location.href = `/admin-dashboard/application-detail?id=${id}`;
+}
 
       // --- NEWSLETTER ---
-      async function loadNewsletter() {
-        const wrap = document.getElementById('newsletter-table-wrap');
-        try {
-          const res = await apiFetch('/api/admin/newsletter/');
-          const data = await res.json();
-          const subs = Array.isArray(data) ? data : data.results || [];
+async function loadNewsletter() {
+    const wrap = document.getElementById('newsletter-table-wrap');
+    const countElement = document.getElementById('subscriber-count');
 
-          if (!subs.length) {
-            wrap.innerHTML = '<div class="db-empty">No subscribers yet.</div>';
-            return;
-          }
+    try {
+        const res = await apiFetch('/api/admin/newsletter/');
+        const data = await res.json();
 
-          wrap.innerHTML = `
-            <table>
-              <thead>
-                <tr>
-                  <th>Email</th>
-                  <th>Subscribed</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${subs
-                  .map(
-                    (sub) => `
-                  <tr>
-                    <td>${sub.email}</td>
-                    <td>${new Date(sub.subscribed_at).toLocaleDateString()}</td>
-                  </tr>
-                `,
-                  )
-                  .join('')}
-              </tbody>
-            </table>
-          `;
-        } catch (error) {
-          if (error.message !== 'Not authenticated') {
-            wrap.innerHTML = '<div class="db-empty">Unable to load subscribers.</div>';
-            console.error(error);
-          }
+        const subs = Array.isArray(data)
+            ? data
+            : data.results || [];
+
+        console.log('Newsletter subscribers:', subs);
+
+        // Update active subscriber count
+        if (countElement) {
+            const activeCount = subs.filter(
+                sub => sub.is_active === true
+            ).length;
+
+            countElement.textContent = activeCount;
         }
-      }
+
+        // If newsletter table doesn't exist, stop here
+        if (!wrap) {
+            console.warn(
+                'newsletter-table-wrap element was not found.'
+            );
+            return;
+        }
+
+        if (!subs.length) {
+            wrap.innerHTML =
+                '<div class="db-empty">No subscribers yet.</div>';
+            return;
+        }
+
+        wrap.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Subscribed</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${subs.map(sub => `
+                        <tr>
+                            <td>${sub.email}</td>
+
+                            <td>
+                                ${new Date(
+                                    sub.subscribed_at
+                                ).toLocaleDateString()}
+                            </td>
+
+                            <td>
+                                ${sub.is_active
+                                    ? '<span class="status-active">Active</span>'
+                                    : '<span class="status-inactive">Inactive</span>'
+                                }
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+
+    } catch (error) {
+        console.error('Newsletter error:', error);
+
+        if (wrap) {
+            wrap.innerHTML =
+                '<div class="db-empty">Unable to load subscribers.</div>';
+        }
+    }
+}
+
+const newsletterSubject =
+    document.getElementById('newsletter-subject');
+
+const newsletterContent =
+    document.getElementById('newsletter-content');
+
+const previewSubject =
+    document.getElementById('preview-subject');
+
+const previewContent =
+    document.getElementById('preview-content');
+
+const wordCount =
+    document.getElementById('newsletter-word-count');
+
+
+function updateNewsletterPreview() {
+
+    const subject =
+        newsletterSubject.value.trim();
+
+    const content =
+        newsletterContent.value.trim();
+
+    previewSubject.textContent =
+        subject || 'Your newsletter subject';
+
+    previewContent.innerHTML =
+        content
+            ? content.replace(/\n/g, '<br>')
+            : '<p>Your newsletter content will appear here.</p>';
+
+    const words =
+        content
+            ? content.split(/\s+/).length
+            : 0;
+
+    wordCount.textContent =
+        `${words} ${words === 1 ? 'word' : 'words'}`;
+}
+
+
+newsletterSubject.addEventListener(
+    'input',
+    updateNewsletterPreview
+);
+
+newsletterContent.addEventListener(
+    'input',
+    updateNewsletterPreview
+);
+document
+    .getElementById('newsletter-send-btn')
+    .addEventListener('click', async () => {
+
+        const subject =
+            newsletterSubject.value.trim();
+
+        const content =
+            newsletterContent.value.trim();
+
+        if (!subject) {
+            alert('Please enter a newsletter subject.');
+            newsletterSubject.focus();
+            return;
+        }
+
+        if (!content) {
+            alert('Please enter newsletter content.');
+            newsletterContent.focus();
+            return;
+        }
+
+        const subscriberCount =
+            document.getElementById('subscriber-count')
+                .textContent;
+
+        const confirmed = confirm(
+            `Send this newsletter to ${subscriberCount} active subscribers?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const button =
+            document.getElementById('newsletter-send-btn');
+
+        button.disabled = true;
+        button.textContent = 'Sending...';
+
+        try {
+
+            const response = await apiFetch(
+                '/api/admin/newsletter/send/',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subject,
+                        content
+                    })
+                }
+            );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.detail ||
+                    'Failed to send newsletter.'
+                );
+            }
+
+            alert(
+                `Newsletter sent!\n\n` +
+                `Sent: ${data.sent}\n` +
+                `Failed: ${data.failed}\n` +
+                `Total: ${data.total}`
+            );
+
+            newsletterSubject.value = '';
+            newsletterContent.value = '';
+
+            updateNewsletterPreview();
+
+        } catch (error) {
+
+            console.error(
+                'Newsletter error:',
+                error
+            );
+
+            alert(
+                'Unable to send newsletter: ' +
+                error.message
+            );
+
+        } finally {
+
+            button.disabled = false;
+            button.textContent = 'Send Newsletter';
+        }
+    });
 
       // --- Init ---
       loadJobs();

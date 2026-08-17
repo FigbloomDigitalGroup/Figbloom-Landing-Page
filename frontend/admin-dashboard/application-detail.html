@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    >
+
+    <meta
+        name="theme-color"
+        content="#FF9400"
+    >
+
+    <title>Application Details | Figbloom Digital Group</title>
+
+    <link
+        rel="stylesheet"
+        href="/assets/css/style.css"
+    >
+
+    <style>
+
+        /* =========================================================
+           PAGE
+        ========================================================= */
+
+        body {
+            background:
+                linear-gradient(
+                    180deg,
+                    #f8fafc 0%,
+                    #ffffff 45%,
+                    #f8fafc 100%
+                );
+            color: #17201a;
+        }
+
+        .application-page {
+            width: min(1150px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 42px 0 70px;
+        }
+
+
+        /* =========================================================
+           TOP BAR
+        ========================================================= */
+
+        .application-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .application-heading {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .heading-icon {
+            width: 52px;
+            height: 52px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            background: #fff3e6;
+            color: #ff9400;
+        }
+
+        .heading-icon svg {
+            width: 25px;
+            height: 25px;
+        }
+
+        .application-heading h1 {
+            margin: 0;
+            font-size: 30px;
+            line-height: 1.2;
+            font-weight: 800;
+            color: #18221a;
+        }
+
+        .application-heading p {
+            margin: 7px 0 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            color: #334155;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all .2s ease;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, .04);
+        }
+
+        .back-button:hover {
+            border-color: #ff9400;
+            color: #d97706;
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================================================
+           LOADING / ERROR
+        ========================================================= */
+
+        .page-state {
+            display: none;
+            padding: 18px 20px;
+            margin-bottom: 24px;
+            border-radius: 14px;
+            font-size: 14px;
+        }
+
+        .page-state.error {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            color: #be123c;
+        }
+
+        .page-state.success {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #047857;
+        }
+
+
+        /* =========================================================
+           MAIN GRID
+        ========================================================= */
+
+        .application-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 330px;
+            gap: 24px;
+            align-items: start;
+        }
+
+
+        /* =========================================================
+           CARDS
+        ========================================================= */
+
+        .application-card {
+            background: #ffffff;
+            border: 1px solid #e7ebef;
+            border-radius: 20px;
+            padding: 26px;
+            margin-bottom: 24px;
+            box-shadow:
+                0 8px 30px rgba(15, 23, 42, .045);
+        }
+
+        .application-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 11px;
+            background: #f1f8f1;
+            color: #285c35;
+        }
+
+        .card-icon.orange {
+            background: #fff4e8;
+            color: #ff9400;
+        }
+
+        .card-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            color: #18221a;
+            font-size: 18px;
+            font-weight: 750;
+        }
+
+        .card-header p {
+            margin: 3px 0 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+
+        /* =========================================================
+           APPLICANT INFO
+        ========================================================= */
+
+        .app-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .app-info {
+            min-width: 0;
+        }
+
+        .app-info label {
+            display: block;
+            margin-bottom: 6px;
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .app-info-value {
+            color: #1e293b;
+            font-size: 15px;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .app-info-value a {
+            color: #d97706;
+            text-decoration: none;
+        }
+
+        .app-info-value a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* =========================================================
+           STATUS
+        ========================================================= */
+
+        .status-wrapper {
+            position: relative;
+        }
+
+        .status-select {
+            width: 100%;
+            appearance: none;
+            padding: 11px 38px 11px 13px;
+            border: 1px solid #dce2e8;
+            border-radius: 10px;
+            background:
+                #ffffff
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23647585' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+                no-repeat
+                right 13px center;
+            color: #1e293b;
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .status-select:focus {
+            border-color: #ff9400;
+            box-shadow: 0 0 0 3px rgba(255, 148, 0, .12);
+        }
+
+
+        /* =========================================================
+           COVER LETTER
+        ========================================================= */
+
+        .cover-letter {
+            white-space: pre-wrap;
+            line-height: 1.8;
+            color: #475569;
+            font-size: 15px;
+        }
+
+        .empty-content {
+            padding: 18px;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+
+        /* =========================================================
+           SIDE CARD
+        ========================================================= */
+
+        .side-column {
+            position: sticky;
+            top: 24px;
+        }
+
+        .summary-card {
+            background:
+                linear-gradient(
+                    145deg,
+                    #183d20,
+                    #285c35
+                );
+            color: #ffffff;
+            border-radius: 20px;
+            padding: 26px;
+            margin-bottom: 20px;
+            box-shadow:
+                0 15px 35px rgba(24, 61, 32, .18);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .summary-card::after {
+            content: "";
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 999px;
+            background: rgba(255, 148, 0, .12);
+            right: -45px;
+            top: -45px;
+        }
+
+        .summary-label {
+            position: relative;
+            z-index: 1;
+            color: #cfe3d2;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .summary-name {
+            position: relative;
+            z-index: 1;
+            margin: 7px 0 3px;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .summary-job {
+            position: relative;
+            z-index: 1;
+            color: #dceade;
+            font-size: 14px;
+        }
+
+        .summary-divider {
+            position: relative;
+            z-index: 1;
+            height: 1px;
+            background: rgba(255,255,255,.14);
+            margin: 22px 0;
+        }
+
+        .summary-date {
+            position: relative;
+            z-index: 1;
+            color: #dceade;
+            font-size: 13px;
+        }
+
+
+        /* =========================================================
+           CV
+        ========================================================= */
+
+        .cv-container {
+            margin-top: 10px;
+            overflow: hidden;
+            border-radius: 14px;
+            border: 1px solid #dfe5e9;
+            background: #f8fafc;
+        }
+
+        .cv-viewer {
+            display: block;
+            width: 100%;
+            height: 760px;
+            border: 0;
+            background: #ffffff;
+        }
+
+        .cv-message {
+            padding: 22px;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #64748b;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .cv-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .cv-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all .2s ease;
+        }
+
+        .cv-action svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .cv-action.primary {
+            background: #ff9400;
+            color: #ffffff;
+        }
+
+        .cv-action.primary:hover {
+            background: #e98500;
+            transform: translateY(-1px);
+        }
+
+        .cv-action.secondary {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .cv-action.secondary:hover {
+            background: #e2e8f0;
+        }
+
+
+        /* =========================================================
+           LOADING
+        ========================================================= */
+
+        .loading-screen {
+            padding: 70px 20px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .loading-spinner {
+            width: 35px;
+            height: 35px;
+            margin: 0 auto 15px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #ff9400;
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 850px) {
+
+            .application-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .side-column {
+                position: static;
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .application-page {
+                width: min(100% - 22px, 1150px);
+                padding-top: 25px;
+            }
+
+            .application-topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .application-heading h1 {
+                font-size: 25px;
+            }
+
+            .back-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .application-card {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .app-info-grid {
+                grid-template-columns: 1fr;
+                gap: 17px;
+            }
+
+            .cv-viewer {
+                height: 600px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="application-page">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="application-topbar">
+
+        <div class="application-heading">
+
+            <div class="heading-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+
+            </div>
+
+            <div>
+
+                <h1>Application Details</h1>
+
+                <p>
+                    Review applicant information, cover letter and CV.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="/admin-dashboard/"
+            class="back-button"
+        >
+
+            <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="m15 18-6-6 6-6"/>
+            </svg>
+
+            Back to Applications
+
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         PAGE STATE
+    ====================================================== -->
+
+    <div
+        id="page-error"
+        class="page-state error"
+    ></div>
+
+
+    <!-- =====================================================
+         LOADING
+    ====================================================== -->
+
+    <div
+        id="loading-screen"
+        class="loading-screen"
+    >
+
+        <div class="loading-spinner"></div>
+
+        <div>
+            Loading application...
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         APPLICATION CONTENT
+    ====================================================== -->
+
+    <div
+        id="application-content"
+        class="application-layout"
+        style="display:none;"
+    >
+
+        <!-- =================================================
+             LEFT COLUMN
+        ================================================== -->
+
+        <div>
+
+
+            <!-- APPLICANT INFORMATION -->
+
+            <section class="application-card">
+
+                <div class="card-header">
+
+                    <div class="card-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M20 21a8 8 0 0 0-16 0"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+
+                    </div>
+
+                    <div>
+
+                        <h2>Applicant Information</h2>
+
+                        <p>
+                            Contact and application information
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="app-info-grid">
+
+
+                    <div class="app-info">
+
+                        <label>
+                            Full Name
+                        </label>
+
+                        <div
+                            id="full-name"
+                            class="app-info-value"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+
+                    <div class="app-info">
+
+                        <label>
+                            Email Address
+                        </label>
+
+                        <div
+                            id="email"
+                            class="app-info-value"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+
+                    <div class="app-info">
+
+                        <label>
+                            Phone Number
+                        </label>
+
+                        <div
+                            id="phone"
+                            class="app-info-value"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+
+                    <div class="app-info">
+
+                        <label>
+                            Position Applied For
+                        </label>
+
+                        <div
+                            id="job-title"
+                            class="app-info-value"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+
+                    <div class="app-info">
+
+                        <label>
+                            Portfolio / LinkedIn
+                        </label>
+
+                        <div class="app-info-value">
+
+                            <a
+                                id="portfolio"
+                                href="#"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                —
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="app-info">
+
+                        <label>
+                            Application Status
+                        </label>
+
+                        <div class="status-wrapper">
+
+                            <select
+                                id="application-status"
+                                class="status-select"
+                            >
+
+                                <option value="new">
+                                    New
+                                </option>
+
+                                <option value="reviewed">
+                                    Reviewed
+                                </option>
+
+                                <option value="shortlisted">
+                                    Shortlisted
+                                </option>
+
+                                <option value="interview">
+                                    Interview
+                                </option>
+
+                                <option value="rejected">
+                                    Rejected
+                                </option>
+
+                                <option value="hired">
+                                    Hired
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- COVER LETTER -->
+
+            <section class="application-card">
+
+                <div class="card-header">
+
+                    <div class="card-icon orange">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M4 4h16v16H4z"/>
+                            <path d="M8 9h8"/>
+                            <path d="M8 13h6"/>
+                        </svg>
+
+                    </div>
+
+                    <div>
+
+                        <h2>Cover Letter</h2>
+
+                        <p>
+                            Applicant's message and motivation
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="cover-letter"
+                    class="cover-letter"
+                >
+                    Loading...
+                </div>
+
+            </section>
+
+
+            <!-- CV -->
+
+            <section class="application-card">
+
+                <div class="card-header">
+
+                    <div class="card-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+
+                    </div>
+
+                    <div>
+
+                        <h2>Curriculum Vitae</h2>
+
+                        <p>
+                            Applicant's uploaded CV / resume
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="cv-message"
+                    class="cv-message"
+                    style="display:none;"
+                ></div>
+
+
+                <div
+                    id="cv-container"
+                    class="cv-container"
+                ></div>
+
+
+                <div
+                    id="cv-actions"
+                    class="cv-actions"
+                    style="display:none;"
+                >
+
+                    <a
+                        id="open-cv"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="cv-action primary"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M15 3h6v6"/>
+                            <path d="M10 14 21 3"/>
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                        </svg>
+
+                        Open CV
+
+                    </a>
+
+
+                    <a
+                        id="download-cv"
+                        href="#"
+                        download
+                        class="cv-action secondary"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M12 3v12"/>
+                            <path d="m7 10 5 5 5-5"/>
+                            <path d="M5 21h14"/>
+                        </svg>
+
+                        Download CV
+
+                    </a>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT COLUMN
+        ================================================== -->
+
+        <aside class="side-column">
+
+
+            <!-- APPLICANT SUMMARY -->
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Applicant
+                </div>
+
+                <div
+                    id="summary-name"
+                    class="summary-name"
+                >
+                    —
+                </div>
+
+                <div
+                    id="summary-job"
+                    class="summary-job"
+                >
+                    —
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div
+                    id="application-date"
+                    class="summary-date"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <!-- QUICK INFORMATION -->
+
+            <section class="application-card">
+
+                <div class="card-header">
+
+                    <div class="card-icon orange">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <circle cx="12" cy="12" r="9"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+
+                    </div>
+
+                    <div>
+
+                        <h2>Application Overview</h2>
+
+                        <p>
+                            Quick reference
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="app-info">
+
+                    <label>
+                        Submitted
+                    </label>
+
+                    <div
+                        id="overview-date"
+                        class="app-info-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="app-info"
+                    style="margin-top:18px;"
+                >
+
+                    <label>
+                        Position
+                    </label>
+
+                    <div
+                        id="overview-job"
+                        class="app-info-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="app-info"
+                    style="margin-top:18px;"
+                >
+
+                    <label>
+                        CV Status
+                    </label>
+
+                    <div
+                        id="overview-cv"
+                        class="app-info-value"
+                    >
+                        Checking...
+                    </div>
+
+                </div>
+
+            </section>
+
+        </aside>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =========================================================
+       CONFIGURATION
+    ========================================================= */
+
+    const API_BASE =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+            ? "http://127.0.0.1:8000"
+            : "";
+
+
+    /* =========================================================
+       CSRF
+    ========================================================= */
+
+    function getCsrfToken() {
+
+        return (
+            document.cookie
+                .split("; ")
+                .find(row =>
+                    row.startsWith("csrftoken=")
+                )
+                ?.split("=")[1] || ""
+        );
+
+    }
+
+
+    /* =========================================================
+       API FETCH
+    ========================================================= */
+
+    async function apiFetch(url, options = {}) {
+
+        const response = await fetch(
+            `${API_BASE}${url}`,
+            {
+                ...options,
+
+                credentials: "include",
+
+                headers: {
+                    "X-CSRFToken": getCsrfToken(),
+
+                    ...(options.headers || {})
+                }
+            }
+        );
+
+
+        /*
+         * Do NOT show alerts here.
+         *
+         * If the admin session has expired,
+         * send them quietly back to login.
+         */
+
+        if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
+
+            window.location.href =
+                "/admin-dashboard/login";
+
+            throw new Error(
+                "Not authenticated"
+            );
+
+        }
+
+
+        return response;
+
+    }
+
+
+    /* =========================================================
+       CV URL
+    ========================================================= */
+
+    function buildFileUrl(filePath) {
+
+        if (!filePath) {
+            return "";
+        }
+
+
+        /*
+         * If Django already returned a complete URL,
+         * use it directly.
+         */
+
+        if (
+            filePath.startsWith("http://") ||
+            filePath.startsWith("https://")
+        ) {
+
+            return filePath;
+
+        }
+
+
+        /*
+         * Otherwise attach the Django API/domain.
+         *
+         * Example:
+         *
+         * /media/cv/john.pdf
+         *
+         * becomes:
+         *
+         * http://127.0.0.1:8000/media/cv/john.pdf
+         */
+
+        if (!filePath.startsWith("/")) {
+
+            filePath =
+                "/" + filePath;
+
+        }
+
+
+        return `${API_BASE}${filePath}`;
+
+    }
+
+
+    /* =========================================================
+       SHOW ERROR
+    ========================================================= */
+
+    function showPageError(message) {
+
+        const errorBox =
+            document.getElementById("page-error");
+
+        errorBox.textContent =
+            message;
+
+        errorBox.style.display =
+            "block";
+
+    }
+
+
+    /* =========================================================
+       LOAD APPLICATION
+    ========================================================= */
+
+    async function loadApplication() {
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const applicationId =
+            params.get("id");
+
+
+        /*
+         * Instead of an alert, show an
+         * inline message.
+         */
+
+        if (!applicationId) {
+
+            document
+                .getElementById("loading-screen")
+                .style.display = "none";
+
+            showPageError(
+                "No application was selected. Please return to the applications list and select an application."
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            const response =
+                await apiFetch(
+                    `/api/admin/applications/${applicationId}/`
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    `Unable to load application (${response.status})`
+                );
+
+            }
+
+
+            const app =
+                await response.json();
+
+
+            console.log(
+                "Application loaded successfully."
+            );
+
+
+            /* =================================================
+               APPLICANT
+            ================================================== */
+
+            const fullName =
+                app.full_name || "—";
+
+            const email =
+                app.email || "—";
+
+            const phone =
+                app.phone || "—";
+
+            const jobTitle =
+                app.job_title ||
+                app.job ||
+                "—";
+
+
+            document
+                .getElementById("full-name")
+                .textContent =
+                fullName;
+
+
+            document
+                .getElementById("email")
+                .textContent =
+                email;
+
+
+            document
+                .getElementById("phone")
+                .textContent =
+                phone;
+
+
+            document
+                .getElementById("job-title")
+                .textContent =
+                jobTitle;
+
+
+            /* =================================================
+               SUMMARY
+            ================================================== */
+
+            document
+                .getElementById("summary-name")
+                .textContent =
+                fullName;
+
+
+            document
+                .getElementById("summary-job")
+                .textContent =
+                jobTitle;
+
+
+            document
+                .getElementById("overview-job")
+                .textContent =
+                jobTitle;
+
+
+            /* =================================================
+               DATE
+            ================================================== */
+
+            let formattedDate =
+                "Date unavailable";
+
+
+            if (app.applied_at) {
+
+                formattedDate =
+                    new Date(
+                        app.applied_at
+                    ).toLocaleString(
+                        "en-US",
+                        {
+                            dateStyle: "medium",
+                            timeStyle: "short"
+                        }
+                    );
+
+            }
+
+
+            document
+                .getElementById("application-date")
+                .textContent =
+                `Applied ${formattedDate}`;
+
+
+            document
+                .getElementById("overview-date")
+                .textContent =
+                formattedDate;
+
+
+            /* =================================================
+               PORTFOLIO
+            ================================================== */
+
+            const portfolio =
+                document.getElementById(
+                    "portfolio"
+                );
+
+
+            if (app.portfolio) {
+
+                portfolio.href =
+                    app.portfolio;
+
+                portfolio.textContent =
+                    "View Portfolio ↗";
+
+            } else {
+
+                portfolio.removeAttribute(
+                    "href"
+                );
+
+                portfolio.textContent =
+                    "Not provided";
+
+            }
+
+
+            /* =================================================
+               STATUS
+            ================================================== */
+
+            const status =
+                document.getElementById(
+                    "application-status"
+                );
+
+
+            status.value =
+                app.status || "new";
+
+
+            /* =================================================
+               COVER LETTER
+            ================================================== */
+
+            const coverLetter =
+                document.getElementById(
+                    "cover-letter"
+                );
+
+
+            if (app.cover_letter) {
+
+                coverLetter.textContent =
+                    app.cover_letter;
+
+            } else {
+
+                coverLetter.innerHTML =
+                    `
+                    <div class="empty-content">
+                        No cover letter was provided with this application.
+                    </div>
+                    `;
+
+            }
+
+
+            /* =================================================
+               CV
+            ================================================== */
+
+            const cvContainer =
+                document.getElementById(
+                    "cv-container"
+                );
+
+
+            const cvMessage =
+                document.getElementById(
+                    "cv-message"
+                );
+
+
+            const cvActions =
+                document.getElementById(
+                    "cv-actions"
+                );
+
+
+            const overviewCv =
+                document.getElementById(
+                    "overview-cv"
+                );
+
+
+            if (app.cv_file) {
+
+                const cvUrl =
+                    buildFileUrl(
+                        app.cv_file
+                    );
+
+
+                /*
+                 * Display PDF directly in iframe.
+                 */
+
+                const fileName =
+                    String(
+                        app.cv_file
+                    )
+                    .split("/")
+                    .pop()
+                    .toLowerCase();
+
+
+                const isPdf =
+                    fileName.endsWith(
+                        ".pdf"
+                    );
+
+
+                if (isPdf) {
+
+                    cvContainer.innerHTML =
+                        `
+                        <iframe
+                            src="${cvUrl}"
+                            class="cv-viewer"
+                            title="Applicant CV"
+                        ></iframe>
+                        `;
+
+                } else {
+
+                    /*
+                     * Browsers cannot reliably
+                     * preview DOC/DOCX files locally.
+                     */
+
+                    cvContainer.innerHTML =
+                        `
+                        <div class="cv-message">
+                            This CV is a ${fileName.endsWith(".docx") ? "Word document" : "document"}.
+                            Use the button below to open or download it.
+                        </div>
+                        `;
+
+                }
+
+
+                document
+                    .getElementById("open-cv")
+                    .href =
+                    cvUrl;
+
+
+                document
+                    .getElementById("download-cv")
+                    .href =
+                    cvUrl;
+
+
+                cvActions.style.display =
+                    "flex";
+
+
+                overviewCv.textContent =
+                    "CV uploaded";
+
+
+            } else {
+
+                cvMessage.style.display =
+                    "block";
+
+
+                cvMessage.textContent =
+                    "No CV was uploaded with this application.";
+
+
+                overviewCv.textContent =
+                    "No CV uploaded";
+
+            }
+
+
+            /* =================================================
+               SHOW PAGE
+            ================================================== */
+
+            document
+                .getElementById("loading-screen")
+                .style.display =
+                "none";
+
+
+            document
+                .getElementById("application-content")
+                .style.display =
+                "grid";
+
+
+        } catch (error) {
+
+            console.error(
+                "Error loading application:",
+                error
+            );
+
+
+            document
+                .getElementById("loading-screen")
+                .style.display =
+                "none";
+
+
+            /*
+             * No annoying alert.
+             *
+             * Show the error directly on
+             * the page.
+             */
+
+            showPageError(
+                "We couldn't load this application. The application may have been removed, or your admin session may have expired."
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       UPDATE APPLICATION STATUS
+    ========================================================= */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => {
+
+            const statusSelect =
+                document.getElementById(
+                    "application-status"
+                );
+
+
+            statusSelect.addEventListener(
+                "change",
+                async function () {
+
+                    const params =
+                        new URLSearchParams(
+                            window.location.search
+                        );
+
+
+                    const applicationId =
+                        params.get("id");
+
+
+                    if (!applicationId) {
+                        return;
+                    }
+
+
+                    const newStatus =
+                        this.value;
+
+
+                    try {
+
+                        const response =
+                            await apiFetch(
+                                `/api/admin/applications/${applicationId}/`,
+                                {
+                                    method: "PATCH",
+
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json"
+                                    },
+
+                                    body:
+                                        JSON.stringify({
+                                            status:
+                                                newStatus
+                                        })
+                                }
+                            );
+
+
+                        if (!response.ok) {
+
+                            throw new Error(
+                                "Status update failed"
+                            );
+
+                        }
+
+
+                        /*
+                         * Small non-intrusive
+                         * confirmation.
+                         */
+
+                        const errorBox =
+                            document.getElementById(
+                                "page-error"
+                            );
+
+
+                        errorBox.className =
+                            "page-state success";
+
+
+                        errorBox.textContent =
+                            "Application status updated successfully.";
+
+
+                        errorBox.style.display =
+                            "block";
+
+
+                        setTimeout(
+                            () => {
+
+                                errorBox.style.display =
+                                    "none";
+
+                            },
+                            2500
+                        );
+
+
+                    } catch (error) {
+
+                        console.error(
+                            "Status update error:",
+                            error
+                        );
+
+
+                        const errorBox =
+                            document.getElementById(
+                                "page-error"
+                            );
+
+
+                        errorBox.className =
+                            "page-state error";
+
+
+                        errorBox.textContent =
+                            "Unable to update the application status.";
+
+
+                        errorBox.style.display =
+                            "block";
+
+                    }
+
+                }
+            );
+
+
+            loadApplication();
+
+        }
+    );
+
+</script>
+
+</body>
+</html>

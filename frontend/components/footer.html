@@ -285,7 +285,7 @@
                             .find((row) => row.startsWith('csrftoken='))
                             ?.split('=')[1] || '';
 
-                        const response = await fetch('/newsletter/subscribe/', {
+                        const response = await fetch('/api/newsletter/subscribe/', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {

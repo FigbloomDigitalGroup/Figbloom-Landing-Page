@@ -1,0 +1,21 @@
+asgiref==3.12.1
+Django==6.1
+django-cors-headers==4.9.0
+djangorestframework==3.18.0
+pillow==12.3.0
+sqlparse==0.5.5
+tzdata==2026.3
+
+# Production server + static file serving
+gunicorn==23.0.0
+whitenoise==6.9.0
+
+# Postgres on Render (DATABASE_URL)
+dj-database-url==3.0.1
+psycopg[binary]==3.3.4
+
+# Cloudinary storage for applicant CV uploads
+django-cloudinary-storage==0.3.0
+
+# Optional: loads backend/.env for local development
+python-dotenv==1.1.1

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Admin Login | Figbloom Digital Group</title>
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <style>
+      :root {
+        --fb-green: #1a3a1a;
+        --fb-orange: #ff9400;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #ffffff;
+        font-family: inherit;
+      }
+
+      .login-shell {
+        width: 100%;
+        max-width: 380px;
+        padding: 2.5rem 2rem;
+        border-radius: 16px;
+        border: 1px solid #eaeaea;
+        box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.15);
+      }
+
+      .login-logo {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.75rem;
+      }
+
+      .login-logo img {
+        width: 90px;
+      }
+
+      .login-title {
+        text-align: center;
+        color: var(--fb-green);
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+      }
+
+      .login-subtitle {
+        text-align: center;
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin-bottom: 1.75rem;
+      }
+
+      .login-field {
+        margin-bottom: 1.1rem;
+      }
+
+      .login-field label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.4rem;
+      }
+
+      .login-field input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.65rem 0.85rem;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.15s ease;
+      }
+
+      .login-field input:focus {
+        border-color: var(--fb-orange);
+        box-shadow: 0 0 0 3px rgba(255, 148, 0, 0.15);
+      }
+
+      .login-submit {
+        width: 100%;
+        padding: 0.75rem;
+        margin-top: 0.5rem;
+        border: none;
+        border-radius: 8px;
+        background: var(--fb-green);
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+
+      .login-submit:hover {
+        background: #142e14;
+      }
+
+      .login-error {
+        display: none;
+        margin-top: 1rem;
+        padding: 0.65rem 0.85rem;
+        border-radius: 8px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        font-size: 0.85rem;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-shell">
+      <div class="login-logo">
+        <img src="/assets/images/figbloom_logo.png" alt="Figbloom Digital Group" />
+      </div>
+
+      <div class="login-title">Admin Dashboard</div>
+      <div class="login-subtitle">Sign in to manage jobs, applications, and subscribers</div>
+
+      <form id="login-form">
+        <div class="login-field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" required autocomplete="username" />
+        </div>
+
+        <div class="login-field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" required autocomplete="current-password" />
+        </div>
+
+        <button type="submit" class="login-submit">Sign in</button>
+        <div id="login-error" class="login-error"></div>
+      </form>
+    </div>
+
+    <script>
+        initializeCsrf().catch(console.error);
+      async function initializeCsrf() {
+    await fetch('http://127.0.0.1:8000/api/auth/csrf/', {
+        method: 'GET',
+        credentials: 'include',
+    });
+}
+      function getCsrfToken() {
+        return (
+          document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('csrftoken='))
+            ?.split('=')[1] || ''
+        );
+      }
+
+      document.getElementById('login-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const errorBox = document.getElementById('login-error');
+    errorBox.style.display = 'none';
+
+    try {
+        // Get CSRF cookie from Django first
+        await initializeCsrf();
+
+        const formData = new FormData(event.target);
+
+        const response = await fetch(
+            'http://127.0.0.1:8000/api/auth/login/',
+            {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'X-CSRFToken': getCsrfToken(),
+                },
+                body: formData,
+            }
+        );
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            errorBox.textContent =
+                data.detail || 'Invalid username or password.';
+            errorBox.style.display = 'block';
+            return;
+        }
+
+        window.location.href = '/admin-dashboard/';
+    } catch (error) {
+        console.error('Login error:', error);
+        errorBox.textContent =
+            'Unable to reach the server. Please try again.';
+        errorBox.style.display = 'block';
+    }
+});
+  </script>
+  </body>
+</html>

@@ -1,0 +1,2438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta
+      name="description"
+      content="Job details and application form for career opportunities at Figbloom Digital Group."
+    />
+    <meta name="author" content="Figbloom Digital Group" />
+    <meta name="theme-color" content="#1A3A1A" />
+
+    <title>Job Details | Figbloom Digital Group</title>
+
+    <link rel="stylesheet" href="../assets/css/style.css" />
+
+    <script src="../assets/js/alpine.min.js" defer></script>
+    <script src="../assets/js/lucide.min.js" defer></script>
+
+    <style>
+      :root {
+        --fig-green: #1a3a1a;
+        --fig-green-dark: #102610;
+        --fig-green-light: #edf5ed;
+        --fig-orange: #ff9400;
+        --fig-orange-light: #fff4e5;
+        --fig-text: #172117;
+        --fig-muted: #667066;
+        --fig-border: #e5e9e5;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #f8faf8;
+        color: var(--fig-text);
+      }
+
+      /* =========================================================
+         LOADER
+      ========================================================= */
+
+      .job-loader {
+        min-height: 260px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 14px;
+        color: #687368;
+      }
+
+      .loader-spinner {
+        width: 34px;
+        height: 34px;
+        border: 3px solid #dfe6df;
+        border-top-color: var(--fig-orange);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* =========================================================
+         JOB HERO
+      ========================================================= */
+
+      .job-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 26px;
+        padding: 42px 44px;
+        background:
+          radial-gradient(
+            circle at 90% 15%,
+            rgba(255, 148, 0, 0.22),
+            transparent 30%
+          ),
+          linear-gradient(
+            135deg,
+            var(--fig-green-dark),
+            var(--fig-green)
+          );
+        color: white;
+        box-shadow: 0 20px 50px rgba(26, 58, 26, 0.16);
+      }
+
+      .job-hero::before {
+        content: "";
+        position: absolute;
+        width: 240px;
+        height: 240px;
+        right: -100px;
+        bottom: -120px;
+        border-radius: 50%;
+        border: 40px solid rgba(255, 148, 0, 0.08);
+      }
+
+      .job-hero::after {
+        content: "";
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        right: 80px;
+        top: -70px;
+        border-radius: 50%;
+        background: rgba(255, 148, 0, 0.07);
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 850px;
+      }
+
+      .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 15px;
+        color: #ffb94d;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .hero-eyebrow span {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--fig-orange);
+      }
+
+      .hero-title {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        line-height: 1.08;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+      }
+
+      .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 24px;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 13px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.09);
+        color: #fff;
+        font-size: 0.84rem;
+        font-weight: 500;
+        backdrop-filter: blur(8px);
+      }
+
+      .hero-badge svg {
+        width: 15px;
+        height: 15px;
+        color: #ffb94d;
+      }
+
+      .hero-deadline {
+        margin-top: 25px;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        color: #e9eee9;
+        font-size: 0.9rem;
+      }
+
+      .hero-deadline svg {
+        width: 17px;
+        color: var(--fig-orange);
+      }
+
+      /* =========================================================
+         MAIN GRID
+      ========================================================= */
+
+      .career-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr);
+        gap: 30px;
+        align-items: start;
+      }
+
+      .career-left,
+      .career-right {
+        min-width: 0;
+      }
+
+      .career-left {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+
+      .career-right {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* =========================================================
+         GENERAL CARDS
+      ========================================================= */
+
+      .career-card {
+        border: 1px solid var(--fig-border);
+        border-radius: 20px;
+        background: #fff;
+        padding: 28px;
+        box-shadow: 0 8px 28px rgba(20, 40, 20, 0.045);
+      }
+
+      .career-card-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        margin-bottom: 20px;
+      }
+
+      .card-icon {
+        flex: 0 0 auto;
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: var(--fig-green-light);
+        color: var(--fig-green);
+      }
+
+      .card-icon.orange {
+        background: var(--fig-orange-light);
+        color: #d87900;
+      }
+
+      .card-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .career-card h2 {
+        margin: 0;
+        color: var(--fig-text);
+        font-size: 1.2rem;
+        font-weight: 750;
+      }
+
+      .career-card-subtitle {
+        margin-top: 4px;
+        color: var(--fig-muted);
+        font-size: 0.86rem;
+      }
+
+      .career-content {
+        color: #4d584d;
+        font-size: 0.95rem;
+        line-height: 1.75;
+      }
+
+      .career-content p {
+        margin: 0 0 14px;
+      }
+
+      .career-content p:last-child {
+        margin-bottom: 0;
+      }
+
+      /* =========================================================
+         REQUIREMENTS
+      ========================================================= */
+
+      .requirements-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .requirement-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        color: #4d584d;
+        font-size: 0.94rem;
+        line-height: 1.55;
+      }
+
+      .requirement-check {
+        flex: 0 0 auto;
+        width: 22px;
+        height: 22px;
+        margin-top: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--fig-green-light);
+        color: var(--fig-green);
+        font-size: 0.75rem;
+        font-weight: 800;
+      }
+
+      /* =========================================================
+         JOB DETAILS
+      ========================================================= */
+
+      .job-details-list {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .job-detail-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 15px 0;
+        border-bottom: 1px solid #edf0ed;
+      }
+
+      .job-detail-row:first-child {
+        padding-top: 0;
+      }
+
+      .job-detail-row:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+      }
+
+      .job-detail-label {
+        color: #758075;
+        font-size: 0.88rem;
+      }
+
+      .job-detail-value {
+        color: var(--fig-text);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-align: right;
+      }
+
+      /* =========================================================
+         CTA CARD
+      ========================================================= */
+
+      .impact-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        padding: 30px;
+        background: linear-gradient(
+          135deg,
+          var(--fig-green),
+          #285828
+        );
+        color: white;
+        box-shadow: 0 12px 32px rgba(26, 58, 26, 0.12);
+      }
+
+      .impact-card::after {
+        content: "";
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        right: -70px;
+        top: -70px;
+        border-radius: 50%;
+        background: rgba(255, 148, 0, 0.12);
+      }
+
+      .impact-card h2 {
+        position: relative;
+        z-index: 2;
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 750;
+      }
+
+      .impact-card p {
+        position: relative;
+        z-index: 2;
+        margin: 10px 0 20px;
+        max-width: 560px;
+        color: #dce7dc;
+        font-size: 0.92rem;
+        line-height: 1.65;
+      }
+
+      .impact-button {
+        position: relative;
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 17px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--fig-orange);
+        color: #fff;
+        font-size: 0.88rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+
+      .impact-button:hover {
+        background: #e98500;
+        transform: translateY(-1px);
+      }
+
+      /* =========================================================
+         WHY JOIN
+      ========================================================= */
+
+      .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .benefit {
+        padding: 15px;
+        border-radius: 13px;
+        background: #f8faf8;
+        border: 1px solid #edf1ed;
+      }
+
+      .benefit-icon {
+        width: 30px;
+        height: 30px;
+        margin-bottom: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        background: var(--fig-orange-light);
+        color: #d87900;
+      }
+
+      .benefit-icon svg {
+        width: 16px;
+      }
+
+      .benefit strong {
+        display: block;
+        color: var(--fig-text);
+        font-size: 0.85rem;
+      }
+
+      .benefit span {
+        display: block;
+        margin-top: 3px;
+        color: #788178;
+        font-size: 0.76rem;
+        line-height: 1.45;
+      }
+
+      /* =========================================================
+         HOW TO APPLY
+      ========================================================= */
+
+      .steps {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .step {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .step-number {
+        flex: 0 0 auto;
+        width: 29px;
+        height: 29px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--fig-green);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      .step strong {
+        display: block;
+        color: var(--fig-text);
+        font-size: 0.86rem;
+      }
+
+      .step span {
+        display: block;
+        margin-top: 2px;
+        color: #7a827a;
+        font-size: 0.76rem;
+        line-height: 1.45;
+      }
+
+      /* =========================================================
+         APPLICATION CARD
+      ========================================================= */
+
+      .application-card {
+        position: relative;
+      }
+
+      .application-card.sticky {
+        position: sticky;
+        top: 24px;
+      }
+
+      .application-header {
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #edf0ed;
+      }
+
+      .application-header h2 {
+        font-size: 1.45rem;
+      }
+
+      .application-header p {
+        margin: 7px 0 0;
+        color: #748074;
+        font-size: 0.86rem;
+        line-height: 1.5;
+      }
+
+      .application-form {
+        display: flex;
+        flex-direction: column;
+        gap: 17px;
+      }
+
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .form-field label {
+        color: #354035;
+        font-size: 0.82rem;
+        font-weight: 650;
+      }
+
+      .form-field input,
+      .form-field textarea {
+        width: 100%;
+        border: 1px solid #dce2dc;
+        border-radius: 10px;
+        background: #fff;
+        padding: 11px 12px;
+        color: var(--fig-text);
+        font-family: inherit;
+        font-size: 0.88rem;
+        outline: none;
+        transition:
+          border-color 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+
+      .form-field textarea {
+        min-height: 115px;
+        resize: vertical;
+      }
+
+      .form-field input::placeholder,
+      .form-field textarea::placeholder {
+        color: #a2aaa2;
+      }
+
+      .form-field input:focus,
+      .form-field textarea:focus {
+        border-color: var(--fig-orange);
+        box-shadow: 0 0 0 3px rgba(255, 148, 0, 0.12);
+      }
+
+      .file-upload {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        border: 1px dashed #d5ddd5;
+        border-radius: 11px;
+        background: #fafcf9;
+      }
+
+      .file-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 11px;
+        border-radius: 8px;
+        background: var(--fig-green);
+        color: white;
+        font-size: 0.76rem;
+        font-weight: 650;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .file-button:hover {
+        background: var(--fig-green-dark);
+      }
+
+      .file-button svg {
+        width: 14px;
+      }
+
+      .file-name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #7c857c;
+        font-size: 0.75rem;
+      }
+
+      .submit-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        width: 100%;
+        min-height: 46px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--fig-orange);
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 750;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease;
+      }
+
+      .submit-button:hover:not(:disabled) {
+        background: #e98500;
+        transform: translateY(-1px);
+      }
+
+      .submit-button:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+      }
+
+      .submit-spinner {
+        width: 17px;
+        height: 17px;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      /* =========================================================
+         SUCCESS
+      ========================================================= */
+
+      .success-state {
+        padding: 25px 10px 10px;
+        text-align: center;
+      }
+
+      .success-icon {
+        width: 58px;
+        height: 58px;
+        margin: 0 auto 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--fig-green-light);
+        color: var(--fig-green);
+      }
+
+      .success-icon svg {
+        width: 28px;
+      }
+
+      .success-state h3 {
+        margin: 0;
+        color: var(--fig-text);
+        font-size: 1.05rem;
+        font-weight: 750;
+      }
+
+      .success-state p {
+        margin: 7px auto 0;
+        max-width: 340px;
+        color: #758075;
+        font-size: 0.82rem;
+        line-height: 1.55;
+      }
+
+      /* =========================================================
+         ERROR / HIDDEN
+      ========================================================= */
+
+      .application-error {
+        display: none;
+        padding: 10px 12px;
+        border-radius: 9px;
+        background: #fff4f4;
+        border: 1px solid #f2d0d0;
+        color: #a33a3a;
+        font-size: 0.8rem;
+        line-height: 1.5;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* =========================================================
+         RESPONSIVE
+      ========================================================= */
+
+      @media (max-width: 1024px) {
+        .career-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .career-right {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          align-items: start;
+        }
+
+        .application-card {
+          grid-column: 1 / -1;
+        }
+
+        .application-card.sticky {
+          position: static;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .job-hero {
+          padding: 30px 24px;
+          border-radius: 20px;
+        }
+
+        .hero-title {
+          font-size: 2rem;
+        }
+
+        .career-card,
+        .impact-card {
+          padding: 22px;
+          border-radius: 17px;
+        }
+
+        .career-right {
+          display: flex;
+        }
+
+        .benefits-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .job-hero {
+          padding: 26px 20px;
+        }
+
+        .hero-meta {
+          gap: 7px;
+        }
+
+        .hero-badge {
+          font-size: 0.76rem;
+          padding: 7px 10px;
+        }
+
+        .career-card {
+          padding: 19px;
+        }
+
+        .benefits-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .job-detail-row {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .job-detail-value {
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+
+  <body x-data="mainFunction()">
+
+    <!-- =========================================================
+         NAVBAR
+    ========================================================= -->
+
+    <div id="navbar"></div>
+
+    <main class="container py-10 lg:py-14">
+
+      <!-- =======================================================
+           LOADING
+      ======================================================== -->
+
+      <div id="job-detail-loader" class="job-loader">
+        <div class="loader-spinner"></div>
+        <span>Loading job details...</span>
+      </div>
+
+
+      <!-- =======================================================
+           JOB CONTENT
+      ======================================================== -->
+
+      <div id="job-detail" class="hidden">
+
+        <!-- =====================================================
+             HERO
+        ====================================================== -->
+
+        <section class="job-hero">
+
+          <div class="hero-content">
+
+            <div class="hero-eyebrow">
+              <span></span>
+              Role
+            </div>
+
+            <h1 id="job-title" class="hero-title text-white">
+              Open Position
+            </h1>
+
+            <div class="hero-meta">
+
+              <span class="hero-badge">
+                <i data-lucide="building-2"></i>
+                <span id="job-department">General</span>
+              </span>
+
+              <span class="hero-badge">
+                <i data-lucide="map-pin"></i>
+                <span id="job-location">Remote</span>
+              </span>
+
+              <span class="hero-badge">
+                <i data-lucide="briefcase-business"></i>
+                <span id="job-employment">Full Time</span>
+              </span>
+
+            </div>
+
+            <div id="job-deadline-text" class="hero-deadline">
+              <i data-lucide="calendar-days"></i>
+              <span></span>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             MAIN TWO-COLUMN LAYOUT
+        ====================================================== -->
+
+        <div class="career-layout mt-8 lg:mt-10">
+
+
+          <!-- ===================================================
+               LEFT COLUMN
+          ==================================================== -->
+
+          <div class="career-left">
+
+
+            <!-- ABOUT THE ROLE -->
+
+            <section class="career-card">
+
+              <div class="career-card-header">
+
+                <div class="card-icon">
+                  <i data-lucide="sparkles"></i>
+                </div>
+
+                <div>
+                  <h2>About the Role</h2>
+                  <div class="career-card-subtitle">
+                    What you'll be doing
+                  </div>
+                </div>
+
+              </div>
+
+              <div
+                id="job-description"
+                class="career-content"
+              ></div>
+
+            </section>
+
+
+            <!-- QUALIFICATIONS -->
+
+            <section class="career-card">
+
+              <div class="career-card-header">
+
+                <div class="card-icon orange">
+                  <i data-lucide="graduation-cap"></i>
+                </div>
+
+                <div>
+                  <h2>Qualifications & Experience</h2>
+                  <div class="career-card-subtitle">
+                    What we're looking for
+                  </div>
+                </div>
+
+              </div>
+
+              <div
+                id="job-experience"
+                class="career-content"
+              ></div>
+
+            </section>
+
+
+            <!-- REQUIREMENTS -->
+
+            <section class="career-card">
+
+              <div class="career-card-header">
+
+                <div class="card-icon">
+                  <i data-lucide="check-check"></i>
+                </div>
+
+                <div>
+                  <h2>Requirements</h2>
+                  <div class="career-card-subtitle">
+                    Skills and capabilities for this role
+                  </div>
+                </div>
+
+              </div>
+
+              <div
+                id="job-requirements"
+                class="requirements-list"
+              ></div>
+
+            </section>
+
+
+            <!-- JOB DETAILS -->
+
+            <section class="career-card">
+
+              <div class="career-card-header">
+
+                <div class="card-icon orange">
+                  <i data-lucide="briefcase"></i>
+                </div>
+
+                <div>
+                  <h2>Job Details</h2>
+                  <div class="career-card-subtitle">
+                    Position information
+                  </div>
+                </div>
+
+              </div>
+
+
+              <div class="job-details-list">
+
+                <div class="job-detail-row">
+                  <span class="job-detail-label">
+                    Department
+                  </span>
+
+                  <span
+                    id="job-department-details"
+                    class="job-detail-value"
+                  >
+                    —
+                  </span>
+                </div>
+
+
+                <div class="job-detail-row">
+                  <span class="job-detail-label">
+                    Employment Type
+                  </span>
+
+                  <span
+                    id="job-employment-details"
+                    class="job-detail-value"
+                  >
+                    —
+                  </span>
+                </div>
+
+
+                <div class="job-detail-row">
+                  <span class="job-detail-label">
+                    Work Arrangement
+                  </span>
+
+                  <span
+                    id="job-location-details"
+                    class="job-detail-value"
+                  >
+                    —
+                  </span>
+                </div>
+
+
+                <div class="job-detail-row">
+                  <span class="job-detail-label">
+                    Salary
+                  </span>
+
+                  <span
+                    id="job-salary"
+                    class="job-detail-value"
+                  >
+                    —
+                  </span>
+                </div>
+
+
+                <div class="job-detail-row">
+                  <span class="job-detail-label">
+                    Application Deadline
+                  </span>
+
+                  <span
+                    id="job-deadline"
+                    class="job-detail-value"
+                  >
+                    —
+                  </span>
+                </div>
+
+              </div>
+
+            </section>
+
+
+            <!-- READY TO APPLY CTA -->
+
+            <section class="impact-card">
+
+              <h2 class="text-white">Ready to make an impact?</h2>
+
+              <p>
+                If this opportunity sounds like a good fit for you,
+                we'd love to hear from you. Take the next step and
+                submit your application.
+              </p>
+
+              <button
+                type="button"
+                id="apply-now-button"
+                class="impact-button"
+              >
+                Apply for this role
+                <i data-lucide="arrow-right"></i>
+              </button>
+
+            </section>
+
+          </div>
+
+
+          <!-- ===================================================
+               RIGHT COLUMN
+          ==================================================== -->
+
+          <div class="career-right">
+
+
+            <!-- WHY JOIN FIGBLOOM -->
+
+            <section class="career-card">
+
+              <div class="career-card-header">
+
+                <div class="card-icon orange">
+                  <i data-lucide="heart-handshake"></i>
+                </div>
+
+                <div>
+                  <h2>Why Join Figbloom?</h2>
+                  <div class="career-card-subtitle">
+                    Grow with a team that builds with purpose
+                  </div>
+                </div>
+
+              </div>
+
+
+              <div class="benefits-grid">
+
+                <div class="benefit">
+
+                  <div class="benefit-icon">
+                    <i data-lucide="trending-up"></i>
+                  </div>
+
+                  <strong>Growth</strong>
+
+                  <span>
+                    Learn, develop and take your career further.
+                  </span>
+
+                </div>
+
+
+                <div class="benefit">
+
+                  <div class="benefit-icon">
+                    <i data-lucide="users"></i>
+                  </div>
+
+                  <strong>Great Team</strong>
+
+                  <span>
+                    Work alongside talented and supportive people.
+                  </span>
+
+                </div>
+
+
+                <div class="benefit">
+
+                  <div class="benefit-icon">
+                    <i data-lucide="lightbulb"></i>
+                  </div>
+
+                  <strong>Innovation</strong>
+
+                  <span>
+                    Solve meaningful problems with creative ideas.
+                  </span>
+
+                </div>
+
+
+                <div class="benefit">
+
+                  <div class="benefit-icon">
+                    <i data-lucide="rocket"></i>
+                  </div>
+
+                  <strong>Impact</strong>
+
+                  <span>
+                    Build digital solutions that make a difference.
+                  </span>
+
+                </div>
+
+              </div>
+
+            </section>
+
+
+            <!-- HOW TO APPLY -->
+
+            <section class="career-card">
+
+              <div class="career-card-header">
+
+                <div class="card-icon">
+                  <i data-lucide="list-checks"></i>
+                </div>
+
+                <div>
+                  <h2>How to Apply</h2>
+                  <div class="career-card-subtitle">
+                    Four simple steps
+                  </div>
+                </div>
+
+              </div>
+
+
+              <div class="steps">
+
+                <div class="step">
+
+                  <div class="step-number">1</div>
+
+                  <div>
+                    <strong>Complete the form</strong>
+                    <span>
+                      Provide your basic contact information.
+                    </span>
+                  </div>
+
+                </div>
+
+
+                <div class="step">
+
+                  <div class="step-number">2</div>
+
+                  <div>
+                    <strong>Tell us about yourself</strong>
+                    <span>
+                      Share why you're interested in the role.
+                    </span>
+                  </div>
+
+                </div>
+
+
+                <div class="step">
+
+                  <div class="step-number">3</div>
+
+                  <div>
+                    <strong>Upload your CV</strong>
+                    <span>
+                      Attach your latest CV or resume.
+                    </span>
+                  </div>
+
+                </div>
+
+
+                <div class="step">
+
+                  <div class="step-number">4</div>
+
+                  <div>
+                    <strong>Submit your application</strong>
+                    <span>
+                      Our team will review your application.
+                    </span>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </section>
+
+
+            <!-- APPLICATION FORM -->
+
+            <section
+              id="application-form-section"
+              class="career-card application-card sticky"
+            >
+
+              <div id="application-form-header" class="application-header">
+                <div class="career-card-header" style="margin-bottom: 0;">
+
+                  <div class="card-icon orange">
+                    <i data-lucide="send"></i>
+                  </div>
+
+                  <div>
+                    <h2>Apply for this role</h2>
+
+                    <p>
+                      Submit your application and CV below.
+                    </p>
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <form
+                id="job-application-form"
+                class="application-form"
+              >
+
+                <input
+                  id="application-job"
+                  type="hidden"
+                  name="job"
+                />
+
+                <input
+                  id="application-slug"
+                  type="hidden"
+                  name="slug"
+                />
+
+
+                <!-- FULL NAME -->
+
+                <div class="form-field">
+
+                  <label for="full_name">
+                    Full name
+                  </label>
+
+                  <input
+                    id="full_name"
+                    name="full_name"
+                    type="text"
+                    required
+                    placeholder="Your full name"
+                  />
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-field">
+
+                  <label for="email">
+                    Email address
+                  </label>
+
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    placeholder="you@example.com"
+                  />
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="form-field">
+
+                  <label for="phone">
+                    Phone number
+                  </label>
+
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="+254 700 000 000"
+                  />
+
+                </div>
+
+
+                <!-- PORTFOLIO -->
+
+                <div class="form-field">
+
+                  <label for="portfolio">
+                    Portfolio / LinkedIn
+                  </label>
+
+                  <input
+                    id="portfolio"
+                    name="portfolio"
+                    type="url"
+                    placeholder="https://..."
+                  />
+
+                </div>
+
+
+                <!-- COVER LETTER -->
+
+                <div class="form-field">
+
+                  <label for="cover_letter">
+                    Cover letter
+                  </label>
+
+                  <textarea
+                    id="cover_letter"
+                    name="cover_letter"
+                    rows="5"
+                    placeholder="Tell us why you're a good fit for this role."
+                  ></textarea>
+
+                </div>
+
+
+                <!-- CV -->
+
+                <div class="form-field">
+
+                  <label>
+                    CV / Resume
+                  </label>
+
+                  <div class="file-upload text-white">
+
+                    <label
+                      for="cv_file"
+                      class="text-white file-button"
+                    >
+                      <i data-lucide="upload" class="text-white"></i>
+                      Choose file
+                    </label>
+
+                    <span
+                      id="cv_file_name"
+                      class="file-name text-black"
+                    >
+                      No file chosen
+                    </span>
+
+                  </div>
+
+                  <input
+                    id="cv_file"
+                    name="cv_file"
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    class="hidden text-white"
+
+                  />
+
+                </div>
+
+
+                <!-- ERROR -->
+
+                <div
+                  id="application-error"
+                  class="application-error"
+                ></div>
+
+
+                <!-- SUBMIT -->
+
+                <button
+                  id="submit-application-btn"
+                  type="submit"
+                  class="submit-button"
+                >
+
+                  <span
+                    id="submit-spinner"
+                    class="submit-spinner hidden"
+                  ></span>
+
+                  <span id="submit-btn-label">
+                    Submit application
+                  </span>
+
+                  <i
+                    id="submit-arrow"
+                    data-lucide="arrow-right"
+                  ></i>
+
+                </button>
+
+              </form>
+
+
+              <!-- SUCCESS -->
+
+              <div
+                id="application-success"
+                class="success-state hidden"
+              >
+
+                <div class="success-icon">
+                  <i data-lucide="check"></i>
+                </div>
+
+                <h3>
+                  Application submitted successfully
+                </h3>
+
+                <p>
+                  Thank you for applying. Our team will review
+                  your application and get in touch if there's a
+                  match.
+                </p>
+
+              </div>
+
+            </section>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <div id="footer"></div>
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+    <script>
+
+      /* =========================================================
+         API URLS
+      ========================================================= */
+
+      const JOBS_API_URL =
+        window.JOBS_API_URL ||
+        (
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1"
+        )
+          ? "http://127.0.0.1:8000/api/jobs/?format=json"
+          : "/api/jobs/?format=json";
+
+
+      const APPLICATIONS_API_URL =
+        (
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1"
+        )
+          ? "http://127.0.0.1:8000/api/applications/"
+          : "/api/applications/";
+
+
+      /* =========================================================
+         HELPERS
+      ========================================================== */
+
+      function slugify(value) {
+
+        return String(value || "")
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "");
+
+      }
+
+
+      function getSlugFromUrl() {
+
+        const params =
+          new URLSearchParams(window.location.search);
+
+        return params.get("slug");
+
+      }
+
+
+      function getCsrfToken() {
+
+        return (
+          document.cookie
+            .split("; ")
+            .find((row) =>
+              row.startsWith("csrftoken=")
+            )
+            ?.split("=")[1] || ""
+        );
+
+      }
+
+
+      function escapeHtml(value) {
+
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+
+      }
+
+
+      function formatDate(value) {
+
+        if (!value) return "";
+
+        const date = new Date(value);
+
+        return date.toLocaleDateString(
+          "en-US",
+          {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }
+        );
+
+      }
+
+
+      function formatJobLocation(value) {
+
+        const locations = {
+          onsite: "Onsite",
+          hybrid: "Hybrid",
+          remote: "Remote",
+        };
+
+        return locations[value] ||
+          value ||
+          "Remote";
+
+      }
+
+
+      function formatEmploymentType(value) {
+
+        const types = {
+          full_time: "Full Time",
+          part_time: "Part Time",
+          contract: "Contract",
+          internship: "Internship",
+        };
+
+        return types[value] ||
+          value ||
+          "Not specified";
+
+      }
+
+
+      /* =========================================================
+         COMPONENT LOADER
+      ========================================================== */
+
+      async function loadComponent(
+        elementId,
+        componentPath
+      ) {
+
+        const element =
+          document.getElementById(elementId);
+
+        if (!element) return;
+
+        try {
+
+          const response =
+            await fetch(componentPath);
+
+          if (!response.ok) {
+            throw new Error(
+              "Failed to load component"
+            );
+          }
+
+          element.innerHTML =
+            await response.text();
+
+          if (window.Alpine) {
+            Alpine.initTree(element);
+          }
+
+          if (window.lucide) {
+            lucide.createIcons();
+          }
+
+        } catch (error) {
+
+          console.error(
+            "Component loading error:",
+            error
+          );
+
+        }
+
+      }
+
+
+      /* =========================================================
+         FORMAT DESCRIPTION
+      ========================================================== */
+
+      function formatJobText(text) {
+
+        if (!text) {
+          return "<p>No information provided.</p>";
+        }
+
+        return String(text)
+          .split(/\n\s*\n/)
+          .map((paragraph) => {
+
+            const cleaned =
+              paragraph.trim();
+
+            if (!cleaned) return "";
+
+            return `
+              <p>
+                ${escapeHtml(cleaned)
+                  .replace(/\n/g, "<br>")}
+              </p>
+            `;
+
+          })
+          .join("");
+
+      }
+
+
+      /* =========================================================
+         FORMAT REQUIREMENTS
+      ========================================================== */
+
+      function formatRequirements(text) {
+
+        if (!text) {
+
+          return `
+            <div class="requirement-item">
+              <span class="requirement-check">✓</span>
+              <span>
+                No specific requirements listed.
+              </span>
+            </div>
+          `;
+
+        }
+
+
+        const lines =
+          String(text)
+            .split("\n")
+            .map(line => line.trim())
+            .filter(Boolean);
+
+
+        return lines
+          .map(requirement => {
+
+            const cleaned =
+              requirement
+                .replace(/^[-•*]\s*/, "")
+                .replace(/^\d+[.)]\s*/, "");
+
+            return `
+              <div class="requirement-item">
+
+                <span class="requirement-check">
+                  ✓
+                </span>
+
+                <span>
+                  ${escapeHtml(cleaned)}
+                </span>
+
+              </div>
+            `;
+
+          })
+          .join("");
+
+      }
+
+
+      /* =========================================================
+         RENDER JOB
+      ========================================================== */
+
+      function renderJobDetails(job) {
+
+        const detailSection =
+          document.getElementById("job-detail");
+
+        const loader =
+          document.getElementById(
+            "job-detail-loader"
+          );
+
+
+        loader.classList.add("hidden");
+
+        detailSection.classList.remove("hidden");
+
+
+        /* HERO */
+
+        document.getElementById(
+          "job-title"
+        ).textContent =
+          job.title || "Open position";
+
+
+        document.getElementById(
+          "job-department"
+        ).textContent =
+          job.department || "General";
+
+
+        document.getElementById(
+          "job-location"
+        ).textContent =
+          formatJobLocation(job.location);
+
+
+        document.getElementById(
+          "job-employment"
+        ).textContent =
+          formatEmploymentType(
+            job.employment_type
+          );
+
+
+        const deadlineText =
+          document.getElementById(
+            "job-deadline-text"
+          );
+
+
+        if (job.deadline) {
+
+          deadlineText.querySelector(
+            "span"
+          ).textContent =
+            `Applications close on ${formatDate(
+              job.deadline
+            )}`;
+
+        } else {
+
+          deadlineText.querySelector(
+            "span"
+          ).textContent =
+            "Applications are currently open";
+
+        }
+
+
+        /* DESCRIPTION */
+
+        document.getElementById(
+          "job-description"
+        ).innerHTML =
+          formatJobText(
+            job.description ||
+            "This role is currently open. Please apply below."
+          );
+
+
+        /* EXPERIENCE */
+
+        document.getElementById(
+          "job-experience"
+        ).innerHTML =
+          formatJobText(
+            job.experience ||
+            "Experience requirements will be discussed during the selection process."
+          );
+
+
+        /* REQUIREMENTS */
+
+        document.getElementById(
+          "job-requirements"
+        ).innerHTML =
+          formatRequirements(
+            job.requirements
+          );
+
+
+        /* JOB DETAILS */
+
+        document.getElementById(
+          "job-department-details"
+        ).textContent =
+          job.department ||
+          "Not specified";
+
+
+        document.getElementById(
+          "job-employment-details"
+        ).textContent =
+          formatEmploymentType(
+            job.employment_type
+          );
+
+
+        document.getElementById(
+          "job-location-details"
+        ).textContent =
+          formatJobLocation(
+            job.location
+          );
+
+
+        document.getElementById(
+          "job-salary"
+        ).textContent =
+          job.salary ||
+          "Not specified";
+
+
+        document.getElementById(
+          "job-deadline"
+        ).textContent =
+          job.deadline
+            ? formatDate(job.deadline)
+            : "No deadline specified";
+
+
+        /* APPLICATION */
+
+        document.getElementById(
+          "application-job"
+        ).value =
+          job.id;
+
+
+        document.getElementById(
+          "application-slug"
+        ).value =
+          job.slug ||
+          slugify(job.title);
+
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+      }
+
+
+      /* =========================================================
+         INITIALISE APPLICATION
+      ========================================================== */
+
+      function setupApplicationForm() {
+
+        const form =
+          document.getElementById(
+            "job-application-form"
+          );
+
+
+        const submitButton =
+          document.getElementById(
+            "submit-application-btn"
+          );
+
+
+        const submitLabel =
+          document.getElementById(
+            "submit-btn-label"
+          );
+
+
+        const submitSpinner =
+          document.getElementById(
+            "submit-spinner"
+          );
+
+
+        const submitArrow =
+          document.getElementById(
+            "submit-arrow"
+          );
+
+
+        const cvInput =
+          document.getElementById(
+            "cv_file"
+          );
+
+
+        const cvFileName =
+          document.getElementById(
+            "cv_file_name"
+          );
+
+
+        const errorBox =
+          document.getElementById(
+            "application-error"
+          );
+
+
+        /* FILE */
+
+        cvInput.addEventListener(
+          "change",
+          () => {
+
+            if (
+              cvInput.files &&
+              cvInput.files.length
+            ) {
+
+              cvFileName.textContent =
+                cvInput.files[0].name;
+
+            } else {
+
+              cvFileName.textContent =
+                "No file chosen";
+
+            }
+
+          }
+        );
+
+
+        /* SUBMIT */
+
+        form.addEventListener(
+          "submit",
+          async (event) => {
+
+            event.preventDefault();
+
+
+            if (submitButton.disabled) {
+              return;
+            }
+
+
+            errorBox.style.display =
+              "none";
+
+
+            submitButton.disabled =
+              true;
+
+
+            submitLabel.textContent =
+              "Submitting...";
+
+
+            submitSpinner.classList.remove(
+              "hidden"
+            );
+
+
+            submitArrow.classList.add(
+              "hidden"
+            );
+
+
+            const formData =
+              new FormData(form);
+
+
+            try {
+
+              const response =
+                await fetch(
+                  APPLICATIONS_API_URL,
+                  {
+                    method: "POST",
+
+                    credentials:
+                      "same-origin",
+
+                    headers: {
+                      "X-CSRFToken":
+                        getCsrfToken(),
+                    },
+
+                    body: formData,
+                  }
+                );
+
+
+              const data =
+                await response
+                  .json()
+                  .catch(() => ({}));
+
+
+              if (!response.ok) {
+
+                console.error(
+                  "Application validation error:",
+                  data
+                );
+
+                let message =
+                  "There was a problem submitting your application.";
+
+                if (data) {
+
+                  if (typeof data === "object") {
+
+                    const errors =
+                      Object.values(data)
+                        .flat()
+                        .join(" ");
+
+                    if (errors) {
+                      message = errors;
+                    }
+
+                  } else if (
+                    typeof data === "string"
+                  ) {
+
+                    message = data;
+
+                  }
+
+                }
+
+                throw new Error(message);
+
+              }
+
+
+              /* SUCCESS */
+
+              form.classList.add(
+                "hidden"
+              );
+
+
+              document
+                .getElementById(
+                  "application-form-header"
+                )
+                .classList.add(
+                  "hidden"
+                );
+
+
+              document
+                .getElementById(
+                  "application-success"
+                )
+                .classList.remove(
+                  "hidden"
+                );
+
+
+              if (window.lucide) {
+                lucide.createIcons();
+              }
+
+
+              document
+                .getElementById(
+                  "application-success"
+                )
+                .scrollIntoView({
+                  behavior: "smooth",
+                  block: "center",
+                });
+
+
+            } catch (error) {
+
+              console.error(
+                "Application submission error:",
+                error
+              );
+
+
+              errorBox.textContent =
+                error.message ||
+                "There was a problem submitting your application.";
+
+
+              errorBox.style.display =
+                "block";
+
+
+              submitButton.disabled =
+                false;
+
+
+              submitLabel.textContent =
+                "Submit application";
+
+
+              submitSpinner.classList.add(
+                "hidden"
+              );
+
+
+              submitArrow.classList.remove(
+                "hidden"
+              );
+
+            }
+
+          }
+        );
+
+      }
+
+
+      /* =========================================================
+         PAGE INIT
+      ========================================================== */
+
+      document.addEventListener(
+        "DOMContentLoaded",
+        async () => {
+
+          await loadComponent(
+            "navbar",
+            "/components/navbar.html"
+          );
+
+
+          await loadComponent(
+            "footer",
+            "/components/footer.html"
+          );
+
+
+          const currentSlug =
+            getSlugFromUrl();
+
+
+          if (!currentSlug) {
+
+            document.getElementById(
+              "job-detail-loader"
+            ).innerHTML =
+              `
+                <div style="font-size: 2rem;">:(</div>
+                <strong>No job selected.</strong>
+              `;
+
+            return;
+
+          }
+
+
+          try {
+
+            const response =
+              await fetch(
+                JOBS_API_URL
+              );
+
+
+            if (!response.ok) {
+
+              throw new Error(
+                "Failed to load jobs"
+              );
+
+            }
+
+
+            const payload =
+              await response.json();
+
+
+            const jobs =
+              Array.isArray(payload)
+                ? payload
+                : Array.isArray(
+                    payload.results
+                  )
+                  ? payload.results
+                  : [];
+
+
+            const selectedJob =
+              jobs.find(job => {
+
+                const candidateSlug =
+                  String(
+                    job.slug ||
+                    slugify(job.title)
+                  );
+
+                return (
+                  candidateSlug ===
+                  currentSlug
+                );
+
+              });
+
+
+            if (!selectedJob) {
+
+              document.getElementById(
+                "job-detail-loader"
+              ).innerHTML =
+                `
+                  <div style="font-size: 2rem;">:(</div>
+                  <strong>This job could not be found.</strong>
+                  <span>
+                    The position may have been closed or removed.
+                  </span>
+                `;
+
+              return;
+
+            }
+
+
+            /* RENDER */
+
+            renderJobDetails(
+              selectedJob
+            );
+
+
+            /* FORM */
+
+            setupApplicationForm();
+
+
+            /* APPLY BUTTON */
+
+            const applyButton =
+              document.getElementById(
+                "apply-now-button"
+              );
+
+
+            applyButton.addEventListener(
+              "click",
+              () => {
+
+                const applicationSection =
+                  document.getElementById(
+                    "application-form-section"
+                  );
+
+
+                applicationSection.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+
+
+                setTimeout(() => {
+
+                  const nameInput =
+                    document.getElementById(
+                      "full_name"
+                    );
+
+                  if (nameInput) {
+                    nameInput.focus();
+                  }
+
+                }, 500);
+
+              }
+            );
+
+
+            /* ICONS */
+
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+
+
+          } catch (error) {
+
+            console.error(
+              "Error loading job details:",
+              error
+            );
+
+
+            document.getElementById(
+              "job-detail-loader"
+            ).innerHTML =
+              `
+                <div style="font-size: 2rem;">:(</div>
+                <strong>
+                  Unable to load this job.
+                </strong>
+                <span>
+                  Please refresh the page and try again.
+                </span>
+              `;
+
+          }
+
+        }
+      );
+
+
+      /* =========================================================
+         ALPINE
+      ========================================================== */
+
+      function mainFunction() {
+        return {};
+      }
+
+    </script>
+
+  </body>
+</html>

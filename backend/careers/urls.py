@@ -4,7 +4,6 @@ from .views import (
     JobListView,
     JobDetailView,
     ApplicationCreateView,
-    NewsletterSendView,
     NewsletterSubscribeView,
     JobAdminViewSet,
     ApplicationAdminViewSet,
@@ -23,6 +22,5 @@ urlpatterns = [
     path('newsletter/subscribe/', NewsletterSubscribeView.as_view(), name='newsletter-subscribe'),
     path('auth/csrf/', csrf_token, name='csrf-token'),
     path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'),
-    path('admin/newsletter/send/', NewsletterSendView.as_view(),name='admin-newsletter-send'),                                                                                                              
    
 ] + router.urls

@@ -23,6 +23,7 @@
         <meta name="twitter:image" content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png" />
 
         <title>Services | Figbloom Digital Group</title>
+        {% include "components/favicon.html" %}
 
         <link
             rel="stylesheet"
@@ -386,7 +387,7 @@
                 <div class="container space-y-8 lg:space-y-12">
                     <div class="flex items-center justify-between gap-5">
                         <h2>Related Projects</h2>
-                        <a href="/projects" class="btn"
+                        <a href="/projects/" class="btn"
                             >View all projects</a
                         >
                     </div>
@@ -433,7 +434,7 @@
                                             class="flex items-center justify-between gap-2"
                                         >
                                             <a
-                                                href="/projects"
+                                                href="/projects/"
                                                 x-text="project.category"
                                                 class="h4 text-gray relative z-1 line-clamp-1 transition hover:text-black lg:text-lg"
                                             ></a>

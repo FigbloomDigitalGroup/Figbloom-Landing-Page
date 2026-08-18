@@ -34,12 +34,12 @@ urlpatterns = [
     path('admin-dashboard/', views.admin_dashboard_page, name='admin-dashboard'),
 
     path('', views.home, name='home'),
-    path('about-us', views.about_us, name='about-us'),
-    path('career', views.career, name='career'),
-    path('career/detail', views.job_detail_page, name='job-detail-page'),
-    path('contact', views.contact, name='contact'),
-    path('projects', views.projects, name='projects'),
-    path('service', views.service, name='service'),
+    path('about-us/', views.about_us, name='about-us'),
+    path('career/', views.career, name='career'),
+    path('career/detail/', views.job_detail_page, name='job-detail-page'),
+    path('contact/', views.contact, name='contact'),
+    path('projects/', views.projects, name='projects'),
+    path('service/', views.service, name='service'),
     path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'
 ),
 ]

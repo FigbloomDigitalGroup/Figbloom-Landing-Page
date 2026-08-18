@@ -46,6 +46,7 @@
     />
 
     <title>Careers at Figbloom Digital Group</title>
+    {% include "components/favicon.html" %}
 
     <link rel="stylesheet" href="../assets/css/swiper-bundle.min.css" />
 
@@ -335,7 +336,7 @@
 
                   <div class="mt-auto">
                     <a
-                      :href="'/career/detail?slug=' + (job.slug || slugify(job.title || job.name || job.role || 'position'))"
+                      :href="'/career/detail/?slug=' + (job.slug || slugify(job.title || job.name || job.role || 'position'))"
                       class="btn"
                     >
                       Apply now

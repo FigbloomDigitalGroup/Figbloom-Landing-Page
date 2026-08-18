@@ -151,6 +151,28 @@
   .fb-nav header:not(.is-scrolled) .nav-link:hover,
   .fb-nav header:not(.is-scrolled) .nav-link.active { color: #fff; }
 
+  /* "Our Company" dropdown. Its light look (bg-white + border-gray-light) comes
+     from the Alpine :class binding in navbar.html and is right once the navbar
+     has a light backdrop, so only the transparent-over-hero state is overridden
+     here. Blur is safe on this element — unlike on the header itself, the panel
+     has no position: fixed descendants. */
+  .fb-nav header:not(.is-scrolled) .nav-submenu {
+    background-color: rgba(16, 20, 8, 0.82);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 16px 32px -12px rgba(0, 0, 0, 0.45);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+  }
+
+  .fb-nav header:not(.is-scrolled) .nav-submenu .submenu-nav-link {
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .fb-nav header:not(.is-scrolled) .nav-submenu .submenu-nav-link:hover,
+  .fb-nav header:not(.is-scrolled) .nav-submenu .submenu-nav-link.active {
+    color: #fff;
+  }
+
   /* Phone button: outlined on the hero so the orange hero CTA stays the only
      primary action. Reverts to the shared .btn style once scrolled. */
   .fb-nav header:not(.is-scrolled) .menu .btn {

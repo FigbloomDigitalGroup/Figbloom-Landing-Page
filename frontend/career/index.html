@@ -17,7 +17,7 @@
       name="keywords"
       content="careers at Figbloom, technology careers Kenya, software jobs, networking jobs, AI and security careers"
     />
-    <link rel="canonical" href="https://www.figbloomdigitalgroup.com/career/" />
+    <link rel="canonical" href="https://figbloom.org/career/" />
     <meta property="og:locale" content="en_KE" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Careers at Figbloom Digital Group" />
@@ -27,12 +27,12 @@
     />
     <meta
       property="og:url"
-      content="https://www.figbloomdigitalgroup.com/career/"
+      content="https://figbloom.org/career/"
     />
     <meta property="og:site_name" content="Figbloom Digital Group" />
     <meta
       property="og:image"
-      content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png"
+      content="https://figbloom.org/assets/images/figbloom_logo.png"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Careers at Figbloom Digital Group" />
@@ -42,26 +42,28 @@
     />
     <meta
       name="twitter:image"
-      content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png"
+      content="https://figbloom.org/assets/images/figbloom_logo.png"
     />
 
     <title>Careers at Figbloom Digital Group</title>
+    {% include "components/favicon.html" %}
 
     <link rel="stylesheet" href="../assets/css/swiper-bundle.min.css" />
 
     <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/motion.css" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebPage",
         "name": "Careers at Figbloom Digital Group",
-        "url": "https://www.figbloomdigitalgroup.com/career/",
+        "url": "https://figbloom.org/career/",
         "description": "Career opportunities at Figbloom Digital Group for people who want to build practical technology solutions."
       }
     </script>
   </head>
   <body x-data="mainFunction()">
-    <div id="navbar"></div>
+    {% include "components/navbar.html" %}
     <div
       class="relative"
       x-data="{ isLoading: true }"
@@ -83,7 +85,6 @@
       </div>
     </div>
 
-    <div id="navbar"></div>
 
     <div class="grow">
       <div
@@ -335,7 +336,7 @@
 
                   <div class="mt-auto">
                     <a
-                      :href="'/career/detail?slug=' + (job.slug || slugify(job.title || job.name || job.role || 'position'))"
+                      :href="'/career/detail/?slug=' + (job.slug || slugify(job.title || job.name || job.role || 'position'))"
                       class="btn"
                     >
                       Apply now
@@ -367,7 +368,7 @@
         </div>
       </div>
     </div>
-    <div id="footer"></div>
+    {% include "components/footer.html" %}
 
     <script src="../assets/js/lucide.min.js"></script>
     <script src="../assets/js/alpine.min.js" defer></script>

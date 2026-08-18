@@ -10,7 +10,7 @@
                             <a href="/" class="flex">
                                 <img
                                     src="/assets/images/figbloom_logo.png"
-                                    alt="Logo"
+                                    alt="Figbloom Digital Group"
                                     class="mx-auto w-40 md:w-48 lg:mx-0"
                                 />
                             </a>
@@ -136,23 +136,23 @@
                             </div>
                             <div class="flex flex-col items-start space-y-4">
                                 <a
-                                    href="/about-us"
+                                    href="/about-us/"
                                     class="hover:text-primary transition"
                                     >About Us</a
                                 >
                                 <a
-                                    href="/service"
+                                    href="/service/"
                                     class="hover:text-primary transition"
                                     >Our Services</a
                                 >
                                 <a
-                                    href="/projects"
+                                    href="/projects/"
                                     class="hover:text-primary transition"
                                     >Projects</a
                                 >
                                
                                 <a
-                                    href="/career"
+                                    href="/career/"
                                     class="hover:text-primary transition"
                                     >Career</a
                                 >
@@ -215,7 +215,7 @@
                             </div>
                             <div class="flex flex-col items-start space-y-4">
                                 <a
-                                    href="/contact"
+                                    href="/contact/"
                                     class="hover:text-primary transition"
                                     >Contact</a
                                 >
@@ -285,7 +285,7 @@
                             .find((row) => row.startsWith('csrftoken='))
                             ?.split('=')[1] || '';
 
-                        const response = await fetch('/newsletter/subscribe/', {
+                        const response = await fetch('/api/newsletter/subscribe/', {
                             method: 'POST',
                             credentials: 'same-origin',
                             headers: {

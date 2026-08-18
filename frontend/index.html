@@ -8,22 +8,23 @@
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta name="description" content="Figbloom Digital Group delivers reliable internet connectivity, CCTV security, AI automation, custom software, and digital growth solutions for modern businesses." />
         <meta name="keywords" content="Figbloom Digital Group, internet connectivity Kenya, CCTV security Kenya, AI automation Kenya, software development, digital growth solutions" />
-        <link rel="canonical" href="https://www.figbloomdigitalgroup.com/" />
+        <link rel="canonical" href="https://figbloom.org/" />
         <meta property="og:locale" content="en_KE" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Figbloom Digital Group | Internet, CCTV, AI & Software Solutions" />
         <meta property="og:description" content="We help businesses stay connected, secure, and productive through reliable internet, professional CCTV, AI automation, custom software, and digital growth solutions." />
-        <meta property="og:url" content="https://www.figbloomdigitalgroup.com/" />
+        <meta property="og:url" content="https://figbloom.org/" />
         <meta property="og:site_name" content="Figbloom Digital Group" />
-        <meta property="og:image" content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png" />
+        <meta property="og:image" content="https://figbloom.org/assets/images/figbloom_logo.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Figbloom Digital Group | Internet, CCTV, AI & Software Solutions" />
         <meta name="twitter:description" content="Reliable internet, CCTV, AI automation, software and digital growth solutions built for modern businesses." />
-        <meta name="twitter:image" content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png" />
+        <meta name="twitter:image" content="https://figbloom.org/assets/images/figbloom_logo.png" />
 
         <title>Figbloom Digital Group | Internet, CCTV, AI & Software Solutions</title>
+        {% include "components/favicon.html" %}
 
         <link
             rel="stylesheet"
@@ -37,14 +38,47 @@
             rel="stylesheet"
             href="../assets/css/style.css"
         />
+        <!-- Revamped hero / services / why-us sections. Must load after style.css. -->
+        <link
+            rel="stylesheet"
+            href="/assets/css/landing.css"
+        />
+        <link
+            rel="stylesheet"
+            href="/assets/css/motion.css"
+        />
+        <!--
+            Gate for all entrance/reveal animations. Runs before first paint so
+            there is no flash, and only opts in when JS is alive and the visitor
+            hasn't asked for reduced motion. Without this class nothing is
+            hidden, so any failure degrades to plain visible content.
+        -->
+        <script>
+            (function () {
+                try {
+                    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                        document.documentElement.classList.add('fb-anim');
+
+                        // If the reveal observer never gets going (script error,
+                        // blocked file), drop the gate so nothing stays hidden.
+                        // Cancelled by that script once it's set up.
+                        window.fbAnimFallback = setTimeout(function () {
+                            document.documentElement.classList.remove('fb-anim');
+                        }, 4000);
+                    }
+                } catch (e) {
+                    /* no motion, content stays visible */
+                }
+            })();
+        </script>
         <script src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
         <script type="application/ld+json">
             {
                 "@context": "https://schema.org",
                 "@type": "Organization",
                 "name": "Figbloom Digital Group",
-                "url": "https://www.figbloomdigitalgroup.com/",
-                "logo": "https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png",
+                "url": "https://figbloom.org/",
+                "logo": "https://figbloom.org/assets/images/figbloom_logo.png",
                 "description": "Technology solutions for businesses including internet connectivity, CCTV security, AI automation, software development, and digital growth services.",
                 "address": {
                     "@type": "PostalAddress",
@@ -65,84 +99,93 @@
     </head>
      
     <body x-data="mainFunction()">
-        <div id="navbar"></div>
-        <div
-            class="relative"
-            x-data="{ isLoading: true }"
-            x-init="setTimeout(() => {isLoading = false }, 1500)"
-        >
-            <div
-                id="preloader"
-                x-show="isLoading"
-                class="fixed inset-0 z-60 flex h-dvh w-full items-center justify-center bg-white"
-                style="display: none"
-            >
-                <span
-                    class="from-background to-background absolute inset-0 animate-pulse bg-linear-to-br via-white"
-                ></span>
+        <!--
+            The .fb-nav wrapper is the hook landing.css uses to make this page's
+            navbar transparent and fixed over the hero gradient. Homepage only —
+            the other pages include the same partial without this wrapper and
+            keep the standard white sticky bar.
+        -->
+        <div class="fb-nav">{% include "components/navbar.html" %}</div>
 
-                <div
-                    class="border-t-gray/70 border-b-gray-light absolute top-1/2 left-1/2 grid size-10 -translate-1/2 animate-spin place-content-center rounded-full border-y-8 sm:size-14"
-                ></div>
-            </div>
-        </div>
-
-          
-
-    <div id="navbar"></div>
-                  
-                   
         <div class="grow" >
-                      <div class="pt-14 lg:pt-16">
-                <div class="container">
-                    <div
-                        class="mx-auto max-w-262 space-y-6 pb-14 text-center lg:pb-20"
-                    >
-                         <div class="hero-gifs" aria-hidden="true">
-                                    <img src="assets/images/broadcast_tower.gif" class="hero-gif hero-gif-1" alt="">
-                                   <img src="assets/images/security_camera_gif.gif" class="hero-gif hero-gif-2" alt="">
-                                   <img src="assets/images/tranmission_gif.gif" class="hero-gif hero-gif-3" alt="">
-                                     <img src="assets/images/AI_gif.gif" class="hero-gif hero-gif-4" alt="">
+            <!--
+                Hero and the metrics counters share one background container so
+                the gradient runs continuously across both, rather than each
+                band painting its own green.
+            -->
+            <div class="fb fb-top">
+                <img
+                    src="/assets/images/about-bg.jpg"
+                    alt=""
+                    class="fb-top__bg"
+                    fetchpriority="high"
+                />
+                <div class="fb-top__layer fb-top__layer--wash"></div>
+                <div class="fb-top__layer fb-top__layer--glow"></div>
+
+                <section class="fb-hero">
+                <div class="fb-hero__inner container">
+                    <div class="fb-hero__grid">
+                        <div>
+                            <div class="fb-hero__kicker">
+                                <span class="fb-hero__tick"></span>
+                                <span class="fb-hero__place">Nairobi &middot; Serving all of Kenya</span>
                             </div>
-                        <h1>
-                         Reliable <span class="sketch-underline">internet</span>, <span class="sketch-underline">CCTV</span>, <span class="sketch-underline">AI</span> and <span class="sketch-underline">software solutions</span> for businesses in Kenya
-                     </h1>
-                         <p class="mx-auto max-w-143">
-                                Figbloom Digital Group helps businesses in Nairobi and across Kenya with internet connectivity, CCTV installation, AI automation, custom software development, and digital growth solutions that improve security, efficiency, and performance.
-                      </p>
-                        <div
-                            class="flex flex-wrap items-center justify-center gap-3 sm:gap-5"
-                        >
-                            <a href="/contact" class="btn pr-3">
-                                Get a quote
-                                <i data-lucide="chevron-right"></i>
-                            </a>
-                            <a
-                                href="/service"
-                                class="btn btn-secondary pr-3"
-                            >
-                                Explore services
-                                <i data-lucide="chevron-right"></i>
-                            </a>
+
+                            <h1 class="fb-hero__title">
+                                The infrastructure Kenyan business actually runs on.
+                            </h1>
+
+                            <p class="fb-hero__lede">
+                                Internet connectivity, CCTV security, AI automation and custom
+                                software &mdash; delivered by one team, accountable end to end.
+                            </p>
+
+                            <div class="fb-hero__actions">
+                                <a href="/contact/" class="fb-btn fb-btn--orange">
+                                    Book a consultation
+                                </a>
+                                <a href="/service/" class="fb-btn fb-btn--onDark">
+                                    Explore services
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="fb-hero__facts">
+                            <div class="fb-fact">
+                                <div>
+                                    <div class="fb-fact__title">One vendor, four disciplines</div>
+                                    <p class="fb-fact__desc">
+                                        Connectivity, security, software and AI under one contract.
+                                    </p>
+                                </div>
+                                <span class="fb-fact__num">01</span>
+                            </div>
+                            <div class="fb-fact">
+                                <div>
+                                    <div class="fb-fact__title">Same-day on site in Nairobi</div>
+                                    <p class="fb-fact__desc">
+                                        Engineers based on Enterprise Road, not a call centre abroad.
+                                    </p>
+                                </div>
+                                <span class="fb-fact__num">02</span>
+                            </div>
+                            <div class="fb-fact">
+                                <div>
+                                    <div class="fb-fact__title">98% client satisfaction</div>
+                                    <p class="fb-fact__desc">
+                                        Across 250+ projects delivered since 2016.
+                                    </p>
+                                </div>
+                                <span class="fb-fact__num">03</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div
-                    class="mx-auto h-50 max-w-409 overflow-hidden rounded-t-[100px] sm:h-70 sm:rounded-t-[200px] lg:h-92 lg:rounded-t-[370px]"
-                >
-                    <img
-                        src="assets/images/hero_img.jpeg"
-                        alt="Hero image"
-                        class="h-full w-full object-cover object-top"
-                    />
-                </div>
-            </div>           
-
-         
-
+            </section>
 
             <div
-                class="bg-secondary py-14 text-center font-medium text-white lg:py-16"
+                class="fb-metrics py-14 text-center font-medium text-white lg:py-16"
             >
                 <div class="container">
                     <div
@@ -170,7 +213,7 @@
                         </div>
                         <div class="space-y-2">
                             <div
-                                x-data="counter(10)"
+                                x-data="counter(35)"
                                 x-init="observe()"
                                 class="text-primary text-3xl sm:text-4xl xl:text-5xl/14"
                             >
@@ -191,244 +234,106 @@
                     </div>
                 </div>
             </div>
+            </div>
+            <!-- /.fb-top (shared hero + metrics background) -->
 
 
-           <div class="bg-background py-14 lg:py-16">
-
-
+           <section class="fb fb-services" id="services">
              <div class="container">
-    <div
-        class="flex flex-col items-start gap-4 sm:flex-row sm:items-end" >
-        <div class="w-full grow">
-            <div class="section-heading text-center">
-                <div>Our services</div>
-
-                 <h2>
-                 <span class="sketch-underline">Technology</span> that moves <br />
-                 your <span class="sketch-underline">business</span>  forward
-               </h2>
-
-               <p class="mx-auto sm:max-w-md">
-                AI reviews the work. Humans own the outcome
-
-                 </p>
-          </div>
-</div>
-    </div>
-
-    <div
-        class="grid grid-cols-1 gap-x-6 gap-y-8 pt-12 sm:grid-cols-2 lg:grid-cols-3"
-    >
-        <!-- AI Automation -->
-        <div class="bg-primary rounded-[14px]">
-            <div
-                class="group border-gray-light relative h-full overflow-hidden rounded-xl border bg-white p-6 shadow-[0_16px_32px_-12px_rgba(88,92,95,0.1)] transition-all hover:-rotate-3"
-            >
-                <!-- Keep leaves icon -->
-                <img
-                    src="/assets/images/leaves-icon.svg"
-                    alt="leaves-icon"
-                    class="absolute -top-5 -right-5 size-40"
-                />
-
-                <div class="relative">
-                    <div class="grid size-10 place-content-center">
-                        <img
-                            src="/assets/images/ai.svg"
-                            alt="AI Automation"
-                            class="service-icon size-8 lg:size-9"
-                        />
+                <div class="fb-services__head">
+                    <div>
+                        <div class="fb-eyebrow">What we do</div>
+                        <h2 class="fb-title">Five capabilities, one accountable team.</h2>
                     </div>
-
-                    <h3 class="mt-8 mb-4">
-                        Put AI to Work
-                    </h3>
-
-                    <p>
-                        We turn repetitive work into intelligent systems that
-                        automate workflows, support better decisions, and give
-                        your team more time to focus on what moves the business
-                        forward.
+                    <p class="fb-lede">
+                        Most businesses stitch together four vendors and own the gaps between
+                        them. We close the gaps &mdash; from the fibre in the wall to the
+                        software on the screen.
                     </p>
                 </div>
-            </div>
-        </div>
 
-        <!-- ISP -->
-        <div class="bg-primary rounded-[14px]">
-            <div
-                class="group border-gray-light relative h-full overflow-hidden rounded-xl border bg-white p-6 shadow-[0_16px_32px_-12px_rgba(88,92,95,0.1)] transition-all hover:-rotate-3"
-            >
-                <!-- Keep leaves icon -->
-                <img
-                    src="/assets/images/leaves-icon.svg"
-                    alt="leaves-icon"
-                    class="absolute -top-5 -right-5 size-40"
-                />
-
-                <div class="relative">
-                    <div class="grid size-10 place-content-center">
-                        <img
-                            src="/assets/images/ISP.svg"
-                            alt="Internet Connectivity"
-                            class="service-icon size-8 lg:size-9"
-                        />
+                <div class="fb-services__grid">
+                    <div class="fb-service">
+                        <div class="fb-service__top">
+                            <span class="fb-service__tile">
+                                <span class="fb-service__icon" style="--icon: url('/assets/images/ISP.svg')"></span>
+                            </span>
+                            <span class="fb-service__num">01</span>
+                        </div>
+                        <h3 class="fb-service__name">Internet connectivity</h3>
+                        <p class="fb-service__desc">
+                            Business-grade links with routing, redundancy and SLAs that keep
+                            teams online when it matters.
+                        </p>
                     </div>
 
-                    <h3 class="mt-8 mb-4">
-                        Keep Your Business Connected
-                    </h3>
-
-                    <p>
-                        Fast, reliable connectivity built around the way your
-                        business operates — keeping your teams productive,
-                        your systems online, and your operations moving without
-                        unnecessary interruptions.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- CCTV & Security -->
-        <div class="bg-primary rounded-[14px]">
-            <div
-                class="group border-gray-light relative h-full overflow-hidden rounded-xl border bg-white p-6 shadow-[0_16px_32px_-12px_rgba(88,92,95,0.1)] transition-all hover:-rotate-3"
-            >
-                <!-- Keep leaves icon -->
-                <img
-                    src="/assets/images/leaves-icon.svg"
-                    alt="leaves-icon"
-                    class="absolute -top-5 -right-5 size-40"/>
-
-                <div class="relative">
-                    <div class="grid size-10 place-content-center">
-                        <img
-                            src="/assets/images/camera.svg"
-                            alt="CCTV and Security"
-                            class="service-icon size-8 lg:size-9"/>
+                    <div class="fb-service">
+                        <div class="fb-service__top">
+                            <span class="fb-service__tile">
+                                <span class="fb-service__icon" style="--icon: url('/assets/images/camera.svg')"></span>
+                            </span>
+                            <span class="fb-service__num">02</span>
+                        </div>
+                        <h3 class="fb-service__name">CCTV &amp; security</h3>
+                        <p class="fb-service__desc">
+                            Surveillance designed around your site, installed properly and
+                            monitored remotely.
+                        </p>
                     </div>
 
-                    <h3 class="mt-8 mb-4">
-                        See More. Protect Better.
-                    </h3>
-
-                    <p>
-                        We install professional surveillance and security
-                        systems that give you greater visibility, stronger
-                        protection, and more confidence in the places and
-                        operations that matter most.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Marketing -->
-        <div class="bg-primary rounded-[14px]">
-            <div
-                class="group border-gray-light relative h-full overflow-hidden rounded-xl border bg-white p-6 shadow-[0_16px_32px_-12px_rgba(88,92,95,0.1)] transition-all hover:-rotate-3"
-            >
-                <!-- Keep leaves icon -->
-                <img
-                    src="/assets/images/leaves-icon.svg"
-                    alt="leaves-icon"
-                    class="absolute -top-5 -right-5 size-40"
-                />
-
-                <div class="relative">
-                    <div class="grid size-10 place-content-center">
-                        <img
-                            src="/assets/images/marketingsvg.svg"
-                            alt="Marketing Solutions"
-                            class="service-icon size-8 lg:size-9"
-                        />
+                    <div class="fb-service">
+                        <div class="fb-service__top">
+                            <span class="fb-service__tile">
+                                <span class="fb-service__icon" style="--icon: url('/assets/images/ai.svg')"></span>
+                            </span>
+                            <span class="fb-service__num">03</span>
+                        </div>
+                        <h3 class="fb-service__name">AI automation</h3>
+                        <p class="fb-service__desc">
+                            Repetitive workflows turned into systems that run themselves. AI
+                            reviews the work; humans own the outcome.
+                        </p>
                     </div>
 
-                    <h3 class="mt-8 mb-4">
-                        Turn Attention Into Growth
-                    </h3>
-
-                    <p>
-                        We help businesses reach the right people, build
-                        stronger visibility, and turn digital attention into
-                        meaningful engagement and measurable growth.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Branding -->
-        <div class="bg-primary rounded-[14px]">
-            <div
-                class="group border-gray-light relative h-full overflow-hidden rounded-xl border bg-white p-6 shadow-[0_16px_32px_-12px_rgba(88,92,95,0.1)] transition-all hover:-rotate-3"
-            >
-                <!-- Keep leaves icon -->
-                <img
-                    src="/assets/images/leaves-icon.svg"
-                    alt="leaves-icon"
-                    class="absolute -top-5 -right-5 size-40"
-                />
-
-                <div class="relative">
-                    <div class="grid size-10 place-content-center">
-                        <img
-                            src="/assets/images/brand-wire.svg"
-                            alt="Brand Identity"
-                            class="service-icon size-8 lg:size-9"
-                        />
+                    <div class="fb-service">
+                        <div class="fb-service__top">
+                            <span class="fb-service__tile">
+                                <span class="fb-service__icon" style="--icon: url('/assets/images/web.svg')"></span>
+                            </span>
+                            <span class="fb-service__num">04</span>
+                        </div>
+                        <h3 class="fb-service__name">Software &amp; platforms</h3>
+                        <p class="fb-service__desc">
+                            Websites, internal tools and mobile apps built to solve a named
+                            problem, not to look busy.
+                        </p>
                     </div>
 
-                    <h3 class="mt-8 mb-4">
-                        Make Your Brand Impossible to Ignore
-                    </h3>
-
-                    <p>
-                        We shape clear, consistent brand identities that help
-                        businesses look credible, communicate with confidence,
-                        and stay memorable wherever their audience finds them.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Web & App Development -->
-        <div class="bg-primary rounded-[14px]">
-            <div
-                class="group border-gray-light relative h-full overflow-hidden rounded-xl border bg-white p-6 shadow-[0_16px_32px_-12px_rgba(88,92,95,0.1)] transition-all hover:-rotate-3"
-            >
-                <!-- Keep leaves icon -->
-                <img
-                    src="/assets/images/leaves-icon.svg"
-                    alt="leaves-icon"
-                    class="absolute -top-5 -right-5 size-40"
-                />
-
-                <div class="relative">
-                    <div class="grid size-10 place-content-center">
-                        <img
-                            src="/assets/images/web.svg"
-                            alt="Web and App Development"
-                            class="service-icon size-8 lg:size-9"
-                        />
+                    <div class="fb-service">
+                        <div class="fb-service__top">
+                            <span class="fb-service__tile">
+                                <span class="fb-service__icon" style="--icon: url('/assets/images/brand-wire.svg')"></span>
+                            </span>
+                            <span class="fb-service__num">05</span>
+                        </div>
+                        <h3 class="fb-service__name">Brand &amp; growth</h3>
+                        <p class="fb-service__desc">
+                            Identity and digital marketing that makes the rest of the work
+                            legible to your market.
+                        </p>
                     </div>
 
-                    <h3 class="mt-8 mb-4">
-                        Build What Your Business Needs Next
-                    </h3>
-
-                    <p>
-                        From business websites to custom platforms and mobile
-                        applications, we build reliable digital products that
-                        solve real problems and grow with your business.
-                    </p>
+                    <div class="fb-service fb-service--ask">
+                        <p class="fb-service__desc">
+                            Not sure which of these you need? We start with a site visit and a
+                            plain-language recommendation.
+                        </p>
+                        <a href="/contact/" class="fb-arrow">Talk to an engineer &rarr;</a>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
+             </div>
+           </section>
 
-
-
-</div>
 
 
 
@@ -485,7 +390,7 @@
                                             class="flex items-center justify-between gap-2"
                                         >
                                             <a
-                                                href="/projects"
+                                                href="/projects/"
                                                 x-text="project.category"
                                                 class="h4 text-gray relative z-1 line-clamp-1 transition hover:text-black lg:text-lg"
                                             ></a>
@@ -507,173 +412,236 @@
                         </div>
                     </div>
                     <div class="text-center">
-                        <a href="/projects" class="btn"
+                        <a href="/projects/" class="btn"
                             >View all projects</a
                         >
                     </div>
                 </div>
             </div>
 
-            <div class="border-gray/20 border-y bg-[#FAFAFA] pt-14 lg:pt-16">
+            <section class="fb fb-clients">
                 <div class="container">
-                    <div class="section-heading">
-                        <div>Clients</div>
-                        <h2>The businesses already building with us</h2>
+                    <div class="fb-clients__head">
+                        <div class="fb-eyebrow">Clients</div>
+                        <h2 class="fb-title">The businesses already building with us</h2>
                     </div>
                 </div>
-                <div
-                    x-data="clientsSlider()"
-                    x-init="init()"
-                    class="swiper clients-swiper pt-12! pb-14! lg:pb-16!"
-                >
-                    <div class="swiper-wrapper">
-                        <template x-for="logo in logos">
-                            <div class="swiper-slide">
-                                <div
-                                    class="flex h-[140px] w-[250px] items-center justify-center rounded-xl border border-gray-200 bg-white p-4"
-                                >
-                                    <img
-                                        :src="logo"
-                                        alt="Logo"
-                                        class="h-[72px] w-full max-w-[180px] object-contain"
-                                    />
-                                </div>
-                            </div>
-                        </template>
+
+                <!--
+                    Continuous CSS marquee (replaced a stepping Swiper autoplay).
+                    The track holds two identical rows and slides by exactly one
+                    row width (-50%), which makes the loop seamless. Each row
+                    repeats the four logos 4x so it is always wider than the
+                    viewport — a row narrower than the screen would show a gap on
+                    every cycle. The second row is aria-hidden so screen readers
+                    announce each client once. Adding a client means adding it to
+                    BOTH rows.
+                -->
+                <div class="fb-marquee">
+                    <div class="fb-marquee__track">
+                    <ul class="fb-marquee__row">
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="CapitalPay" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="Mali Cash" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="SSCAA" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="Mular Credit Ltd" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="CapitalPay" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="Mali Cash" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="SSCAA" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="Mular Credit Ltd" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="CapitalPay" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="Mali Cash" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="SSCAA" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="Mular Credit Ltd" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="CapitalPay" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="Mali Cash" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="SSCAA" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="Mular Credit Ltd" loading="lazy" decoding="async" />
+                        </li>
+                    </ul>
+                    <ul class="fb-marquee__row" aria-hidden="true">
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/capital_pay.svg" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mali-cash.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/ssudanaviation.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                        <li>
+                            <img src="/assets/images/mulacredit.png" alt="" loading="lazy" decoding="async" />
+                        </li>
+                    </ul>
                     </div>
                 </div>
-            </div>
+            </section>
 
 
 
-           <div class="py-14 lg:py-16">
-    <div class="container">
-        <div
-            class="section-heading border-gray-light flex flex-col items-center pb-4 text-center! sm:text-left lg:border-b xl:flex-row xl:justify-between xl:gap-5 xl:text-left"
-        >
-            <h2>Why businesses choose us</h2>
+           <section class="fb fb-why">
+             <div class="container">
+                <div class="fb-why__grid">
+                    <div class="fb-why__copy">
+                        <div class="fb-eyebrow">Why Figbloom</div>
+                        <h2 class="fb-title">Why businesses choose us</h2>
+                        <p class="fb-lede" style="margin-top: 20px;">
+                            We bring the experience, speed, flexibility, and support to turn
+                            technology into real business progress.
+                        </p>
+                    </div>
 
-            <p class="text-center sm:max-w-125 xl:mt-0! xl:text-left">
-                We bring the experience, speed, flexibility, and support to
-                turn technology into real business progress.
-            </p>
-        </div>
-
-        <div
-            class="grid grid-cols-1 gap-12 pt-6 sm:grid-cols-2 lg:grid-cols-4 xl:pt-12"
-        >
-            <!-- Proven Expertise -->
-            <div class="group space-y-3">
-                <div class="grid size-10 place-content-center rounded-lg">
-                    <img
-                        src="/assets/images/test.svg"
-                        alt="Proven expertise"
-                        class="size-8 object-contain"
-                    />
-                </div>
-
-                <h3>Experience That Delivers</h3>
-
-                <p>
-                    We bring proven technical experience to complex business
-                    challenges, delivering solutions built to work.
-                </p>
-            </div>
-
-            <!-- Fast Delivery -->
-            <div
-                class="group before:bg-gray-light relative space-y-3 before:absolute before:top-0 before:-left-6 before:hidden before:h-full before:w-px lg:pt-14 lg:before:block"
-            >
-                <div class="grid size-10 place-content-center rounded-lg">
-                    <img
-                        src="/assets/images/fast-delivery.svg"
-                        alt="Fast delivery"
-                        class="size-8 object-contain"
-                    />
-                </div>
-
-                <h3>Move From Idea to Impact</h3>
-
-                <p>
-                    We keep projects moving with clear processes, practical
-                    execution, and delivery without unnecessary delays.
-                </p>
-            </div>
-
-            <!-- Scalable Approach -->
-            <div
-                class="group before:bg-gray-light relative space-y-3 before:absolute before:top-0 before:-left-6 before:hidden before:h-full before:w-px lg:pt-6 lg:before:block"
-            >
-                <div class="grid size-10 place-content-center rounded-lg">
-                    <img
-                        src="/assets/images/graph-scale.svg"
-                        alt="Scalable solutions"
-                        class="size-8 object-contain"
-                    />
-                </div>
-
-                <h3>Built to Grow With You</h3>
-
-                <p>
-                    Our solutions are designed to adapt as your operations,
-                    customers, and ambitions continue to grow.
-                </p>
-            </div>
-
-            <!-- Dedicated Support -->
-            <div
-                class="group before:bg-gray-light relative space-y-3 before:absolute before:top-0 before:-left-6 before:hidden before:h-full before:w-px lg:pt-14 lg:before:block"
-            >
-                <div class="grid size-10 place-content-center rounded-lg">
-                    <img
-                        src="/assets/images/support.svg"
-                        alt="Dedicated support"
-                        class="size-8 object-contain"
-                    />
-                </div>
-
-                <h3>We Stay With You</h3>
-
-                <p>
-                    From setup to ongoing support, we remain available to keep
-                    your technology working when your business needs it.
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-            <div
-                class="hero-pic relative  bg-[url('../images/teams12.jpeg')] bg-cover bg-center bg-no-repeat py-14 lg:py-16"
-            >
-                <div
-                    class="from-secondary via-secondary to-secondary absolute inset-0 bg-linear-to-r opacity-80 lg:to-transparent lg:opacity-100"
-                ></div>
-                <div class="container">
-                    <div
-                        class="relative flex flex-col items-center gap-14 lg:flex-row lg:items-end lg:justify-between"
-                    >
-                        <div class="section-heading lg:text-left">
-                            <div>About us</div>
-                            <h2 class="text-white lg:max-w-122 lg:pb-33">
-                                Your business shouldn't have to adapt to technology that doesn't fit.
-                            </h2>
-                            <p
-                                class="border-white/30 font-medium text-white/80 sm:max-w-3xl lg:mt-0 lg:border-t lg:pt-4 lg:text-2xl/10"
-                            >
-                               
-                                Figbloom builds the connectivity, security, software, and AI solutions that adapt to how you actually work, helping businesses replace friction with systems that work.
+                    <div class="fb-why__cards">
+                        <div class="fb-why__card">
+                            <div class="fb-why__num">01</div>
+                            <h3 class="fb-why__name">Experience that delivers</h3>
+                            <p class="fb-why__desc">
+                                A decade of field work on complex installations, not a portfolio
+                                of concepts.
                             </p>
                         </div>
-                        <a
-                            href="/about-us"
-                            class="btn btn-secondary shrink-0 pr-3"
-                        >
-                            Know more about us
-                            <i data-lucide="chevron-right" class="size-5"></i>
-                        </a>
+                        <div class="fb-why__card">
+                            <div class="fb-why__num">02</div>
+                            <h3 class="fb-why__name">From idea to impact</h3>
+                            <p class="fb-why__desc">
+                                Clear scope, fixed milestones, and delivery without the
+                                unexplained delays.
+                            </p>
+                        </div>
+                        <div class="fb-why__card">
+                            <div class="fb-why__num">03</div>
+                            <h3 class="fb-why__name">Built to grow with you</h3>
+                            <p class="fb-why__desc">
+                                Systems sized for where you are and designed for where you're
+                                heading.
+                            </p>
+                        </div>
+                        <div class="fb-why__card">
+                            <div class="fb-why__num">04</div>
+                            <h3 class="fb-why__name">We stay with you</h3>
+                            <p class="fb-why__desc">
+                                Named contacts, real response times, support that answers after
+                                handover.
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
+             </div>
+           </section>
+            <!--
+                About band. Split panel: copy on the green field, the team photo
+                in its own framed figure so it reads as a deliberate image rather
+                than washed-out wallpaper behind the text.
+            -->
+            <section class="fb fb-about">
+                <div class="container">
+                    <div class="fb-about__grid">
+                        <div class="fb-about__copy">
+                            <div class="fb-about__eyebrow">About us</div>
+
+                            <h2 class="fb-about__title">
+                                Your business shouldn't have to adapt to technology that
+                                doesn't fit.
+                            </h2>
+
+                            <p class="fb-about__lede">
+                                Figbloom builds the connectivity, security, software, and AI
+                                solutions that adapt to how you actually work, helping
+                                businesses replace friction with systems that work.
+                            </p>
+
+                            <ul class="fb-about__points">
+                                <li>One team across connectivity, security and software</li>
+                                <li>Nairobi-based engineers, on site the same day</li>
+                                <li>Support that still answers after handover</li>
+                            </ul>
+
+                            <a href="/about-us/" class="fb-btn fb-btn--orange fb-about__cta">
+                                Know more about us
+                            </a>
+                        </div>
+
+                        <figure class="fb-about__media">
+                            <img
+                                src="/assets/images/aboutus.jpg"
+                                alt="The Figbloom team working together at the Nairobi office"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                            <figcaption class="fb-about__caption">
+                                <span class="fb-about__caption-label">Our office</span>
+                                <span class="fb-about__caption-value">Enterprise Road, Nairobi</span>
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </section>
             <div
                 x-data="testimonialsData()"
                 x-init="initSwiper()"
@@ -773,7 +741,7 @@
                 </div>
             </div>
 
-           <div id="prices"></div>
+           {% include "components/prices.html" %}
 
             <div
                 class="relative overflow-hidden py-14 shadow-[0_16px_40px_-8px_rgba(13,13,13,0.2)] lg:py-16"
@@ -810,11 +778,11 @@
                         <button
                                 type="button"
                                 class="btn btn-secondary px-2.5 whitespace-nowrap sm:px-4.75"
-                                onclick="window.location.href='/contact'">
+                                onclick="window.location.href='/contact/'">
                             Get a quote
                           </button>
                         <a
-                            href="/contact"
+                            href="/contact/"
                             class="btn btn-secondary bg-transparent px-2.5 whitespace-nowrap text-white sm:px-4.75"
                             >Book a free consultation</a
                         >
@@ -822,7 +790,7 @@
                 </div>
             </div>
         </div>
-         <div id="footer"></div>
+         {% include "components/footer.html" %}
     
                            
 
@@ -859,71 +827,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
         <script>
-            function clientsSlider() {
-                return {
-                    swiper: null,
-
-                    logos: [
-                        '/assets/images/capital_pay.svg',
-                        '/assets/images/mali-cash.png',
-                        '/assets/images/ssudanaviation.png',
-                        '/assets/images/mulacredit.png',
-                         '/assets/images/capital_pay.svg',
-                        '/assets/images/mali-cash.png',
-                        '/assets/images/ssudanaviation.png',
-                        '/assets/images/mulacredit.png',
-                          '/assets/images/capital_pay.svg',
-                        '/assets/images/mali-cash.png',
-                        '/assets/images/ssudanaviation.png',
-                        '/assets/images/mulacredit.png',
-                         '/assets/images/capital_pay.svg',
-                        '/assets/images/mali-cash.png',
-                        '/assets/images/ssudanaviation.png',
-                        '/assets/images/mulacredit.png',
-                          '/assets/images/capital_pay.svg',
-                        '/assets/images/mali-cash.png',
-                        '/assets/images/ssudanaviation.png',
-                        '/assets/images/mulacredit.png',
-
-                       
-                    ],
-
-                 
-
-                    init() {
-                        // Wait until Alpine renders slides
-                        this.$nextTick(() => {
-                            this.initSwiper()
-                        })
-                    },
-
-                    initSwiper() {
-                        this.swiper = new Swiper(this.$el, {
-                            slidesPerView: 2,
-                            spaceBetween: 16,
-                            loop: true,
-                            centeredSlides: true,
-                            speed: 1000,
-
-                            autoplay: {
-                                delay: 1000,
-                                disableOnInteraction: false,
-                            },
-
-                            breakpoints: {
-                                768: { slidesPerView: 4, spaceBetween: 16 },
-                                1024: { slidesPerView: 5, spaceBetween: 30 },
-                                1280: { slidesPerView: 6, spaceBetween: 30 },
-                                1568: { slidesPerView: 8, spaceBetween: 48 },
-                            },
-
-                            observer: true,
-                            observeParents: true,
-                        })
-                    },
-                }
-            }
-
             function testimonialsData() {
                 return {
                     swiper: null,
@@ -1210,5 +1113,96 @@ document.addEventListener("DOMContentLoaded", () => {
 
            <div id="floating-actions"></div>
         <script src="assets/js/components.js"></script>
+
+        <!--
+            Homepage navbar state: transparent over the hero so the gradient runs
+            to the top of the page, then picks up a solid backdrop as soon as the
+            visitor scrolls. The navbar is server-rendered now, so it's in the DOM
+            at parse time — no waiting on injection.
+        -->
+        <script>
+            (function () {
+                var header = document.querySelector('.fb-nav header');
+
+                if (!header) return;
+
+                function sync() {
+                    if (window.scrollY > 8) {
+                        header.classList.add('is-scrolled');
+                    } else {
+                        header.classList.remove('is-scrolled');
+                    }
+                }
+
+                window.addEventListener('scroll', sync, { passive: true });
+                sync();
+            })();
+        </script>
+
+        <!--
+            Scroll reveals. The hidden state is applied by landing.css under
+            html.fb-anim; this only adds .is-in as elements come into view.
+            Selector list mirrors the one in landing.css.
+        -->
+        <script>
+            (function () {
+                var SELECTOR = [
+                    '.fb-services__head > *',
+                    '.fb-service',
+                    '.fb-why__copy',
+                    '.fb-why__card',
+                    '.fb-about__copy',
+                    '.fb-about__media',
+                ].join(',');
+
+                function revealAll(nodes) {
+                    for (var i = 0; i < nodes.length; i++) {
+                        nodes[i].classList.add('is-in');
+                    }
+                }
+
+                function init() {
+                    var nodes = document.querySelectorAll(SELECTOR);
+
+                    if (!nodes.length) return;
+
+                    // No observer support, or motion opted out: show everything
+                    // immediately rather than leaving it hidden.
+                    if (
+                        !('IntersectionObserver' in window) ||
+                        !document.documentElement.classList.contains('fb-anim')
+                    ) {
+                        revealAll(nodes);
+                        return;
+                    }
+
+                    var observer = new IntersectionObserver(
+                        function (entries) {
+                            entries.forEach(function (entry) {
+                                if (entry.isIntersecting) {
+                                    entry.target.classList.add('is-in');
+                                    observer.unobserve(entry.target);
+                                }
+                            });
+                        },
+                        { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+                    );
+
+                    for (var i = 0; i < nodes.length; i++) {
+                        observer.observe(nodes[i]);
+                    }
+
+                    // Observer is live, so the head script's un-hide fallback is
+                    // no longer needed.
+                    clearTimeout(window.fbAnimFallback);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', init);
+                } else {
+                    init();
+                }
+            })();
+        </script>
     </body>
 </html>

@@ -12,11 +12,20 @@
     <meta name="theme-color" content="#1A3A1A" />
 
     <title>Job Details | Figbloom Digital Group</title>
+    {% include "components/favicon.html" %}
 
     <link rel="stylesheet" href="../assets/css/style.css" />
 
+    <link rel="stylesheet" href="/assets/css/motion.css" />
     <script src="../assets/js/alpine.min.js" defer></script>
     <script src="../assets/js/lucide.min.js" defer></script>
+    <!--
+        Defines mainFunction() for the body's x-data (the included footer's
+        contact modal reads contactModal from it), runs lucide.createIcons() for
+        the navbar/footer icons, and adds the floating WhatsApp / scroll-top
+        buttons this page was missing. Deferred so it runs after lucide loads.
+    -->
+    <script src="/assets/js/components.js" defer></script>
 
     <style>
       :root {
@@ -825,7 +834,7 @@
          NAVBAR
     ========================================================= -->
 
-    <div id="navbar"></div>
+    {% include "components/navbar.html" %}
 
     <main class="container py-10 lg:py-14">
 
@@ -1528,7 +1537,7 @@
 
     <!-- FOOTER -->
 
-    <div id="footer"></div>
+    {% include "components/footer.html" %}
 
 
     <!-- =========================================================

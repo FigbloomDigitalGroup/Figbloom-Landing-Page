@@ -8,20 +8,21 @@
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta name="description" content="Contact Figbloom Digital Group for a quote on internet connectivity, CCTV security, AI automation, software solutions, and digital growth services." />
         <meta name="keywords" content="contact Figbloom Digital Group, technology quote Kenya, internet and software consultation" />
-        <link rel="canonical" href="https://www.figbloomdigitalgroup.com/contact/" />
+        <link rel="canonical" href="https://figbloom.org/contact/" />
         <meta property="og:locale" content="en_KE" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Contact Figbloom Digital Group" />
         <meta property="og:description" content="Get in touch with Figbloom Digital Group for tailored technology solutions and support." />
-        <meta property="og:url" content="https://www.figbloomdigitalgroup.com/contact/" />
+        <meta property="og:url" content="https://figbloom.org/contact/" />
         <meta property="og:site_name" content="Figbloom Digital Group" />
-        <meta property="og:image" content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png" />
+        <meta property="og:image" content="https://figbloom.org/assets/images/figbloom_logo.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Contact Figbloom Digital Group" />
         <meta name="twitter:description" content="Reach out to Figbloom Digital Group for reliable internet, security, AI, and software solutions." />
-        <meta name="twitter:image" content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png" />
+        <meta name="twitter:image" content="https://figbloom.org/assets/images/figbloom_logo.png" />
 
         <title>Contact Figbloom Digital Group</title>
+        {% include "components/favicon.html" %}
 
         <link
             rel="stylesheet"
@@ -32,18 +33,19 @@
             rel="stylesheet"
             href="../assets/css/style.css"
         />
+        <link rel="stylesheet" href="/assets/css/motion.css" />
         <script type="application/ld+json">
             {
                 "@context": "https://schema.org",
                 "@type": "WebPage",
                 "name": "Contact Figbloom Digital Group",
-                "url": "https://www.figbloomdigitalgroup.com/contact/",
+                "url": "https://figbloom.org/contact/",
                 "description": "Contact Figbloom Digital Group for a quote and support."
             }
         </script>
     </head>
     <body x-data="mainFunction()">
-        <div id="navbar"></div>
+        {% include "components/navbar.html" %}
         <div
             class="relative"
             x-data="{ isLoading: true }"
@@ -65,7 +67,6 @@
             </div>
         </div>
 
-       <div id="navbar"></div>
 
         <div class="grow" >
             <div
@@ -386,7 +387,7 @@
             </div>
         </div>
 
-  <div id="footer"></div>
+  {% include "components/footer.html" %}
 
         <script src="/assets/js/lucide.min.js"></script>
         <script defer src="/assets/js/alpine.min.js"></script>

@@ -295,7 +295,7 @@ class NewsletterSendView(APIView):
                             text-align:center;
                         ">
                             <img
-                                src="https://www.figbloom.org/assets/images/figbloom_logo.png"
+                                src="https://figbloom.org/assets/images/figbloom_logo.png"
                                 alt="Figbloom Digital Group"
                                 style="
                                     width:120px;

@@ -16,11 +16,14 @@
         <meta property="og:description" content="Practical technology services built to keep your business connected, protected, and ready to grow." />
         <meta property="og:url" content="https://figbloom.org/service/" />
         <meta property="og:site_name" content="Figbloom Digital Group" />
-        <meta property="og:image" content="https://figbloom.org/assets/images/figbloom_logo.png" />
+        <meta property="og:image" content="https://figbloom.org/assets/images/og-card.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Figbloom Digital Group — internet, security, software and AI" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Services | Figbloom Digital Group" />
         <meta name="twitter:description" content="Reliable internet, CCTV, AI automation, and custom software services for modern businesses." />
-        <meta name="twitter:image" content="https://figbloom.org/assets/images/figbloom_logo.png" />
+        <meta name="twitter:image" content="https://figbloom.org/assets/images/og-card.png" />
 
         <title>Services | Figbloom Digital Group</title>
         {% include "components/favicon.html" %}
@@ -42,6 +45,26 @@
                 "name": "Figbloom Digital Group Services",
                 "url": "https://figbloom.org/service/",
                 "description": "Internet, CCTV, AI, and software services from Figbloom Digital Group."
+            }
+        </script>
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://figbloom.org/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Services",
+                        "item": "https://figbloom.org/service/"
+                    }
+                ]
             }
         </script>
     </head>

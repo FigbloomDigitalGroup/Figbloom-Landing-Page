@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- lastmod is only a useful signal while it stays truthful: update the date
+     for a page whenever that page's content changes. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://figbloom.org/</loc>
+    <lastmod>2026-08-18</lastmod>
   </url>
   <url>
     <loc>https://figbloom.org/about-us/</loc>
+    <lastmod>2026-08-18</lastmod>
   </url>
   <url>
     <loc>https://figbloom.org/service/</loc>
+    <lastmod>2026-08-18</lastmod>
   </url>
   <url>
     <loc>https://figbloom.org/projects/</loc>
+    <lastmod>2026-08-18</lastmod>
   </url>
   <url>
     <loc>https://figbloom.org/career/</loc>
+    <lastmod>2026-08-18</lastmod>
   </url>
   <url>
     <loc>https://figbloom.org/contact/</loc>
+    <lastmod>2026-08-18</lastmod>
   </url>
 </urlset>

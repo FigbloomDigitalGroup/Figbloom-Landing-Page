@@ -32,8 +32,11 @@
     <meta property="og:site_name" content="Figbloom Digital Group" />
     <meta
       property="og:image"
-      content="https://figbloom.org/assets/images/figbloom_logo.png"
+      content="https://figbloom.org/assets/images/og-card.png"
     />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Figbloom Digital Group — internet, security, software and AI" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Careers at Figbloom Digital Group" />
     <meta
@@ -42,7 +45,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://figbloom.org/assets/images/figbloom_logo.png"
+      content="https://figbloom.org/assets/images/og-card.png"
     />
 
     <title>Careers at Figbloom Digital Group</title>
@@ -60,6 +63,26 @@
         "url": "https://figbloom.org/career/",
         "description": "Career opportunities at Figbloom Digital Group for people who want to build practical technology solutions."
       }
+    </script>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://figbloom.org/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Careers",
+                    "item": "https://figbloom.org/career/"
+                }
+            ]
+        }
     </script>
   </head>
   <body x-data="mainFunction()">

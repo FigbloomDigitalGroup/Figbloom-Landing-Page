@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="robots"
+    content="noindex, nofollow"
+  />
+
+  <title>
+    Subscribers | Figbloom Digital Group
+  </title>
+
+  <style>
+
+    :root {
+      --fig-green: #183c22;
+      --fig-green-dark: #102d18;
+      --fig-orange: #ff9400;
+      --fig-orange-soft: #fff5e8;
+      --fig-bg: #f7f9f7;
+      --fig-border: #e5e9e5;
+      --fig-muted: #718096;
+      --white: #ffffff;
+      --success: #15803d;
+      --success-soft: #ecfdf3;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --shadow-sm: 0 4px 18px rgba(24, 60, 34, 0.06);
+      --shadow-md: 0 12px 35px rgba(24, 60, 34, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--fig-bg);
+      color: var(--fig-green);
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* HEADER */
+
+    .page-header {
+      height: 82px;
+      background: white;
+      border-bottom: 1px solid var(--fig-border);
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 34px;
+
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .header-left img {
+      width: 50px;
+    }
+
+    .header-title {
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .back-button {
+      border: 1px solid var(--fig-border);
+      background: white;
+      color: var(--fig-green);
+
+      padding: 11px 18px;
+
+      border-radius: 10px;
+
+      font-weight: 800;
+
+      transition: 0.2s ease;
+    }
+
+    .back-button:hover {
+      background: var(--fig-orange-soft);
+      border-color: var(--fig-orange);
+      color: var(--fig-orange);
+    }
+
+    /* MAIN */
+
+    .page-container {
+      width: min(1400px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 38px 0 70px;
+    }
+
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+
+      margin-bottom: 28px;
+    }
+
+    .page-heading h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .page-heading p {
+      margin: 8px 0 0;
+      color: var(--fig-muted);
+    }
+
+    /* STAT CARDS */
+
+    .stats {
+      display: grid;
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 18px;
+
+      margin-bottom: 26px;
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid var(--fig-border);
+      border-radius: 16px;
+
+      padding: 22px;
+
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-label {
+      color: var(--fig-muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 900;
+    }
+
+    .stat-number {
+      display: block;
+      margin-top: 9px;
+
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--fig-green);
+    }
+
+    /* FILTERS */
+
+    .toolbar {
+      background: white;
+      border: 1px solid var(--fig-border);
+      border-radius: 16px;
+
+      padding: 18px;
+
+      display: flex;
+      align-items: flex-end;
+
+      gap: 15px;
+      flex-wrap: wrap;
+
+      margin-bottom: 22px;
+
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .filter-group label {
+      font-size: 11px;
+      color: #6b7a70;
+
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+
+      font-weight: 900;
+    }
+
+    .filter-group input,
+    .filter-group select {
+      height: 44px;
+
+      min-width: 220px;
+
+      border: 1px solid #d8ded9;
+      border-radius: 10px;
+
+      padding: 0 13px;
+
+      background: white;
+      color: var(--fig-green);
+
+      outline: none;
+    }
+
+    .filter-group input:focus,
+    .filter-group select:focus {
+      border-color: var(--fig-orange);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(255, 148, 0, 0.12);
+    }
+
+    /* TABLE */
+
+    .table-card {
+      background: white;
+
+      border: 1px solid var(--fig-border);
+      border-radius: 17px;
+
+      box-shadow: var(--shadow-sm);
+
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 20px 24px;
+
+      border-bottom: 1px solid var(--fig-border);
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .table-header h2 {
+      margin: 0;
+
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .table-header span {
+      color: var(--fig-muted);
+      font-size: 13px;
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      min-width: 700px;
+    }
+
+    th {
+      background: #fafcfa;
+
+      color: #68766d;
+
+      text-align: left;
+
+      padding: 15px 18px;
+
+      font-size: 12px;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.05em;
+
+      font-weight: 800;
+
+      border-bottom: 1px solid var(--fig-border);
+    }
+
+    td {
+      padding: 17px 18px;
+
+      border-bottom: 1px solid #edf0ed;
+
+      color: #27362d;
+
+      font-size: 14px;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tbody tr:hover {
+      background: #fbfdfb;
+    }
+
+    .email {
+      font-weight: 800;
+      color: var(--fig-green);
+    }
+
+    .date {
+      color: #526057;
+    }
+
+    /* STATUS */
+
+    .status {
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 7px;
+
+      padding: 6px 10px;
+
+      border-radius: 999px;
+
+      font-size: 12px;
+
+      font-weight: 800;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+
+      border-radius: 50%;
+
+      background: currentColor;
+    }
+
+    .status.active {
+      color: var(--success);
+      background: var(--success-soft);
+    }
+
+    .status.inactive {
+      color: #64748b;
+      background: #f1f5f9;
+    }
+
+    /* EMPTY */
+
+    .empty {
+      min-height: 220px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+      justify-content: center;
+
+      text-align: center;
+
+      color: var(--fig-muted);
+
+      padding: 40px;
+    }
+
+    .empty-icon {
+      font-size: 38px;
+      margin-bottom: 12px;
+    }
+
+    .empty strong {
+      color: var(--fig-green);
+      font-size: 16px;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 800px) {
+
+      .page-header {
+        padding: 0 18px;
+      }
+
+      .header-title {
+        font-size: 17px;
+      }
+
+      .page-container {
+        width: min(
+          100% - 28px,
+          1400px
+        );
+
+        padding-top: 25px;
+      }
+
+      .page-heading {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        align-items: stretch;
+      }
+
+      .filter-group {
+        width: 100%;
+      }
+
+      .filter-group input,
+      .filter-group select {
+        width: 100%;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- HEADER -->
+
+  <header class="page-header">
+
+    <div class="header-left">
+
+      <img
+        src="/assets/images/figbloom_logo.png"
+        alt="Figbloom Digital Group"
+      />
+
+      <span class="header-title">
+        Subscribers
+      </span>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="back-button"
+      id="back-dashboard"
+    >
+      ← Back to Dashboard
+    </button>
+
+  </header>
+
+
+  <!-- MAIN -->
+
+  <main class="page-container">
+
+
+    <!-- PAGE TITLE -->
+
+    <div class="page-heading">
+
+      <div>
+
+        <h1>
+          Newsletter Subscribers
+        </h1>
+
+        <p>
+          View and manage everyone subscribed to the Figbloom newsletter.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- STATISTICS -->
+
+    <section class="stats">
+
+      <div class="stat-card">
+
+        <span class="stat-label">
+          Total Subscribers
+        </span>
+
+        <strong
+          class="stat-number"
+          id="total-count"
+        >
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <span class="stat-label">
+          Active Subscribers
+        </span>
+
+        <strong
+          class="stat-number"
+          id="active-count"
+        >
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <span class="stat-label">
+          Inactive Subscribers
+        </span>
+
+        <strong
+          class="stat-number"
+          id="inactive-count"
+        >
+          0
+        </strong>
+
+      </div>
+
+    </section>
+
+
+    <!-- FILTERS -->
+
+    <section class="toolbar">
+
+      <div class="filter-group">
+
+        <label for="search">
+          Search Subscriber
+        </label>
+
+        <input
+          type="search"
+          id="search"
+          placeholder="Search by email..."
+        />
+
+      </div>
+
+
+      <div class="filter-group">
+
+        <label for="status-filter">
+          Status
+        </label>
+
+        <select id="status-filter">
+
+          <option value="all">
+            All Subscribers
+          </option>
+
+          <option value="active">
+            Active Only
+          </option>
+
+          <option value="inactive">
+            Inactive Only
+          </option>
+
+        </select>
+
+      </div>
+
+    </section>
+
+
+    <!-- SUBSCRIBER TABLE -->
+
+    <section class="table-card">
+
+      <div class="table-header">
+
+        <div>
+
+          <h2>
+            Subscriber List
+          </h2>
+
+          <span id="table-summary">
+            Loading subscribers...
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div id="subscriber-table">
+
+        <div class="empty">
+
+          <div class="empty-icon">
+            ⏳
+          </div>
+
+          <strong>
+            Loading subscribers...
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+  <script>
+
+    /* =====================================================
+       API CONFIG
+       ===================================================== */
+
+    const API_BASE =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1"
+        ? "http://127.0.0.1:8000"
+        : "";
+
+
+    /* =====================================================
+       CSRF
+       ===================================================== */
+
+    function getCsrfToken() {
+
+      return (
+        document.cookie
+          .split("; ")
+          .find(
+            row =>
+              row.startsWith(
+                "csrftoken="
+              )
+          )
+          ?.split("=")[1] || ""
+      );
+
+    }
+
+
+    /* =====================================================
+       API
+       ===================================================== */
+
+    async function apiFetch(
+      url,
+      options = {}
+    ) {
+
+      const response =
+        await fetch(
+          `${API_BASE}${url}`,
+          {
+            ...options,
+
+            credentials: "include",
+
+            headers: {
+              ...(options.headers || {}),
+              "X-CSRFToken":
+                getCsrfToken()
+            }
+
+          }
+        );
+
+
+      if (
+        response.status === 401 ||
+        response.status === 403
+      ) {
+
+        window.location.href =
+          "/admin-dashboard/login";
+
+        throw new Error(
+          "Not authenticated"
+        );
+
+      }
+
+
+      return response;
+
+    }
+
+
+    /* =====================================================
+       STATE
+       ===================================================== */
+
+    let subscribers = [];
+
+    let filteredSubscribers = [];
+
+
+    /* =====================================================
+       LOAD SUBSCRIBERS
+       ===================================================== */
+
+    async function loadSubscribers() {
+
+      const table =
+        document.getElementById(
+          "subscriber-table"
+        );
+
+
+      try {
+
+        const response =
+          await apiFetch(
+            "/api/admin/newsletter/"
+          );
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            `Request failed: ${response.status}`
+          );
+
+        }
+
+
+        const data =
+          await response.json();
+
+
+        subscribers =
+          Array.isArray(data)
+            ? data
+            : data.results || [];
+
+
+        updateStatistics();
+
+        applyFilters();
+
+
+      } catch (error) {
+
+        console.error(
+          "Subscriber loading error:",
+          error
+        );
+
+
+        table.innerHTML = `
+
+          <div class="empty">
+
+            <div class="empty-icon">
+              ⚠️
+            </div>
+
+            <strong>
+              Unable to load subscribers
+            </strong>
+
+            <span>
+              Please refresh the page and try again.
+            </span>
+
+          </div>
+
+        `;
+
+      }
+
+    }
+
+
+    /* =====================================================
+       STATISTICS
+       ===================================================== */
+
+    function updateStatistics() {
+
+      const total =
+        subscribers.length;
+
+
+      const active =
+        subscribers.filter(
+          subscriber =>
+            subscriber.is_active === true
+        ).length;
+
+
+      const inactive =
+        total - active;
+
+
+      document.getElementById(
+        "total-count"
+      ).textContent =
+        total;
+
+
+      document.getElementById(
+        "active-count"
+      ).textContent =
+        active;
+
+
+      document.getElementById(
+        "inactive-count"
+      ).textContent =
+        inactive;
+
+    }
+
+
+    /* =====================================================
+       FILTERS
+       ===================================================== */
+
+    function applyFilters() {
+
+      const search =
+        document.getElementById(
+          "search"
+        ).value
+          .trim()
+          .toLowerCase();
+
+
+      const status =
+        document.getElementById(
+          "status-filter"
+        ).value;
+
+
+      filteredSubscribers =
+        subscribers.filter(
+          subscriber => {
+
+            const email =
+              String(
+                subscriber.email || ""
+              ).toLowerCase();
+
+
+            const matchesSearch =
+              !search ||
+              email.includes(search);
+
+
+            const matchesStatus =
+              status === "all" ||
+              (
+                status === "active" &&
+                subscriber.is_active === true
+              ) ||
+              (
+                status === "inactive" &&
+                subscriber.is_active !== true
+              );
+
+
+            return (
+              matchesSearch &&
+              matchesStatus
+            );
+
+          }
+        );
+
+
+      renderSubscribers();
+
+    }
+
+
+    /* =====================================================
+       RENDER
+       ===================================================== */
+
+    function renderSubscribers() {
+
+      const table =
+        document.getElementById(
+          "subscriber-table"
+        );
+
+
+      const summary =
+        document.getElementById(
+          "table-summary"
+        );
+
+
+      summary.textContent =
+        `${filteredSubscribers.length} subscriber${
+          filteredSubscribers.length === 1
+            ? ""
+            : "s"
+        } shown`;
+
+
+      if (
+        !filteredSubscribers.length
+      ) {
+
+        table.innerHTML = `
+
+          <div class="empty">
+
+            <div class="empty-icon">
+              📭
+            </div>
+
+            <strong>
+              No subscribers found
+            </strong>
+
+            <span>
+              Try changing your search or status filter.
+            </span>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      table.innerHTML = `
+
+        <div class="table-scroll">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Email Address
+                </th>
+
+                <th>
+                  Subscription Date
+                </th>
+
+                <th>
+                  Status
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              ${filteredSubscribers
+                .map(
+                  subscriber => {
+
+                    const date =
+                      subscriber.subscribed_at
+                        ? new Date(
+                            subscriber.subscribed_at
+                          ).toLocaleString(
+                            "en-US",
+                            {
+                              year:
+                                "numeric",
+                              month:
+                                "short",
+                              day:
+                                "numeric",
+                              hour:
+                                "numeric",
+                              minute:
+                                "2-digit"
+                            }
+                          )
+                        : "—";
+
+
+                    return `
+
+                      <tr>
+
+                        <td>
+
+                          <span class="email">
+
+                            ${escapeHtml(
+                              subscriber.email
+                            )}
+
+                          </span>
+
+                        </td>
+
+
+                        <td>
+
+                          <span class="date">
+
+                            ${date}
+
+                          </span>
+
+                        </td>
+
+
+                        <td>
+
+                          <span
+                            class="status ${
+                              subscriber.is_active
+                                ? "active"
+                                : "inactive"
+                            }"
+                          >
+
+                            <span
+                              class="status-dot"
+                            ></span>
+
+                            ${
+                              subscriber.is_active
+                                ? "Active"
+                                : "Inactive"
+                            }
+
+                          </span>
+
+                        </td>
+
+                      </tr>
+
+                    `;
+
+                  }
+                )
+                .join("")}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      `;
+
+    }
+
+
+    /* =====================================================
+       HTML ESCAPE
+       ===================================================== */
+
+    function escapeHtml(value) {
+
+      return String(value ?? "")
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+
+    /* =====================================================
+       SEARCH
+       ===================================================== */
+
+    document
+      .getElementById("search")
+      .addEventListener(
+        "input",
+        applyFilters
+      );
+
+
+    /* =====================================================
+       STATUS FILTER
+       ===================================================== */
+
+    document
+      .getElementById("status-filter")
+      .addEventListener(
+        "change",
+        applyFilters
+      );
+
+
+    /* =====================================================
+       BACK TO DASHBOARD
+       ===================================================== */
+
+    document
+      .getElementById("back-dashboard")
+      .addEventListener(
+        "click",
+        () => {
+
+          window.location.href =
+            "/admin-dashboard/";
+
+        }
+      );
+
+
+    /* =====================================================
+       INITIALIZE
+       ===================================================== */
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      loadSubscribers
+    );
+
+  </script>
+
+</body>
+
+</html>

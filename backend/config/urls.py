@@ -18,9 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
-from careers.views import admin_application_detail
+from careers.views import admin_subscribers
+from careers.views import(admin_application_detail, admin_profile_settings,ChangePasswordView,)
 from . import views
+from careers.views import admin_subscribers
+from careers.views import ChangePasswordView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,16 +34,19 @@ urlpatterns = [
     path('api/auth/logout/', views.admin_logout_api, name='admin-logout-api'),
     path('api/auth/user/', views.admin_user_api, name='admin-user-api'),
     path('admin-dashboard/', views.admin_dashboard_page, name='admin-dashboard'),
-
+    path("admin-dashboard/subscribers",admin_subscribers,name="admin-subscribers"),
     path('', views.home, name='home'),
-    path('about-us/', views.about_us, name='about-us'),
-    path('career/', views.career, name='career'),
-    path('career/detail/', views.job_detail_page, name='job-detail-page'),
-    path('contact/', views.contact, name='contact'),
-    path('projects/', views.projects, name='projects'),
-    path('service/', views.service, name='service'),
-    path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'
-),
+    path('about-us', views.about_us, name='about-us'),
+    path('career', views.career, name='career'),
+    path('career/detail', views.job_detail_page, name='job-detail-page'),
+    path('contact', views.contact, name='contact'),
+    path('projects', views.projects, name='projects'),
+    path('service', views.service, name='service'),
+    path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'),
+    path("admin-dashboard/subscribers",admin_subscribers,name="admin-subscribers"),
+    path("api/auth/change-password/",ChangePasswordView.as_view(),name="change-password"),
+    path("admin-dashboard/profile-settings",admin_profile_settings,name="admin-profile-settings"),     
+      
 ]
 
 if settings.DEBUG:

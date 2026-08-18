@@ -36,12 +36,23 @@ urlpatterns = [
     path('admin-dashboard/', views.admin_dashboard_page, name='admin-dashboard'),
     path("admin-dashboard/subscribers",admin_subscribers,name="admin-subscribers"),
     path('', views.home, name='home'),
-    path('about-us', views.about_us, name='about-us'),
-    path('career', views.career, name='career'),
-    path('career/detail', views.job_detail_page, name='job-detail-page'),
-    path('contact', views.contact, name='contact'),
-    path('projects', views.projects, name='projects'),
-    path('service', views.service, name='service'),
+    # Each page answers on BOTH /x and /x/ with a 200 instead of redirecting between
+    # them. A redirect in either direction keeps breaking links whenever one form
+    # or the other gets normalised. The sitemap and rel=canonical advertise the
+    # trailing-slash form, so that pattern carries the URL name and is what
+    # reverse() returns; the bare pattern is an unnamed alias.
+    path('about-us/', views.about_us, name='about-us'),
+    path('about-us', views.about_us),
+    path('career/', views.career, name='career'),
+    path('career', views.career),
+    path('career/detail/', views.job_detail_page, name='job-detail-page'),
+    path('career/detail', views.job_detail_page),
+    path('contact/', views.contact, name='contact'),
+    path('contact', views.contact),
+    path('projects/', views.projects, name='projects'),
+    path('projects', views.projects),
+    path('service/', views.service, name='service'),
+    path('service', views.service),
     path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'),
     path("admin-dashboard/subscribers",admin_subscribers,name="admin-subscribers"),
     path("api/auth/change-password/",ChangePasswordView.as_view(),name="change-password"),

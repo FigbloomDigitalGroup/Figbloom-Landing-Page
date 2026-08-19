@@ -8,7 +8,7 @@
         <meta name="theme-color" content="#FF9400" />
         <meta name="author" content="Figbloom Digital Group" />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-        <meta name="description" content="Learn how Figbloom Digital Group helps businesses stay connected, secure, and efficient through reliable internet, CCTV, AI automation, and custom software solutions." />
+        <meta name="description" content="Learn how Figbloom Digital Group helps businesses stay connected, secure, and efficient with reliable internet, CCTV, AI automation, and software." />
         <meta name="keywords" content="about Figbloom Digital Group, business technology partner, internet and software solutions Kenya, CCTV security services" />
         <link rel="canonical" href="https://figbloom.org/about-us/" />
         <meta property="og:locale" content="en_KE" />
@@ -127,26 +127,6 @@
     </head>
     <body x-data="mainFunction()">
         {% include "components/navbar.html" %}
-        <div
-            class="relative"
-            x-data="{ isLoading: true }"
-            x-init="setTimeout(() => {isLoading = false }, 1500)"
-        >
-            <div
-                id="preloader"
-                x-show="isLoading"
-                class="loader-backdrop fixed inset-0 z-60 flex h-dvh w-full items-center justify-center"
-                style="display: none"
-            >
-                <div class="loader-orb">
-                    <svg viewBox="0 0 100 100" class="loader-ring" fill="none">
-                        <circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,.18)" stroke-width="6" />
-                        <circle cx="50" cy="50" r="42" stroke="#FF9400" stroke-width="6" stroke-linecap="round" stroke-dasharray="66 264" />
-                    </svg>
-                    <img src="/assets/images/fig-mark-white.png" alt="" class="loader-mark" />
-                </div>
-            </div>
-        </div>
 
 
 

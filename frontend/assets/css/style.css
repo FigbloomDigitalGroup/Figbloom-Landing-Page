@@ -3040,61 +3040,6 @@
 
 }
 
-/* Full-screen brand splash shown for ~1.5s on page load (see the isLoading
-   Alpine state in each page). Backdrop matches the About-us banner / OG card
-   green so this reads as one deliberate brand moment, not a generic spinner.
-   Sizing is hand-written rather than Tailwind size-* utilities: this file is a
-   prebuilt/purged stylesheet, so only classes present in the original source
-   survive the build — an arbitrary size-* guess here can silently render at
-   the image's native resolution instead of the intended size. */
-.loader-backdrop {
-    background:
-        radial-gradient(60% 60% at 50% 46%, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 70%),
-        var(--color-secondary);
-}
-
-.loader-orb {
-    position: relative;
-    width: 64px;
-    height: 64px;
-}
-
-.loader-ring {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    animation: loader-spin 1.1s linear infinite;
-}
-
-.loader-mark {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 30px;
-    height: 30px;
-    animation: loader-breathe 1.8s ease-in-out infinite;
-}
-
-@media (min-width: 640px) {
-    .loader-orb { width: 84px; height: 84px; }
-    .loader-mark { width: 40px; height: 40px; }
-}
-
-@keyframes loader-spin {
-    to { transform: rotate(360deg); }
-}
-
-@keyframes loader-breathe {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    50%      { transform: translate(-50%, -50%) scale(1.08); opacity: .84; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .loader-ring { animation: none; }
-    .loader-mark { animation: none; transform: translate(-50%, -50%); }
-}
-
 .border-t-gray\/70 {
         border-top-color: #67788fb3
     }

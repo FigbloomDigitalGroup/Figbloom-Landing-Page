@@ -222,17 +222,25 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_HOST = os.getenv("EMAIL_HOST", "lon105.truehost.cloud")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "465"))
 
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+# Truehost (figbloom.org's mail host, per its MX record) uses implicit SSL
+# on 465, not STARTTLS on 587 — Django rejects a settings.py where both are
+# true, so these stay mutually exclusive. The hostname here is the mail
+# server's real name (lon105.truehost.cloud), confirmed reachable — the
+# generic "mail.figbloom.org" from Truehost's client-config instructions
+# has no DNS record at all. Both flags are env-var-driven, not hardcoded,
+# so switching provider or port again later needs only a dashboard edit.
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "true").lower() == "true"
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "false").lower() == "true"
 
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
+# Most SMTP servers reject or flag a From address that doesn't match (or
+# share a domain with) the authenticated account, so this should track
+# whichever mailbox EMAIL_HOST_USER actually is.
 DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     "Figbloom Digital Group <support@figbloom.org>"

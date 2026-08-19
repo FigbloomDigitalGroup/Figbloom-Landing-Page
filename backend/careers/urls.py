@@ -5,6 +5,7 @@ from .views import (
     JobDetailView,
     ApplicationCreateView,
     NewsletterSubscribeView,
+    ContactCreateView,
     JobAdminViewSet,
     ApplicationAdminViewSet,
     NewsletterAdminViewSet, csrf_token, admin_application_detail
@@ -20,6 +21,7 @@ urlpatterns = [
     path('jobs/<slug:slug>/', JobDetailView.as_view(), name='job-detail'),
     path('applications/', ApplicationCreateView.as_view(), name='application-create'),
     path('newsletter/subscribe/', NewsletterSubscribeView.as_view(), name='newsletter-subscribe'),
+    path('contact/', ContactCreateView.as_view(), name='contact-create'),
     path('auth/csrf/', csrf_token, name='csrf-token'),
     path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'),
    

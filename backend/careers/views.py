@@ -7,8 +7,8 @@ from django.utils.dateparse import parse_date
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import APIView, action
-from .models import Job, JobApplication, NewsletterSubscriber
-from .serializers import (JobSerializer, JobApplicationSerializer, NewsletterSubscriberSerializer,JobApplicationAdminSerializer)
+from .models import Job, JobApplication, NewsletterSubscriber, ContactInquiry
+from .serializers import (JobSerializer, JobApplicationSerializer, NewsletterSubscriberSerializer,JobApplicationAdminSerializer, ContactInquirySerializer)
 from django.contrib import messages
 from .forms import JobApplicationForm
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -17,6 +17,9 @@ from django.views.decorators.http import require_GET
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from html import escape
+import logging
+
+logger = logging.getLogger(__name__)
 from rest_framework.permissions import IsAdminUser
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import update_session_auth_hash
@@ -677,6 +680,77 @@ class NewsletterSubscribeView(generics.CreateAPIView):
         return Response(
             {'detail': 'Successfully subscribed to our newsletter.'},
             status=status.HTTP_201_CREATED
-        ) 
+        )
+
+
+CONTACT_NOTIFICATION_RECIPIENT = 'sales@figbloom.org'
+
+
+class ContactCreateView(generics.CreateAPIView):
+    queryset = ContactInquiry.objects.all()
+    serializer_class = ContactInquirySerializer
+
+    def create(self, request, *args, **kwargs):
+        # Honeypot: a genuine visitor never fills this hidden field, so a
+        # non-empty value means a bot. Respond as if it succeeded — telling
+        # a bot it was rejected just teaches it to try again differently —
+        # but skip saving and emailing.
+        if request.data.get('website'):
+            return Response(
+                {'detail': 'Thanks — we\'ll be in touch shortly.'},
+                status=status.HTTP_201_CREATED,
+            )
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        inquiry = serializer.save()
+
+        # The inquiry is already saved at this point, so a transient SMTP
+        # failure loses the notification, not the lead — it still shows up
+        # for anyone checking the database directly.
+        try:
+            self._notify(inquiry)
+        except Exception:
+            logger.exception('Failed to send contact inquiry notification email')
+
+        return Response(
+            {
+                'detail': 'Thanks — we\'ll be in touch shortly.',
+                'inquiry': serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+    def _notify(self, inquiry):
+        fields = [
+            ('Full name', inquiry.full_name),
+            ('Company', inquiry.company),
+            ('Email', inquiry.email),
+            ('Phone', inquiry.phone),
+            ('Interested in', inquiry.service),
+            ('Budget', inquiry.budget),
+            ('Timeline', inquiry.timeline),
+            ('Brief', inquiry.brief),
+        ]
+
+        text_lines = [f'{label}: {value}' for label, value in fields if value]
+        text_body = '\n'.join(text_lines)
+
+        html_rows = ''.join(
+            f'<tr><td style="padding:4px 12px 4px 0;color:#67788f;white-space:nowrap;">{escape(label)}</td>'
+            f'<td style="padding:4px 0;">{escape(value).replace(chr(10), "<br>")}</td></tr>'
+            for label, value in fields if value
+        )
+        html_body = f'<table cellpadding="0" cellspacing="0">{html_rows}</table>'
+
+        message = EmailMultiAlternatives(
+            subject=f'New contact inquiry from {inquiry.full_name}',
+            body=text_body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[CONTACT_NOTIFICATION_RECIPIENT],
+            reply_to=[inquiry.email] if inquiry.email else None,
+        )
+        message.attach_alternative(html_body, 'text/html')
+        message.send(fail_silently=False) 
 
 

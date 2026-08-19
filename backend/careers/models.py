@@ -99,6 +99,21 @@ class NewsletterSubscriber(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.email        
+        return self.email
+
+
+class ContactInquiry(models.Model):
+    full_name = models.CharField(max_length=200)
+    company = models.CharField(max_length=200, blank=True, default='')
+    email = models.EmailField()
+    phone = models.CharField(max_length=30, blank=True, default='')
+    service = models.CharField(max_length=100, blank=True, default='')
+    budget = models.CharField(max_length=100, blank=True, default='')
+    timeline = models.CharField(max_length=100, blank=True, default='')
+    brief = models.TextField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.full_name} - {self.email}"
 
     

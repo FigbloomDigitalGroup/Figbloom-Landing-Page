@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Job, JobApplication, NewsletterSubscriber
+from .models import Job, JobApplication, NewsletterSubscriber, ContactInquiry
 
 
 class JobSerializer(serializers.ModelSerializer):
@@ -53,6 +53,24 @@ class NewsletterSubscriberSerializer(serializers.ModelSerializer):
         model = NewsletterSubscriber
         fields = ["id", "email", "is_active", "subscribed_at"]
         read_only_fields = ["id", "subscribed_at"]
+
+
+class ContactInquirySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInquiry
+        fields = [
+            'id',
+            'full_name',
+            'company',
+            'email',
+            'phone',
+            'service',
+            'budget',
+            'timeline',
+            'brief',
+            'created_at',
+        ]
+        read_only_fields = ['id', 'created_at']
 
 
 # --- Admin-facing serializers ---

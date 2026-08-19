@@ -79,22 +79,16 @@
             <div
                 id="preloader"
                 x-show="isLoading"
-                class="fixed inset-0 z-60 flex h-dvh w-full items-center justify-center bg-white"
+                class="loader-backdrop fixed inset-0 z-60 flex h-dvh w-full items-center justify-center"
                 style="display: none"
             >
-                <span
-                    class="from-background to-background absolute inset-0 animate-pulse bg-linear-to-br via-white"
-                ></span>
-
-                <div
-                    class="border-t-gray/70 border-b-gray-light absolute top-1/2 left-1/2 grid size-10 -translate-1/2 animate-spin place-content-center rounded-full border-y-8 sm:size-14"
-                ></div>
-
-                <img
-                    src="/assets/images/favicon-192.png"
-                    alt=""
-                    class="absolute top-1/2 left-1/2 size-5 -translate-1/2 rounded-full shadow sm:size-7"
-                />
+                <div class="loader-orb">
+                    <svg viewBox="0 0 100 100" class="loader-ring" fill="none">
+                        <circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,.18)" stroke-width="6" />
+                        <circle cx="50" cy="50" r="42" stroke="#FF9400" stroke-width="6" stroke-linecap="round" stroke-dasharray="66 264" />
+                    </svg>
+                    <img src="/assets/images/fig-mark-white.png" alt="" class="loader-mark" />
+                </div>
             </div>
         </div>
 

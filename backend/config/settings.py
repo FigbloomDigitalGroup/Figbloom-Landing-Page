@@ -222,18 +222,23 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-EMAIL_HOST = os.getenv("EMAIL_HOST", "lon105.truehost.cloud")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", "465"))
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
 
-# Truehost (figbloom.org's mail host, per its MX record) uses implicit SSL
-# on 465, not STARTTLS on 587 — Django rejects a settings.py where both are
-# true, so these stay mutually exclusive. The hostname here is the mail
-# server's real name (lon105.truehost.cloud), confirmed reachable — the
-# generic "mail.figbloom.org" from Truehost's client-config instructions
-# has no DNS record at all. Both flags are env-var-driven, not hardcoded,
-# so switching provider or port again later needs only a dashboard edit.
-EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "true").lower() == "true"
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "false").lower() == "true"
+# Sends go out through Gmail's SMTP relay, authenticated as a Gmail account
+# that has sales@figbloom.org verified as a "Send As" alias (Gmail →
+# Settings → Accounts and Import) — so mail shows up as sales@figbloom.org
+# without being flagged as spoofed, while riding on Gmail's sending
+# reputation. Direct-to-Truehost (lon105.truehost.cloud, port 465, implicit
+# SSL) was tried first, since that's figbloom.org's actual mail host per its
+# MX record, but a freshly-configured mailbox there got real messages
+# rejected outright with "550 Message discarded as high-probability spam"
+# after only a handful of sends — not something a hosting-side setting could
+# fix quickly. Gmail's port 587 needs STARTTLS, not implicit SSL, hence the
+# swapped defaults below. Both flags stay env-var-driven rather than
+# hardcoded, so a future provider change is a dashboard edit, not a deploy.
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "false").lower() == "true"
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() == "true"
 
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")

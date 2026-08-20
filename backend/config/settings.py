@@ -220,15 +220,17 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
-# Sends over Resend's HTTPS API rather than raw SMTP — see
-# careers/mail_backends.py for the full trail: an IPv6-routing gap on
-# Render, then (once that was fixed) a plain connection timeout on port 587
-# even over IPv4. Both point at outbound SMTP itself being unreliable from
-# this platform, not any one host/port/IP-family combination, so this
-# sidesteps SMTP entirely rather than chasing another variant of the same
-# problem. careers.mail_backends.EmailBackend (IPv4-forced SMTP) is left in
-# place, unused, in case a future host without this restriction wants it.
-EMAIL_BACKEND = "careers.mail_backends.ResendBackend"
+# Back on IPv4-forced SMTP (see careers/mail_backends.py) rather than
+# Resend's HTTPS API. Render confirmed directly that ports 25/465/587 are
+# blocked on free instance types specifically — not the workspace plan —
+# and lifted entirely on a paid instance type. That's the path being taken
+# instead of Resend: the service's instance type needs upgrading (Render
+# dashboard → this service → the instance-type selector, not the workspace
+# billing plan) for this to actually work in production; the code alone
+# doesn't change anything until that happens. careers.mail_backends.
+# ResendBackend is left in place, proven working, as an easy fallback if
+# the upgrade doesn't pan out.
+EMAIL_BACKEND = "careers.mail_backends.EmailBackend"
 
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))

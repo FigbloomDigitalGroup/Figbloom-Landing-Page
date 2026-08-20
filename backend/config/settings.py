@@ -220,7 +220,12 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# Custom subclass of Django's own SMTP backend that forces the connection
+# over IPv4 — see careers/mail_backends.py for why: Render's containers
+# have no outbound IPv6 route, and smtp.gmail.com resolves to both an A and
+# an AAAA record, so the plain backend's IPv6 attempt failed instantly with
+# OSError: [Errno 101] Network is unreachable before ever reaching Gmail.
+EMAIL_BACKEND = "careers.mail_backends.EmailBackend"
 
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))

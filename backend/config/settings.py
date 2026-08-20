@@ -240,6 +240,14 @@ EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
 EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "false").lower() == "true"
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() == "true"
 
+# Django leaves this unset by default, which means an SMTP connection/send
+# that never gets a response blocks forever — smtplib has no timeout of its
+# own. That's exactly what turned a flaky SMTP path into the contact form
+# hanging on "Sending..." for a full two minutes in production, until
+# gunicorn's own --timeout killed the worker. Bounding it here means a bad
+# connection fails fast and gets logged, instead of hanging.
+EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "10"))
+
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 

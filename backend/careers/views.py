@@ -18,6 +18,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from html import escape
 import logging
+import threading
 
 logger = logging.getLogger(__name__)
 from rest_framework.permissions import IsAdminUser
@@ -705,13 +706,14 @@ class ContactCreateView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         inquiry = serializer.save()
 
-        # The inquiry is already saved at this point, so a transient SMTP
-        # failure loses the notification, not the lead — it still shows up
-        # for anyone checking the database directly.
-        try:
-            self._notify(inquiry)
-        except Exception:
-            logger.exception('Failed to send contact inquiry notification email')
+        # The inquiry is already saved at this point, so a slow or failing
+        # SMTP attempt loses the notification, not the lead — it still shows
+        # up for anyone checking the database directly. This runs on a
+        # background thread rather than inline: EMAIL_TIMEOUT bounds how
+        # long a single send can take, but the visitor shouldn't be stuck on
+        # "Sending..." for even that long waiting on a third-party mail
+        # server neither of us controls the latency of.
+        threading.Thread(target=self._notify_safely, args=(inquiry,), daemon=True).start()
 
         return Response(
             {
@@ -720,6 +722,15 @@ class ContactCreateView(generics.CreateAPIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+    def _notify_safely(self, inquiry):
+        # Runs on a background thread — an unhandled exception here would
+        # only ever surface in the thread's default excepthook, not to the
+        # request, so it's caught and logged explicitly instead.
+        try:
+            self._notify(inquiry)
+        except Exception:
+            logger.exception('Failed to send contact inquiry notification email')
 
     def _notify(self, inquiry):
         fields = [

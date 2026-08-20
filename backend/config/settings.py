@@ -220,12 +220,15 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
-# Custom subclass of Django's own SMTP backend that forces the connection
-# over IPv4 — see careers/mail_backends.py for why: Render's containers
-# have no outbound IPv6 route, and smtp.gmail.com resolves to both an A and
-# an AAAA record, so the plain backend's IPv6 attempt failed instantly with
-# OSError: [Errno 101] Network is unreachable before ever reaching Gmail.
-EMAIL_BACKEND = "careers.mail_backends.EmailBackend"
+# Sends over Resend's HTTPS API rather than raw SMTP — see
+# careers/mail_backends.py for the full trail: an IPv6-routing gap on
+# Render, then (once that was fixed) a plain connection timeout on port 587
+# even over IPv4. Both point at outbound SMTP itself being unreliable from
+# this platform, not any one host/port/IP-family combination, so this
+# sidesteps SMTP entirely rather than chasing another variant of the same
+# problem. careers.mail_backends.EmailBackend (IPv4-forced SMTP) is left in
+# place, unused, in case a future host without this restriction wants it.
+EMAIL_BACKEND = "careers.mail_backends.ResendBackend"
 
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
@@ -255,6 +258,10 @@ EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "10"))
 
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+# Used only by careers.mail_backends.ResendBackend — see that file for why
+# outbound SMTP had to be abandoned entirely rather than patched further.
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 
 # Most SMTP servers reject or flag a From address that doesn't match (or
 # share a domain with) the authenticated account, so this should track

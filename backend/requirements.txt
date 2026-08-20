@@ -19,3 +19,6 @@ django-cloudinary-storage==0.3.0
 
 # Optional: loads backend/.env for local development
 python-dotenv==1.1.1
+
+# Outbound email — see careers/mail_backends.py for why this replaced SMTP
+resend==2.37.0

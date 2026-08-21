@@ -84,3 +84,9 @@ class JobApplicationAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobApplication
         fields = '__all__'
+
+
+class ContactInquiryAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInquiry
+        fields = '__all__'

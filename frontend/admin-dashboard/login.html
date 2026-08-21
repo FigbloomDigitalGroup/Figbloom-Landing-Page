@@ -8,9 +8,14 @@
     {% include "components/favicon.html" %}
     <link rel="stylesheet" href="/assets/css/style.css" />
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
       :root {
-        --fb-green: #1a3a1a;
-        --fb-orange: #ff9400;
+        --fig-green: #2c5322;
+        --fig-orange: #ff9400;
+        --fig-text: #12151e;
+        --fig-muted: #67788f;
+        --fig-border: #e0e5eb;
       }
 
       body {
@@ -20,16 +25,16 @@
         align-items: center;
         justify-content: center;
         background: #ffffff;
-        font-family: inherit;
+        font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
       }
 
       .login-shell {
         width: 100%;
         max-width: 380px;
         padding: 2.5rem 2rem;
-        border-radius: 16px;
-        border: 1px solid #eaeaea;
-        box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.15);
+        border-radius: 0.75rem;
+        border: 1px solid var(--fig-border);
+        box-shadow: 0 20px 60px -20px rgba(18, 21, 30, 0.15);
       }
 
       .login-logo {
@@ -44,15 +49,15 @@
 
       .login-title {
         text-align: center;
-        color: var(--fb-green);
+        color: var(--fig-text);
         font-size: 1.35rem;
-        font-weight: 700;
+        font-weight: 600;
         margin-bottom: 0.35rem;
       }
 
       .login-subtitle {
         text-align: center;
-        color: #6b7280;
+        color: var(--fig-muted);
         font-size: 0.9rem;
         margin-bottom: 1.75rem;
       }
@@ -65,7 +70,7 @@
         display: block;
         font-size: 0.85rem;
         font-weight: 500;
-        color: #374151;
+        color: var(--fig-text);
         margin-bottom: 0.4rem;
       }
 
@@ -73,15 +78,21 @@
         width: 100%;
         box-sizing: border-box;
         padding: 0.65rem 0.85rem;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
+        border: 1px solid var(--fig-border);
+        border-radius: 0.5rem;
         font-size: 0.95rem;
+        font-family: inherit;
         outline: none;
-        transition: border-color 0.15s ease;
+        box-shadow: inset 0 1px 2px rgba(18, 21, 30, 0.03);
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .login-field input:hover {
+        border-color: rgba(255, 148, 0, 0.4);
       }
 
       .login-field input:focus {
-        border-color: var(--fb-orange);
+        border-color: var(--fig-orange);
         box-shadow: 0 0 0 3px rgba(255, 148, 0, 0.15);
       }
 
@@ -90,24 +101,25 @@
         padding: 0.75rem;
         margin-top: 0.5rem;
         border: none;
-        border-radius: 8px;
-        background: var(--fb-green);
+        border-radius: 0.5rem;
+        background: var(--fig-green);
         color: #ffffff;
         font-weight: 600;
         font-size: 0.95rem;
+        font-family: inherit;
         cursor: pointer;
-        transition: background 0.15s ease;
+        transition: background-color 0.2s ease;
       }
 
       .login-submit:hover {
-        background: #142e14;
+        background: var(--fig-orange);
       }
 
       .login-error {
         display: none;
         margin-top: 1rem;
         padding: 0.65rem 0.85rem;
-        border-radius: 8px;
+        border-radius: 0.5rem;
         background: #fef2f2;
         border: 1px solid #fecaca;
         color: #b91c1c;
@@ -141,22 +153,15 @@
       </form>
     </div>
 
+    <script src="/assets/js/admin.js"></script>
     <script>
         initializeCsrf().catch(console.error);
       async function initializeCsrf() {
-    await fetch('http://127.0.0.1:8000/api/auth/csrf/', {
+    await fetch('/api/auth/csrf/', {
         method: 'GET',
         credentials: 'include',
     });
 }
-      function getCsrfToken() {
-        return (
-          document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('csrftoken='))
-            ?.split('=')[1] || ''
-        );
-      }
 
       document.getElementById('login-form').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -171,7 +176,7 @@
         const formData = new FormData(event.target);
 
         const response = await fetch(
-            'http://127.0.0.1:8000/api/auth/login/',
+            '/api/auth/login/',
             {
                 method: 'POST',
                 credentials: 'include',

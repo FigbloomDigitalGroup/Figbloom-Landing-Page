@@ -8,16 +8,19 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import APIView, action
 from .models import Job, JobApplication, NewsletterSubscriber, ContactInquiry
-from .serializers import (JobSerializer, JobApplicationSerializer, NewsletterSubscriberSerializer,JobApplicationAdminSerializer, ContactInquirySerializer)
+from .serializers import (JobSerializer, JobApplicationSerializer, NewsletterSubscriberSerializer,JobApplicationAdminSerializer, ContactInquirySerializer, ContactInquiryAdminSerializer)
 from django.contrib import messages
 from .forms import JobApplicationForm
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from django.core.mail import EmailMultiAlternatives
+from django.core import signing
 from django.conf import settings
 from html import escape
+from email.mime.image import MIMEImage
 import logging
+import os
 import threading
 
 logger = logging.getLogger(__name__)
@@ -223,7 +226,17 @@ def admin_profile_settings(request):
 def admin_subscribers(request):
     return render(
         request,
-        "admin-dashboard/subscribers.html"
+        "admin-dashboard/subscribers.html",
+        {"active_nav": "subscribers"},
+    )
+
+
+@login_required(login_url='/admin-dashboard/login')
+def admin_contact_page(request):
+    return render(
+        request,
+        "admin-dashboard/contact.html",
+        {"active_nav": "contact"},
     )
 
 # --- Admin dashboard API ---
@@ -401,8 +414,8 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
 
         recipients = list(
             subscribers.values_list(
+                "id",
                 "email",
-                flat=True
             )
         )
 
@@ -441,123 +454,185 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
 
         # ---------------------------------------------------------
         # NEWSLETTER EMAIL DESIGN
+        # IMPORTANT:
+        # The unsubscribe link is per-recipient (a signed token that
+        # decodes to that subscriber's id), so the HTML is built once
+        # per recipient inside the send loop below, not once up front.
         # ---------------------------------------------------------
 
-        email_html = f"""
+        current_year = timezone.now().year
+
+        def build_email_html(unsubscribe_url):
+            return f"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <meta name="supported-color-schemes" content="light">
 
     <title>{escape(subject)}</title>
 </head>
 
 <body style="
     margin:0;
-    padding:30px 15px;
-    background:#f7f9f7;
-    font-family:Arial, Helvetica, sans-serif;
+    padding:36px 16px;
+    background:#eef1ee;
+    font-family:Helvetica, Arial, sans-serif;
     color:#333333;
 ">
 
     <div style="
-        max-width:820px;
+        max-width:600px;
         margin:0 auto;
-        background:#ffffff;
-        border-radius:12px;
-        overflow:hidden;
     ">
 
-        <!-- HEADER -->
-
+        <!-- PREHEADER SPACER -->
         <div style="
-            background:#183c22;
-            padding:42px 30px;
+            max-width:600px;
+            margin:0 auto 18px;
             text-align:center;
+            font-family:Arial, Helvetica, sans-serif;
+            font-size:11px;
+            letter-spacing:0.12em;
+            text-transform:uppercase;
+            color:#8a978d;
         ">
-
-            <div style="
-                color:#ffffff;
-                font-size:34px;
-                font-weight:800;
-                letter-spacing:1px;
-                line-height:1.2;
-            ">
-                FIGBLOOM
-            </div>
-
-            <div style="
-                margin-top:12px;
-                color:#ff9400;
-                font-size:17px;
-                letter-spacing:4px;
-                font-weight:500;
-            ">
-                DIGITAL GROUP
-            </div>
-
+            Figbloom Digital Group &bull; Newsletter
         </div>
 
-
-        <!-- CONTENT -->
-
         <div style="
-            padding:45px;
+            background:#ffffff;
+            border-radius:14px;
+            overflow:hidden;
+            border:1px solid #e3e9e2;
         ">
 
-            <h1 style="
-                margin:0 0 28px 0;
-                color:#183c22;
-                font-size:30px;
-                line-height:1.3;
-                font-weight:800;
-            ">
-                {escape(subject)}
-            </h1>
-
+            <!-- HEADER -->
+            <!-- White, not brand-green: the logo's "Fig" wordmark is
+                 rendered in that same dark green, so a green header
+                 would swallow half the logo. The PNG already spells
+                 out "Figbloom Digital Group" on its own, so no
+                 redundant text wordmark is added alongside it. -->
 
             <div style="
-                color:#444444;
-                font-size:16px;
-                line-height:1.8;
+                background:#ffffff;
+                padding:34px 30px 26px;
+                text-align:center;
             ">
-                {html_content.replace(chr(10), '<br>')}
+
+                <img
+                    src="cid:figbloom-logo"
+                    width="150"
+                    alt="Figbloom Digital Group"
+                    style="display:block; margin:0 auto; width:150px; max-width:60%; height:auto; border:0; outline:none;"
+                />
+
             </div>
 
-        </div>
+            <!-- ACCENT RULE -->
+            <div style="height:4px; line-height:4px; font-size:0; background:#ff9400;">&nbsp;</div>
 
 
-        <!-- FOOTER -->
-
-        <div style="
-            background:#f8faf8;
-            border-top:1px solid #edf0ed;
-            text-align:center;
-            padding:25px 20px;
-            color:#718078;
-            font-size:13px;
-        ">
+            <!-- CONTENT -->
 
             <div style="
-                color:#183c22;
-                font-size:15px;
-                font-weight:700;
-                margin-bottom:7px;
+                padding:44px 42px 40px;
             ">
-                Figbloom Digital Group
+
+                <div style="
+                    font-family:Arial, Helvetica, sans-serif;
+                    color:#ff9400;
+                    font-size:12px;
+                    letter-spacing:0.14em;
+                    text-transform:uppercase;
+                    font-weight:700;
+                    margin-bottom:14px;
+                ">
+                    Newsletter Update
+                </div>
+
+                <h1 style="
+                    margin:0 0 26px 0;
+                    color:#12151e;
+                    font-size:28px;
+                    line-height:1.35;
+                    font-weight:700;
+                ">
+                    {escape(subject)}
+                </h1>
+
+                <div style="
+                    height:1px;
+                    background:#edf0ed;
+                    margin:0 0 26px 0;
+                "></div>
+
+                <div style="
+                    color:#3d443f;
+                    font-size:16px;
+                    line-height:1.85;
+                ">
+                    {html_content.replace(chr(10), '<br>')}
+                </div>
+
             </div>
 
-            <div>
-                Technology &bull; Innovation &bull; Growth
-            </div>
+
+            <!-- FOOTER -->
 
             <div style="
-                margin-top:12px;
-                font-size:12px;
-                color:#9aa59d;
+                background:#f6f8f6;
+                border-top:1px solid #e3e9e2;
+                text-align:center;
+                padding:30px 30px;
+                font-family:Arial, Helvetica, sans-serif;
+                color:#8a978d;
+                font-size:13px;
             ">
-                Thank you for being part of our community.
+
+                <div style="
+                    color:#2c5322;
+                    font-size:15px;
+                    font-weight:700;
+                    margin-bottom:6px;
+                ">
+                    Figbloom Digital Group
+                </div>
+
+                <div>
+                    Technology &bull; Innovation &bull; Growth
+                </div>
+
+                <div style="
+                    margin-top:14px;
+                    font-size:12px;
+                    line-height:1.7;
+                ">
+                    You're receiving this email because you subscribed to updates from
+                    figbloom.org. Thank you for being part of our community.
+                </div>
+
+                <div style="
+                    margin-top:16px;
+                    padding-top:16px;
+                    border-top:1px solid #e3e9e2;
+                    font-size:12px;
+                ">
+                    <a href="{unsubscribe_url}" style="color:#8a978d; text-decoration:underline;">
+                        Unsubscribe from this newsletter
+                    </a>
+                </div>
+
+                <div style="
+                    margin-top:14px;
+                    font-size:11px;
+                    color:#a9b3ac;
+                ">
+                    &copy; {current_year} Figbloom Digital Group. All rights reserved.
+                </div>
+
             </div>
 
         </div>
@@ -569,6 +644,22 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
 """
 
         # ---------------------------------------------------------
+        # LOGO (embedded inline via Content-ID, not a remote URL —
+        # most mail clients block remote images by default, but an
+        # embedded one just shows up immediately)
+        # ---------------------------------------------------------
+
+        logo_path = os.path.join(
+            settings.BASE_DIR.parent, "frontend", "assets", "images", "figbloom_logo.png"
+        )
+
+        try:
+            with open(logo_path, "rb") as logo_file:
+                logo_bytes = logo_file.read()
+        except OSError:
+            logo_bytes = None
+
+        # ---------------------------------------------------------
         # SEND EMAILS
         # ---------------------------------------------------------
 
@@ -576,9 +667,18 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
 
             connection.open()
 
-            for email in recipients:
+            for subscriber_id, email in recipients:
 
                 try:
+
+                    unsubscribe_token = signing.dumps(
+                        subscriber_id,
+                        salt="newsletter-unsubscribe",
+                    )
+
+                    unsubscribe_url = request.build_absolute_uri(
+                        f"/unsubscribe/{unsubscribe_token}/"
+                    )
 
                     message = EmailMultiAlternatives(
                         subject=subject,
@@ -589,9 +689,24 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
                     )
 
                     message.attach_alternative(
-                        email_html,
+                        build_email_html(unsubscribe_url),
                         "text/html",
                     )
+
+                    if logo_bytes:
+                        # Django 6.1's EmailMessage always nests
+                        # attachments under multipart/mixed (the
+                        # long-standing multipart/related override via
+                        # `mixed_subtype` was removed) — every major
+                        # mail client still resolves a cid: reference
+                        # to a sibling attachment fine either way, so
+                        # this is just attach() + Content-ID.
+                        logo_image = MIMEImage(logo_bytes)
+                        logo_image.add_header("Content-ID", "<figbloom-logo>")
+                        logo_image.add_header(
+                            "Content-Disposition", "inline", filename="figbloom_logo.png"
+                        )
+                        message.attach(logo_image)
 
                     message.send(
                         fail_silently=False
@@ -680,6 +795,43 @@ class NewsletterSubscribeView(generics.CreateAPIView):
         )
 
 
+def unsubscribe_view(request, token):
+    """One-click unsubscribe link embedded in every newsletter email.
+
+    No login is required — the token itself (a signed subscriber id) is
+    the credential, the same pattern Django uses for password-reset
+    links. No expiry is set: an unsubscribe link in a two-year-old email
+    should still work.
+    """
+    try:
+        subscriber_id = signing.loads(token, salt='newsletter-unsubscribe')
+    except signing.BadSignature:
+        return render(
+            request,
+            'unsubscribe/index.html',
+            {'state': 'invalid'},
+        )
+
+    subscriber = NewsletterSubscriber.objects.filter(id=subscriber_id).first()
+
+    if not subscriber:
+        return render(
+            request,
+            'unsubscribe/index.html',
+            {'state': 'invalid'},
+        )
+
+    if subscriber.is_active:
+        subscriber.is_active = False
+        subscriber.save(update_fields=['is_active'])
+
+    return render(
+        request,
+        'unsubscribe/index.html',
+        {'state': 'unsubscribed', 'email': subscriber.email},
+    )
+
+
 CONTACT_NOTIFICATION_RECIPIENT = 'sales@figbloom.org'
 
 
@@ -758,6 +910,72 @@ class ContactCreateView(generics.CreateAPIView):
             reply_to=[inquiry.email] if inquiry.email else None,
         )
         message.attach_alternative(html_body, 'text/html')
-        message.send(fail_silently=False) 
+        message.send(fail_silently=False)
 
+
+class ContactAdminViewSet(viewsets.ReadOnlyModelViewSet):
+    """Read-only list/detail of contact-form inquiries for the admin dashboard."""
+    queryset = ContactInquiry.objects.all().order_by('-created_at')
+    serializer_class = ContactInquiryAdminSerializer
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+
+class DashboardStatsView(APIView):
+    """Aggregate counts + a merged recent-activity feed for the dashboard Overview tab."""
+
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        week_ago = timezone.now() - timedelta(days=7)
+
+        stats = {
+            'open_jobs': Job.objects.filter(is_open=True).count(),
+            'total_applications': JobApplication.objects.count(),
+            'new_applications_7d': JobApplication.objects.filter(applied_at__gte=week_ago).count(),
+            'active_subscribers': NewsletterSubscriber.objects.filter(is_active=True).count(),
+            'new_subscribers_7d': NewsletterSubscriber.objects.filter(subscribed_at__gte=week_ago).count(),
+            'contact_inquiries': ContactInquiry.objects.count(),
+            'new_contact_inquiries_7d': ContactInquiry.objects.filter(created_at__gte=week_ago).count(),
+        }
+
+        # No natural shared ordering across three unrelated models, so each
+        # is pulled independently and merged/sorted here in Python rather
+        # than attempted as a single cross-model query.
+        recent = []
+
+        for app in JobApplication.objects.select_related('job').order_by('-applied_at')[:8]:
+            recent.append({
+                'type': 'application',
+                'id': app.id,
+                'label': f'{app.full_name} applied — {app.job.title}',
+                'timestamp': app.applied_at,
+                'url': f'/admin-dashboard/application-detail?id={app.id}',
+            })
+
+        for inquiry in ContactInquiry.objects.order_by('-created_at')[:8]:
+            recent.append({
+                'type': 'contact',
+                'id': inquiry.id,
+                'label': f'New contact inquiry from {inquiry.full_name}',
+                'timestamp': inquiry.created_at,
+                'url': '/admin-dashboard/contact',
+            })
+
+        for sub in NewsletterSubscriber.objects.order_by('-subscribed_at')[:8]:
+            recent.append({
+                'type': 'subscriber',
+                'id': sub.id,
+                'label': f'New subscriber — {sub.email}',
+                'timestamp': sub.subscribed_at,
+                'url': '/admin-dashboard/subscribers',
+            })
+
+        recent.sort(key=lambda item: item['timestamp'], reverse=True)
+
+        return Response({
+            'stats': stats,
+            'recent_activity': recent[:10],
+        })
 

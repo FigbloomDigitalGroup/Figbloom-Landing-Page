@@ -14,30 +14,16 @@
   <title>Admin Dashboard | Figbloom Digital Group</title>
 
   <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
 
   <style>
     /* =========================================================
        FIGBLOOM ADMIN DASHBOARD
-       ========================================================= */
 
-    :root {
-      --fig-green: #183c22;
-      --fig-green-dark: #102d18;
-      --fig-green-soft: #eef7f0;
-      --fig-orange: #ff9400;
-      --fig-orange-soft: #fff5e8;
-      --fig-text: #183c22;
-      --fig-muted: #718096;
-      --fig-border: #e5e9e5;
-      --fig-bg: #f7f9f7;
-      --white: #ffffff;
-      --danger: #dc2626;
-      --danger-soft: #fef2f2;
-      --success: #15803d;
-      --success-soft: #ecfdf3;
-      --shadow-sm: 0 4px 18px rgba(24, 60, 34, 0.06);
-      --shadow-md: 0 12px 35px rgba(24, 60, 34, 0.09);
-    }
+       Color/spacing/radius tokens now come from admin.css's :root —
+       this file only carries markup-specific rules (.db-*) that
+       predate the shared design system.
+       ========================================================= */
 
     * {
       box-sizing: border-box;
@@ -51,14 +37,7 @@
       margin: 0;
       background: var(--fig-bg);
       color: var(--fig-text);
-      font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+      font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
     }
 
     button,
@@ -76,56 +55,8 @@
       display: none !important;
     }
 
-    /* =========================================================
-       HEADER
-       ========================================================= */
-
-    .db-header {
-      height: 82px;
-      background: var(--white);
-      border-bottom: 1px solid var(--fig-border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 34px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-
-    .db-header-left {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-
-    .db-header-left img {
-      width: 50px;
-      height: auto;
-      object-fit: contain;
-    }
-
-    .db-header-left span {
-      font-size: 21px;
-      font-weight: 800;
-      color: var(--fig-green);
-    }
-
-    .db-logout {
-      border: 1px solid var(--fig-border);
-      background: white;
-      color: var(--fig-green);
-      padding: 11px 19px;
-      border-radius: 10px;
-      font-weight: 700;
-      transition: 0.2s ease;
-    }
-
-    .db-logout:hover {
-      background: var(--fig-orange-soft);
-      border-color: rgba(255, 148, 0, 0.35);
-      color: var(--fig-orange);
-    }
+    /* Header/logout chrome now lives in admin.css (.ad-header, etc.),
+       shared via components/admin-header.html. */
 
     /* =========================================================
        TABS
@@ -141,7 +72,7 @@
 
     .db-tab {
       padding: 18px 22px;
-      color: #65736a;
+      color: var(--fig-muted);
       font-weight: 700;
       cursor: pointer;
       border-bottom: 3px solid transparent;
@@ -150,11 +81,11 @@
     }
 
     .db-tab:hover {
-      color: var(--fig-green);
+      color: var(--fig-text);
     }
 
     .db-tab.active {
-      color: var(--fig-green);
+      color: var(--fig-text);
       border-bottom-color: var(--fig-orange);
     }
 
@@ -188,7 +119,7 @@
     .newsletter-header h2 {
       margin: 0;
       font-size: 28px;
-      color: var(--fig-green);
+      color: var(--fig-text);
       font-weight: 800;
       letter-spacing: -0.03em;
     }
@@ -208,10 +139,10 @@
       background: var(--fig-green);
       color: white;
       padding: 12px 19px;
-      border-radius: 10px;
+      border-radius: var(--radius-lg);
       font-weight: 800;
       transition: 0.2s ease;
-      box-shadow: 0 5px 14px rgba(24, 60, 34, 0.13);
+      box-shadow: 0 5px 14px rgba(18, 21, 30, 0.13);
     }
 
     .db-btn-primary:hover {
@@ -227,10 +158,10 @@
 
     .db-btn-secondary {
       border: 1px solid var(--fig-border);
-      background: white;
-      color: var(--fig-green);
+      background: #f7f7f7;
+      color: var(--fig-text);
       padding: 12px 19px;
-      border-radius: 10px;
+      border-radius: var(--radius-lg);
       font-weight: 800;
       transition: 0.2s ease;
     }
@@ -250,7 +181,7 @@
     #newsletter-table-wrap {
       background: white;
       border: 1px solid var(--fig-border);
-      border-radius: 17px;
+      border-radius: var(--radius-xl);
       box-shadow: var(--shadow-sm);
       overflow: hidden;
     }
@@ -268,7 +199,7 @@
 
     th {
       background: #fafcfa;
-      color: #68766d;
+      color: var(--fig-muted);
       text-align: left;
       padding: 15px 18px;
       font-size: 12px;
@@ -280,8 +211,8 @@
 
     td {
       padding: 16px 18px;
-      border-bottom: 1px solid #edf0ed;
-      color: #27362d;
+      border-bottom: 1px solid var(--fig-border);
+      color: var(--fig-text);
       font-size: 14px;
       vertical-align: middle;
     }
@@ -297,7 +228,7 @@
     .db-action-link {
       border: 0;
       background: transparent;
-      color: var(--fig-green);
+      color: var(--fig-text);
       font-weight: 800;
       padding: 4px 0;
     }
@@ -332,16 +263,16 @@
     }
 
     .badge-closed {
-      color: #64748b;
+      color: var(--fig-muted);
       background: #f1f5f9;
     }
 
     .status-select {
       border: 1px solid var(--fig-border);
       background: white;
-      border-radius: 8px;
+      border-radius: var(--radius-lg);
       padding: 7px 10px;
-      color: var(--fig-green);
+      color: var(--fig-text);
       font-weight: 700;
       outline: none;
     }
@@ -371,7 +302,7 @@
       min-width: 175px;
       background: var(--fig-green);
       color: white;
-      border-radius: 16px;
+      border-radius: var(--radius-xl);
       padding: 18px 21px;
       text-align: center;
       box-shadow: var(--shadow-md);
@@ -402,7 +333,7 @@
 
 .subscriber-count-clickable:hover {
   transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(24, 60, 34, 0.16);
+  box-shadow: 0 18px 40px rgba(18, 21, 30, 0.16);
 }
 
 .subscriber-count-clickable small {
@@ -413,6 +344,56 @@
   opacity: 0.75;
 }
 
+    /* =========================================================
+       SEARCH / FILTER TOOLBAR (Jobs, Applications)
+       ========================================================= */
+
+    .db-toolbar {
+      background: white;
+      border: 1px solid var(--fig-border);
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 15px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .db-toolbar-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .db-toolbar-group label {
+      font-size: 11px;
+      color: var(--fig-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 900;
+    }
+
+    .db-toolbar-input,
+    .db-toolbar-select {
+      min-width: 220px;
+      height: 44px;
+      border: 1px solid var(--fig-border);
+      border-radius: var(--radius-lg);
+      background: white;
+      color: var(--fig-text);
+      padding: 0 13px;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .db-toolbar-input:focus,
+    .db-toolbar-select:focus {
+      border-color: var(--fig-orange);
+      box-shadow: 0 0 0 3px rgba(255, 148, 0, 0.12);
+    }
+
     /* IMPORTANT:
        Filters are now INSIDE newsletter panel only.
     */
@@ -420,7 +401,7 @@
     .newsletter-filters {
       background: white;
       border: 1px solid var(--fig-border);
-      border-radius: 16px;
+      border-radius: var(--radius-xl);
       padding: 18px;
       margin-bottom: 22px;
       display: flex;
@@ -438,7 +419,7 @@
 
     .newsletter-filter-group label {
       font-size: 11px;
-      color: #6b7a70;
+      color: var(--fig-muted);
       text-transform: uppercase;
       letter-spacing: 0.06em;
       font-weight: 900;
@@ -448,10 +429,10 @@
     .newsletter-filter-input {
       min-width: 190px;
       height: 44px;
-      border: 1px solid #d8ded9;
-      border-radius: 10px;
+      border: 1px solid var(--fig-border);
+      border-radius: var(--radius-lg);
       background: white;
-      color: var(--fig-green);
+      color: var(--fig-text);
       padding: 0 13px;
       font-weight: 700;
       outline: none;
@@ -481,7 +462,7 @@
     .newsletter-preview {
       background: white;
       border: 1px solid var(--fig-border);
-      border-radius: 17px;
+      border-radius: var(--radius-xl);
       padding: 24px;
       box-shadow: var(--shadow-sm);
     }
@@ -492,7 +473,7 @@
 
     .newsletter-field label {
       display: block;
-      color: var(--fig-green);
+      color: var(--fig-text);
       font-size: 13px;
       font-weight: 800;
       margin-bottom: 8px;
@@ -501,10 +482,10 @@
     .newsletter-field input,
     .newsletter-field textarea {
       width: 100%;
-      border: 1px solid #d8ded9;
-      border-radius: 11px;
+      border: 1px solid var(--fig-border);
+      border-radius: var(--radius-lg);
       padding: 13px 14px;
-      color: var(--fig-green);
+      color: var(--fig-text);
       outline: none;
       background: #fff;
       transition: 0.2s ease;
@@ -530,7 +511,7 @@
     }
 
     #newsletter-word-count {
-      color: #9aa59d;
+      color: var(--fig-muted);
       font-size: 12px;
       font-weight: 700;
     }
@@ -542,7 +523,7 @@
     }
 
     .preview-header {
-      color: #6d7a72;
+      color: var(--fig-muted);
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.06em;
@@ -552,15 +533,15 @@
 
     .email-preview-card {
       background: white;
-      border: 1px solid #e8ece8;
-      border-radius: 15px;
+      border: 1px solid var(--fig-border);
+      border-radius: var(--radius-xl);
       overflow: hidden;
-      box-shadow: 0 8px 30px rgba(24, 60, 34, 0.08);
+      box-shadow: 0 8px 30px rgba(18, 21, 30, 0.08);
     }
 
     .email-preview-brand {
-      background: var(--fig-green);
-      padding: 25px;
+      background: #ffffff;
+      padding: 22px 25px 16px;
       text-align: center;
     }
 
@@ -569,44 +550,77 @@
       max-width: 100%;
     }
 
+    .email-preview-accent {
+      height: 4px;
+      background: var(--fig-orange);
+    }
+
     .email-preview-content {
       padding: 28px;
       min-height: 250px;
     }
 
+    .email-preview-eyebrow {
+      color: var(--fig-orange);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
     .email-preview-content h2 {
       margin: 0 0 15px;
-      color: var(--fig-green);
+      color: var(--fig-text);
       font-size: 23px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--fig-border);
     }
 
     .email-preview-content p,
     #preview-content {
-      color: #526057;
+      color: var(--fig-muted);
       line-height: 1.75;
     }
 
     .email-preview-footer {
       background: #f8faf8;
-      border-top: 1px solid #edf0ed;
+      border-top: 1px solid var(--fig-border);
       text-align: center;
       padding: 19px;
-      color: #718078;
+      color: var(--fig-muted);
       font-size: 12px;
     }
 
     .email-preview-footer strong {
-      color: var(--fig-green);
+      color: var(--fig-text);
     }
 
     .email-preview-footer p {
       margin: 5px 0 0;
     }
 
+    .email-preview-unsubscribe {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--fig-border);
+    }
+
+    .email-preview-unsubscribe a {
+      color: var(--fig-muted);
+      text-decoration: underline;
+    }
+
+    .email-preview-copyright {
+      margin-top: 10px;
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
     .newsletter-subscribers-card {
       background: white;
       border: 1px solid var(--fig-border);
-      border-radius: 17px;
+      border-radius: var(--radius-xl);
       box-shadow: var(--shadow-sm);
       overflow: hidden;
     }
@@ -622,7 +636,7 @@
 
     .newsletter-subscribers-header h3 {
       margin: 0;
-      color: var(--fig-green);
+      color: var(--fig-text);
       font-size: 18px;
     }
 
@@ -647,7 +661,7 @@
     }
 
     .newsletter-status-inactive {
-      color: #64748b;
+      color: var(--fig-muted);
       background: #f1f5f9;
     }
 
@@ -665,7 +679,7 @@
     .db-modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(10, 25, 15, 0.55);
+      background: rgba(18, 21, 30, 0.55);
       backdrop-filter: blur(4px);
       display: none;
       align-items: center;
@@ -683,7 +697,7 @@
       max-height: calc(100vh - 50px);
       overflow-y: auto;
       background: white;
-      border-radius: 20px;
+      border-radius: var(--radius-xl);
       padding: 28px;
       box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
     }
@@ -691,7 +705,7 @@
     .db-modal h3 {
       margin: 0 0 24px;
       font-size: 25px;
-      color: var(--fig-green);
+      color: var(--fig-text);
     }
 
     .db-field {
@@ -701,7 +715,7 @@
     .db-field label {
       display: block;
       margin-bottom: 7px;
-      color: var(--fig-green);
+      color: var(--fig-text);
       font-size: 13px;
       font-weight: 800;
     }
@@ -710,10 +724,10 @@
     .db-field textarea,
     .db-field select {
       width: 100%;
-      border: 1px solid #d8ded9;
-      border-radius: 10px;
+      border: 1px solid var(--fig-border);
+      border-radius: var(--radius-lg);
       padding: 11px 13px;
-      color: var(--fig-green);
+      color: var(--fig-text);
       background: white;
       outline: none;
     }
@@ -760,14 +774,6 @@
     }
 
     @media (max-width: 700px) {
-      .db-header {
-        padding: 0 18px;
-      }
-
-      .db-header-left span {
-        font-size: 17px;
-      }
-
       .db-tabs {
         padding: 0 12px;
         overflow-x: auto;
@@ -809,42 +815,8 @@
 </head>
 
 <body>
-
-  <!-- =========================================================
-       HEADER
-       ========================================================= -->
-
-  <header class="db-header">
-    <div class="db-header-left">
-      <img
-        src="/assets/images/figbloom_logo.png"
-        alt="Figbloom Digital Group"
-      />
-
-      <span>Admin Dashboard</span>
-    </div>
-
-    <div style="display:flex; align-items:center; gap:10px;">
-
-  <button
-    type="button"
-    class="db-btn-secondary"
-    id="profile-settings-btn"
-  >
-    Profile Settings
-  </button>
-
-  <button
-    type="button"
-    class="db-logout"
-    id="logout-btn"
-  >
-    Log out
-  </button>
-
-</div>
-  </header>
-
+<div class="ad-root">
+{% include "components/admin-header.html" %}
 
   <!-- =========================================================
        TABS
@@ -854,6 +826,13 @@
 
     <div
       class="db-tab active"
+      data-panel="overview"
+    >
+      Overview
+    </div>
+
+    <div
+      class="db-tab"
       data-panel="jobs"
     >
       Jobs
@@ -879,12 +858,54 @@
   <main class="db-content">
 
     <!-- =======================================================
+         OVERVIEW PANEL
+         ======================================================= -->
+
+    <section
+      id="panel-overview"
+      class="db-panel active"
+    >
+
+      <div class="db-panel-header">
+        <div>
+          <h2>Overview</h2>
+          <p>
+            A snapshot of jobs, applications, subscribers and contact inquiries.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="ad-stat-grid"
+        id="overview-stats"
+      >
+        <div class="ad-stat-tile">
+          <div class="ad-stat-value">&mdash;</div>
+          <div class="ad-stat-label">Loading&hellip;</div>
+        </div>
+      </div>
+
+      <div class="db-panel-header" style="margin-top: 8px;">
+        <div>
+          <h2 style="font-size: 18px;">Recent Activity</h2>
+        </div>
+      </div>
+
+      <div id="overview-activity-wrap">
+        <div class="db-empty">
+          Loading activity...
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =======================================================
          JOBS PANEL
          ======================================================= -->
 
     <section
       id="panel-jobs"
-      class="db-panel active"
+      class="db-panel"
     >
 
       <div class="db-panel-header">
@@ -903,6 +924,32 @@
         >
           + New Job
         </button>
+
+      </div>
+
+      <div class="db-toolbar">
+
+        <div class="db-toolbar-group">
+          <label for="jobs-search">Search</label>
+          <input
+            type="text"
+            id="jobs-search"
+            class="db-toolbar-input"
+            placeholder="Search by title or department..."
+          />
+        </div>
+
+        <div class="db-toolbar-group">
+          <label for="jobs-status-filter">Status</label>
+          <select
+            id="jobs-status-filter"
+            class="db-toolbar-select"
+          >
+            <option value="all">All jobs</option>
+            <option value="open">Open</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
 
       </div>
 
@@ -933,6 +980,36 @@
           <p>
             Review applicants and manage their application status.
           </p>
+        </div>
+
+      </div>
+
+      <div class="db-toolbar">
+
+        <div class="db-toolbar-group">
+          <label for="applications-search">Search</label>
+          <input
+            type="text"
+            id="applications-search"
+            class="db-toolbar-input"
+            placeholder="Search by name or email..."
+          />
+        </div>
+
+        <div class="db-toolbar-group">
+          <label for="applications-status-filter">Status</label>
+          <select
+            id="applications-status-filter"
+            class="db-toolbar-select"
+          >
+            <option value="all">All statuses</option>
+            <option value="new">New</option>
+            <option value="reviewed">Reviewed</option>
+            <option value="shortlisted">Shortlisted</option>
+            <option value="interview">Interview</option>
+            <option value="rejected">Rejected</option>
+            <option value="hired">Hired</option>
+          </select>
         </div>
 
       </div>
@@ -1149,8 +1226,14 @@
 
             </div>
 
+            <div class="email-preview-accent"></div>
+
 
             <div class="email-preview-content">
+
+              <div class="email-preview-eyebrow">
+                Newsletter Update
+              </div>
 
               <h2 id="preview-subject">
                 Your newsletter subject
@@ -1174,8 +1257,18 @@
               </strong>
 
               <p>
-                Thank you for being part of our community.
+                You're receiving this email because you subscribed to updates from
+                figbloom.org. Thank you for being part of our community.
               </p>
+
+              <div class="email-preview-unsubscribe">
+                <a href="javascript:void(0)">Unsubscribe from this newsletter</a>
+              </div>
+
+              <div
+                class="email-preview-copyright"
+                id="preview-copyright-year"
+              ></div>
 
             </div>
 
@@ -1461,6 +1554,7 @@
        JAVASCRIPT
        ========================================================= -->
 
+  <script src="/assets/js/admin.js"></script>
   <script>
 
     /* =========================================================
@@ -1472,94 +1566,8 @@
     window.location.href = "/admin-dashboard/subscribers";
   });
   
-    const API_BASE =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1"
-        ? "http://127.0.0.1:8000"
-        : "";
-
-
-    /* =========================================================
-       CSRF
-       ========================================================= */
-
-    function getCsrfToken() {
-
-      return (
-        document.cookie
-          .split("; ")
-          .find(
-            row => row.startsWith("csrftoken=")
-          )
-          ?.split("=")[1] || ""
-      );
-
-    }
-
-
-    /* =========================================================
-       API HELPER
-       ========================================================= */
-
-    async function apiFetch(
-      url,
-      options = {}
-    ) {
-
-      const csrfToken =
-        getCsrfToken();
-
-
-      const response =
-        await fetch(
-          `${API_BASE}${url}`,
-          {
-            ...options,
-
-            credentials: "include",
-
-            headers: {
-              ...(options.headers || {}),
-              "X-CSRFToken": csrfToken
-            }
-          }
-        );
-
-
-      if (
-        response.status === 401 ||
-        response.status === 403
-      ) {
-
-        window.location.href =
-          "/admin-dashboard/login";
-
-        throw new Error(
-          "Not authenticated"
-        );
-
-      }
-
-
-      return response;
-
-    }
-
-
-    /* =========================================================
-       HTML ESCAPE
-       ========================================================= */
-
-    function escapeHtml(value) {
-
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-    }
+    /* API_BASE / getCsrfToken / apiFetch / escapeHtml now come from
+       the shared /assets/js/admin.js, loaded before this script. */
 
 
     /* =========================================================
@@ -1689,48 +1697,9 @@ function yesterdayKey() {
       });
 
 
-    /* =========================================================
-       LOGOUT
-       ========================================================= */
-    document
-  .getElementById("profile-settings-btn")
-  .addEventListener("click", () => {
-
-    window.location.href =
-      "/admin-dashboard/profile-settings";
-
-  });
-    document
-      .getElementById("logout-btn")
-      .addEventListener(
-        "click",
-        async () => {
-
-          try {
-
-            await apiFetch(
-              "/api/auth/logout/",
-              {
-                method: "POST"
-              }
-            );
-
-          } catch (error) {
-
-            console.error(
-              "Logout error:",
-              error
-            );
-
-          } finally {
-
-            window.location.href =
-              "/admin-dashboard/login";
-
-          }
-
-        }
-      );
+    /* Profile Settings link + logout are now handled by the shared
+       admin-header.html / admin.js (initAdminHeader wires
+       #admin-logout-btn automatically). */
 
 
     /* =========================================================
@@ -1740,61 +1709,75 @@ function yesterdayKey() {
     let jobsCache = [];
 
 
-    async function loadJobs() {
+    function applyJobsFilter() {
+
+      const search =
+        (document.getElementById("jobs-search")?.value || "")
+          .trim()
+          .toLowerCase();
+
+      const statusFilter =
+        document.getElementById("jobs-status-filter")?.value || "all";
+
+      const filtered =
+        jobsCache.filter(job => {
+
+          const matchesSearch =
+            !search ||
+            (job.title || "").toLowerCase().includes(search) ||
+            (job.department || "").toLowerCase().includes(search);
+
+          const matchesStatus =
+            statusFilter === "all" ||
+            (statusFilter === "open" && job.is_open) ||
+            (statusFilter === "closed" && !job.is_open);
+
+          return matchesSearch && matchesStatus;
+
+        });
+
+      renderJobsTable(filtered);
+
+    }
+
+
+    function renderJobsTable(jobs) {
 
       const wrap =
         document.getElementById(
           "jobs-table-wrap"
         );
 
-
       if (!wrap) {
         return;
       }
 
-
-      try {
-
-        const response =
-          await apiFetch(
-            "/api/admin/jobs/"
-          );
-
-
-        if (!response.ok) {
-
-          throw new Error(
-            `Jobs request failed: ${response.status}`
-          );
-
-        }
-
-
-        const data =
-          await response.json();
-
-
-        jobsCache =
-          Array.isArray(data)
-            ? data
-            : data.results || [];
-
-
-        if (!jobsCache.length) {
-
-          wrap.innerHTML = `
-            <div class="db-empty">
-              <strong>No jobs posted yet.</strong>
-              <span>Create your first job posting using the button above.</span>
-            </div>
-          `;
-
-          return;
-
-        }
-
+      if (!jobsCache.length) {
 
         wrap.innerHTML = `
+          <div class="db-empty">
+            <strong>No jobs posted yet.</strong>
+            <span>Create your first job posting using the button above.</span>
+          </div>
+        `;
+
+        return;
+
+      }
+
+      if (!jobs.length) {
+
+        wrap.innerHTML = `
+          <div class="db-empty">
+            No jobs match your search/filter.
+          </div>
+        `;
+
+        return;
+
+      }
+
+      wrap.innerHTML = `
           <div class="db-table-scroll">
 
             <table>
@@ -1814,7 +1797,7 @@ function yesterdayKey() {
 
               <tbody>
 
-                ${jobsCache.map(job => `
+                ${jobs.map(job => `
 
                   <tr>
 
@@ -1897,6 +1880,51 @@ function yesterdayKey() {
           </div>
         `;
 
+    }
+
+
+    async function loadJobs() {
+
+      const wrap =
+        document.getElementById(
+          "jobs-table-wrap"
+        );
+
+
+      if (!wrap) {
+        return;
+      }
+
+
+      try {
+
+        const response =
+          await apiFetch(
+            "/api/admin/jobs/"
+          );
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            `Jobs request failed: ${response.status}`
+          );
+
+        }
+
+
+        const data =
+          await response.json();
+
+
+        jobsCache =
+          Array.isArray(data)
+            ? data
+            : data.results || [];
+
+
+        applyJobsFilter();
+
 
       } catch (error) {
 
@@ -1922,6 +1950,15 @@ function yesterdayKey() {
       }
 
     }
+
+
+    document
+      .getElementById("jobs-search")
+      ?.addEventListener("input", applyJobsFilter);
+
+    document
+      .getElementById("jobs-status-filter")
+      ?.addEventListener("change", applyJobsFilter);
 
 
     /* =========================================================
@@ -2107,8 +2144,9 @@ function yesterdayKey() {
       async function(id) {
 
         const confirmed =
-          window.confirm(
-            "Delete this job posting? This cannot be undone."
+          await showConfirm(
+            "Delete this job posting? This cannot be undone.",
+            { confirmText: "Delete", danger: true }
           );
 
 
@@ -2297,8 +2335,9 @@ function yesterdayKey() {
               );
 
 
-              alert(
-                "Unable to save the job. Please check the form and try again."
+              showToast(
+                "Unable to save the job. Please check the form and try again.",
+                "error"
               );
 
 
@@ -2324,8 +2363,9 @@ function yesterdayKey() {
               error
             );
 
-            alert(
-              "Something went wrong while saving the job."
+            showToast(
+              "Something went wrong while saving the job.",
+              "error"
             );
 
           } finally {
@@ -2346,70 +2386,85 @@ function yesterdayKey() {
        APPLICATIONS
        ========================================================= */
 
-    async function loadApplications() {
+    let applicationsCache = [];
+
+
+    function applyApplicationsFilter() {
+
+      const search =
+        (document.getElementById("applications-search")?.value || "")
+          .trim()
+          .toLowerCase();
+
+      const statusFilter =
+        document.getElementById("applications-status-filter")?.value || "all";
+
+      const filtered =
+        applicationsCache.filter(app => {
+
+          const matchesSearch =
+            !search ||
+            (app.full_name || "").toLowerCase().includes(search) ||
+            (app.email || "").toLowerCase().includes(search);
+
+          const matchesStatus =
+            statusFilter === "all" ||
+            app.status === statusFilter;
+
+          return matchesSearch && matchesStatus;
+
+        });
+
+      renderApplicationsTable(filtered);
+
+    }
+
+
+    function renderApplicationsTable(applications) {
 
       const wrap =
         document.getElementById(
           "applications-table-wrap"
         );
 
-
       if (!wrap) {
         return;
       }
 
-
-      try {
-
-        const response =
-          await apiFetch(
-            "/api/admin/applications/"
-          );
-
-
-        if (!response.ok) {
-
-          throw new Error(
-            `Applications request failed: ${response.status}`
-          );
-
-        }
-
-
-        const data =
-          await response.json();
-
-
-        const applications =
-          Array.isArray(data)
-            ? data
-            : data.results || [];
-
-
-        if (!applications.length) {
-
-          wrap.innerHTML = `
-            <div class="db-empty">
-              <strong>No applications yet.</strong>
-            </div>
-          `;
-
-          return;
-
-        }
-
-
-        const statuses = [
-          "new",
-          "reviewed",
-          "shortlisted",
-          "interview",
-          "rejected",
-          "hired"
-        ];
-
+      if (!applicationsCache.length) {
 
         wrap.innerHTML = `
+          <div class="db-empty">
+            <strong>No applications yet.</strong>
+          </div>
+        `;
+
+        return;
+
+      }
+
+      if (!applications.length) {
+
+        wrap.innerHTML = `
+          <div class="db-empty">
+            No applications match your search/filter.
+          </div>
+        `;
+
+        return;
+
+      }
+
+      const statuses = [
+        "new",
+        "reviewed",
+        "shortlisted",
+        "interview",
+        "rejected",
+        "hired"
+      ];
+
+      wrap.innerHTML = `
 
           <div class="db-table-scroll">
 
@@ -2532,6 +2587,51 @@ function yesterdayKey() {
           </div>
         `;
 
+    }
+
+
+    async function loadApplications() {
+
+      const wrap =
+        document.getElementById(
+          "applications-table-wrap"
+        );
+
+
+      if (!wrap) {
+        return;
+      }
+
+
+      try {
+
+        const response =
+          await apiFetch(
+            "/api/admin/applications/"
+          );
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            `Applications request failed: ${response.status}`
+          );
+
+        }
+
+
+        const data =
+          await response.json();
+
+
+        applicationsCache =
+          Array.isArray(data)
+            ? data
+            : data.results || [];
+
+
+        applyApplicationsFilter();
+
 
       } catch (error) {
 
@@ -2557,6 +2657,15 @@ function yesterdayKey() {
       }
 
     }
+
+
+    document
+      .getElementById("applications-search")
+      ?.addEventListener("input", applyApplicationsFilter);
+
+    document
+      .getElementById("applications-status-filter")
+      ?.addEventListener("change", applyApplicationsFilter);
 
 
     window.viewApplication =
@@ -2603,6 +2712,16 @@ function yesterdayKey() {
 
           }
 
+
+          const cached =
+            applicationsCache.find(
+              app => app.id === id
+            );
+
+          if (cached) {
+            cached.status = status;
+          }
+
         } catch (error) {
 
           console.error(
@@ -2613,6 +2732,96 @@ function yesterdayKey() {
         }
 
       };
+
+
+    /* =========================================================
+       OVERVIEW
+       ========================================================= */
+
+    async function loadOverview() {
+
+      const statsWrap =
+        document.getElementById("overview-stats");
+
+      const activityWrap =
+        document.getElementById("overview-activity-wrap");
+
+      if (!statsWrap || !activityWrap) {
+        return;
+      }
+
+      try {
+
+        const response =
+          await apiFetch("/api/admin/stats/");
+
+        if (!response.ok) {
+          throw new Error(`Stats request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const stats = data.stats || {};
+        const activity = data.recent_activity || [];
+
+        const tiles = [
+          { label: "Open Jobs", value: stats.open_jobs },
+          { label: "Applications", value: stats.total_applications },
+          { label: "Active Subscribers", value: stats.active_subscribers },
+          { label: "Contact Inquiries", value: stats.contact_inquiries },
+        ];
+
+        statsWrap.innerHTML = tiles.map(tile => `
+          <div class="ad-stat-tile">
+            <div class="ad-stat-value">${escapeHtml(String(tile.value ?? 0))}</div>
+            <div class="ad-stat-label">${escapeHtml(tile.label)}</div>
+          </div>
+        `).join("");
+
+        if (!activity.length) {
+
+          activityWrap.innerHTML = `
+            <div class="db-empty">No recent activity yet.</div>
+          `;
+
+          return;
+
+        }
+
+        activityWrap.innerHTML = `
+          <div class="ad-card" style="padding: 6px 0;">
+            ${activity.map((item, index) => `
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; padding:12px 22px; ${index === activity.length - 1 ? "" : "border-bottom:1px solid var(--fig-border);"}">
+                <a
+                  href="${escapeHtml(item.url || "#")}"
+                  style="color:var(--fig-text); text-decoration:none; font-weight:600; font-size:14px;"
+                >
+                  ${escapeHtml(item.label)}
+                </a>
+                <span style="color:var(--fig-muted); font-size:13px; white-space:nowrap;">
+                  ${item.timestamp ? new Date(item.timestamp).toLocaleString() : ""}
+                </span>
+              </div>
+            `).join("")}
+          </div>
+        `;
+
+      } catch (error) {
+
+        if (error.message !== "Not authenticated") {
+
+          console.error("Overview error:", error);
+
+          statsWrap.innerHTML = `
+            <div class="db-empty">Unable to load overview.</div>
+          `;
+
+          activityWrap.innerHTML = "";
+
+        }
+
+      }
+
+    }
 
 
     /* =========================================================
@@ -3247,6 +3456,19 @@ if (subscriberCountCard) {
             : "words"
         }`;
 
+
+      const copyrightEl =
+        document.getElementById(
+          "preview-copyright-year"
+        );
+
+      if (copyrightEl) {
+
+        copyrightEl.textContent =
+          `© ${new Date().getFullYear()} Figbloom Digital Group. All rights reserved.`;
+
+      }
+
     }
 
 
@@ -3340,8 +3562,9 @@ if (subscriberCountCard) {
 
           if (!subject) {
 
-            alert(
-              "Please enter a newsletter subject."
+            showToast(
+              "Please enter a newsletter subject.",
+              "error"
             );
 
             newsletterSubject.focus();
@@ -3353,8 +3576,9 @@ if (subscriberCountCard) {
 
           if (!content) {
 
-            alert(
-              "Please enter newsletter content."
+            showToast(
+              "Please enter newsletter content.",
+              "error"
             );
 
             newsletterContent.focus();
@@ -3379,8 +3603,9 @@ if (subscriberCountCard) {
 
           if (!recipients.length) {
 
-            alert(
-              "There are no active subscribers matching the selected filter."
+            showToast(
+              "There are no active subscribers matching the selected filter.",
+              "error"
             );
 
             return;
@@ -3389,12 +3614,13 @@ if (subscriberCountCard) {
 
 
           const confirmed =
-            window.confirm(
+            await showConfirm(
               `Send this newsletter to ${recipients.length} active subscriber${
                 recipients.length === 1
                   ? ""
                   : "s"
-              }?`
+              }?`,
+              { confirmText: "Send" }
             );
 
 
@@ -3479,11 +3705,11 @@ if (subscriberCountCard) {
              * professional and simple.
              */
 
-            alert(
-              `Newsletter sent successfully.\n\n` +
-              `Recipients: ${recipientEmails.length}\n` +
-              `Sent: ${data.sent ?? recipientEmails.length}\n` +
-              `Failed: ${data.failed ?? 0}`
+            showToast(
+              `Newsletter sent — ${data.sent ?? recipientEmails.length} sent` +
+              `${data.failed ? `, ${data.failed} failed` : ""} ` +
+              `of ${recipientEmails.length} recipients.`,
+              data.failed ? "error" : "success"
             );
 
 
@@ -3506,8 +3732,9 @@ if (subscriberCountCard) {
             );
 
 
-            alert(
-              `Unable to send newsletter.\n\n${error.message}`
+            showToast(
+              `Unable to send newsletter. ${error.message}`,
+              "error"
             );
 
           } finally {
@@ -3536,31 +3763,23 @@ if (subscriberCountCard) {
       async () => {
 
         /*
-         * Jobs and Applications are loaded
-         * immediately because Jobs is the
-         * default tab.
+         * Overview, Jobs, Applications and Newsletter each pull
+         * from independent endpoints, so they load in parallel
+         * rather than one after another.
          */
 
-        await loadJobs();
-
-        await loadApplications();
-
-
-        /*
-         * Newsletter is loaded separately.
-         * This keeps its UI isolated from
-         * Jobs and Applications.
-         */
-
-        await loadNewsletter();
-
-
-        updateNewsletterPreview();
+        await Promise.all([
+          loadOverview(),
+          loadJobs(),
+          loadApplications(),
+          loadNewsletter().then(updateNewsletterPreview),
+        ]);
 
       }
     );
 
   </script>
 
+</div>
 </body>
 </html>

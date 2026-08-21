@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="robots"
+    content="noindex, nofollow"
+  />
+
+  <title>
+    Contact Inquiries | Figbloom Digital Group
+  </title>
+  {% include "components/favicon.html" %}
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--fig-bg);
+      color: var(--fig-text);
+      font-family:
+        "Outfit",
+        ui-sans-serif,
+        system-ui,
+        sans-serif;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* MAIN */
+
+    .page-container {
+      width: min(1400px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 38px 0 70px;
+    }
+
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+
+      margin-bottom: 28px;
+    }
+
+    .page-heading h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .page-heading p {
+      margin: 8px 0 0;
+      color: var(--fig-muted);
+    }
+
+    /* FILTERS */
+
+    .toolbar {
+      background: white;
+      border: 1px solid var(--fig-border);
+      border-radius: 0.75rem;
+
+      padding: 18px;
+
+      display: flex;
+      align-items: flex-end;
+
+      gap: 15px;
+      flex-wrap: wrap;
+
+      margin-bottom: 22px;
+
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .filter-group label {
+      font-size: 11px;
+      color: var(--fig-muted);
+
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+
+      font-weight: 900;
+    }
+
+    .filter-group input {
+      height: 44px;
+
+      min-width: 280px;
+
+      border: 1px solid var(--fig-border);
+      border-radius: 10px;
+
+      padding: 0 13px;
+
+      background: white;
+      color: var(--fig-text);
+
+      outline: none;
+    }
+
+    .filter-group input:focus {
+      border-color: var(--fig-orange);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(255, 148, 0, 0.12);
+    }
+
+    /* TABLE */
+
+    .table-card {
+      background: white;
+
+      border: 1px solid var(--fig-border);
+      border-radius: 0.75rem;
+
+      box-shadow: var(--shadow-sm);
+
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 20px 24px;
+
+      border-bottom: 1px solid var(--fig-border);
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .table-header h2 {
+      margin: 0;
+
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .table-header span {
+      color: var(--fig-muted);
+      font-size: 13px;
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      min-width: 760px;
+    }
+
+    th {
+      background: #fafcfa;
+      color: var(--fig-muted);
+      text-align: left;
+      padding: 15px 18px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 800;
+      border-bottom: 1px solid var(--fig-border);
+    }
+
+    td {
+      padding: 17px 18px;
+      border-bottom: 1px solid #edf0ed;
+      color: var(--fig-text);
+      font-size: 14px;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tbody tr:hover {
+      background: #fbfdfb;
+    }
+
+    .contact-name {
+      font-weight: 800;
+      color: var(--fig-text);
+    }
+
+    .contact-date {
+      color: var(--fig-muted);
+    }
+
+    /* EMPTY */
+
+    .empty {
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--fig-muted);
+      padding: 40px;
+    }
+
+    .empty-icon {
+      font-size: 38px;
+      margin-bottom: 12px;
+    }
+
+    .empty strong {
+      color: var(--fig-text);
+      font-size: 16px;
+    }
+
+    /* MODAL FIELDS */
+
+    .modal-field {
+      margin-bottom: 16px;
+    }
+
+    .modal-field:last-child {
+      margin-bottom: 0;
+    }
+
+    .modal-field-label {
+      font-size: 11px;
+      color: var(--fig-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .modal-field-value {
+      font-size: 14px;
+      color: var(--fig-text);
+      white-space: pre-wrap;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 800px) {
+
+      .page-container {
+        width: min(
+          100% - 28px,
+          1400px
+        );
+
+        padding-top: 25px;
+      }
+
+      .page-heading {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .toolbar {
+        align-items: stretch;
+      }
+
+      .filter-group {
+        width: 100%;
+      }
+
+      .filter-group input {
+        width: 100%;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+<div class="ad-root">
+{% include "components/admin-header.html" %}
+
+  <!-- MAIN -->
+
+  <main class="page-container">
+
+
+    <!-- PAGE TITLE -->
+
+    <div class="page-heading">
+
+      <div>
+
+        <h1>
+          Contact Inquiries
+        </h1>
+
+        <p>
+          Review messages submitted through the website's contact form.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- STATISTICS -->
+
+    <section class="ad-stat-grid">
+
+      <div class="ad-stat-tile">
+        <div
+          class="ad-stat-value"
+          id="total-count"
+        >
+          0
+        </div>
+        <div class="ad-stat-label">
+          Total Inquiries
+        </div>
+      </div>
+
+      <div class="ad-stat-tile">
+        <div
+          class="ad-stat-value"
+          id="new-count"
+        >
+          0
+        </div>
+        <div class="ad-stat-label">
+          New This Week
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- FILTERS -->
+
+    <section class="toolbar">
+
+      <div class="filter-group">
+
+        <label for="search">
+          Search Inquiries
+        </label>
+
+        <input
+          type="search"
+          id="search"
+          placeholder="Search by name, company, email or service..."
+        />
+
+      </div>
+
+    </section>
+
+
+    <!-- CONTACT TABLE -->
+
+    <section class="table-card">
+
+      <div class="table-header">
+
+        <div>
+
+          <h2>
+            Inquiry List
+          </h2>
+
+          <span id="table-summary">
+            Loading inquiries...
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div id="contact-table">
+
+        <div class="empty">
+
+          <div class="empty-icon">
+            ⏳
+          </div>
+
+          <strong>
+            Loading inquiries...
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+</div>
+
+
+<!-- VIEW MODAL -->
+
+<div
+  class="ad-modal-backdrop"
+  id="contact-modal-backdrop"
+  style="display: none;"
+>
+
+  <div class="ad-modal">
+
+    <div class="ad-modal-header">
+      Inquiry Details
+    </div>
+
+    <div
+      class="ad-modal-body"
+      id="contact-modal-body"
+    ></div>
+
+    <div class="ad-modal-footer">
+      <button
+        type="button"
+        class="ad-btn-secondary"
+        id="contact-modal-close"
+      >
+        Close
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+
+  <script src="/assets/js/admin.js"></script>
+  <script>
+
+    /* =====================================================
+       STATE
+       ===================================================== */
+
+    let inquiries = [];
+
+    let filteredInquiries = [];
+
+
+    /* =====================================================
+       LOAD INQUIRIES
+       ===================================================== */
+
+    async function loadInquiries() {
+
+      const table =
+        document.getElementById(
+          "contact-table"
+        );
+
+      try {
+
+        const response =
+          await apiFetch(
+            "/api/admin/contact/"
+          );
+
+        if (!response.ok) {
+
+          throw new Error(
+            `Request failed: ${response.status}`
+          );
+
+        }
+
+        const data =
+          await response.json();
+
+        inquiries =
+          Array.isArray(data)
+            ? data
+            : data.results || [];
+
+        updateStatistics();
+
+        applyFilters();
+
+      } catch (error) {
+
+        console.error(
+          "Contact inquiry loading error:",
+          error
+        );
+
+        table.innerHTML = `
+          <div class="empty">
+            <div class="empty-icon">⚠️</div>
+            <strong>Unable to load contact inquiries</strong>
+            <span>Please refresh the page and try again.</span>
+          </div>
+        `;
+
+      }
+
+    }
+
+
+    /* =====================================================
+       STATISTICS
+       ===================================================== */
+
+    function updateStatistics() {
+
+      const total = inquiries.length;
+
+      const weekAgo =
+        new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+
+      const newThisWeek =
+        inquiries.filter(inquiry => {
+
+          if (!inquiry.created_at) {
+            return false;
+          }
+
+          return new Date(inquiry.created_at) >= weekAgo;
+
+        }).length;
+
+      document.getElementById("total-count").textContent = total;
+      document.getElementById("new-count").textContent = newThisWeek;
+
+    }
+
+
+    /* =====================================================
+       FILTERS
+       ===================================================== */
+
+    function applyFilters() {
+
+      const search =
+        document.getElementById("search").value
+          .trim()
+          .toLowerCase();
+
+      filteredInquiries =
+        inquiries.filter(inquiry => {
+
+          if (!search) {
+            return true;
+          }
+
+          const haystack = [
+            inquiry.full_name,
+            inquiry.company,
+            inquiry.email,
+            inquiry.service,
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+          return haystack.includes(search);
+
+        });
+
+      renderInquiries();
+
+    }
+
+
+    /* =====================================================
+       RENDER
+       ===================================================== */
+
+    function renderInquiries() {
+
+      const table =
+        document.getElementById("contact-table");
+
+      const summary =
+        document.getElementById("table-summary");
+
+      summary.textContent =
+        `${filteredInquiries.length} inquir${
+          filteredInquiries.length === 1 ? "y" : "ies"
+        } shown`;
+
+      if (!filteredInquiries.length) {
+
+        table.innerHTML = `
+          <div class="empty">
+            <div class="empty-icon">📭</div>
+            <strong>No contact inquiries found</strong>
+            <span>Try changing your search, or check back later.</span>
+          </div>
+        `;
+
+        return;
+
+      }
+
+      table.innerHTML = `
+
+        <div class="table-scroll">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Company</th>
+                <th>Email</th>
+                <th>Service</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              ${filteredInquiries.map(inquiry => {
+
+                const date =
+                  inquiry.created_at
+                    ? new Date(inquiry.created_at).toLocaleString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit"
+                      })
+                    : "—";
+
+                return `
+                  <tr>
+                    <td>
+                      <span class="contact-name">${escapeHtml(inquiry.full_name)}</span>
+                    </td>
+                    <td>${escapeHtml(inquiry.company || "—")}</td>
+                    <td>${escapeHtml(inquiry.email)}</td>
+                    <td>${escapeHtml(inquiry.service || "—")}</td>
+                    <td><span class="contact-date">${date}</span></td>
+                    <td>
+                      <button
+                        type="button"
+                        class="ad-btn-secondary"
+                        onclick="openContactModal(${inquiry.id})"
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                `;
+
+              }).join("")}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      `;
+
+    }
+
+
+    /* =====================================================
+       VIEW MODAL
+       ===================================================== */
+
+    const contactModalBackdrop =
+      document.getElementById("contact-modal-backdrop");
+
+    function openContactModal(id) {
+
+      const inquiry =
+        inquiries.find(item => item.id === id);
+
+      if (!inquiry) {
+        return;
+      }
+
+      const fields = [
+        ["Full name", inquiry.full_name],
+        ["Company", inquiry.company],
+        ["Email", inquiry.email],
+        ["Phone", inquiry.phone],
+        ["Interested in", inquiry.service],
+        ["Budget", inquiry.budget],
+        ["Timeline", inquiry.timeline],
+        ["Message", inquiry.brief],
+      ];
+
+      document.getElementById("contact-modal-body").innerHTML =
+        fields
+          .filter(([, value]) => value)
+          .map(([label, value]) => `
+            <div class="modal-field">
+              <div class="modal-field-label">${escapeHtml(label)}</div>
+              <div class="modal-field-value">${escapeHtml(value)}</div>
+            </div>
+          `)
+          .join("");
+
+      contactModalBackdrop.style.display = "flex";
+
+    }
+
+    function closeContactModal() {
+      contactModalBackdrop.style.display = "none";
+    }
+
+    document
+      .getElementById("contact-modal-close")
+      .addEventListener("click", closeContactModal);
+
+    contactModalBackdrop.addEventListener("click", event => {
+
+      if (event.target === contactModalBackdrop) {
+        closeContactModal();
+      }
+
+    });
+
+
+    /* =====================================================
+       SEARCH
+       ===================================================== */
+
+    document
+      .getElementById("search")
+      .addEventListener("input", applyFilters);
+
+
+    /* =====================================================
+       INITIALIZE
+       ===================================================== */
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      loadInquiries
+    );
+
+  </script>
+
+</body>
+
+</html>

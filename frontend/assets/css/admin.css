@@ -1,0 +1,493 @@
+/* =========================================================
+   FIGBLOOM ADMIN — shared design system
+
+   Hand-written, not Tailwind-derived: style.css is a prebuilt/purged
+   Tailwind bundle with no live build step in this repo, so a class not
+   already present in its compiled output silently does nothing. Every
+   class here is authored directly in this file, so nothing can go
+   missing the way it would relying on the purged bundle.
+
+   --fig-green matches the public site's real logo green (#2c5322) rather
+   than a separate "admin chrome" shade — the login page renders the
+   actual logo, and a mismatched green there read as a mistake, not a
+   deliberate distinct palette.
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --fig-green: #2c5322;
+  --fig-green-dark: #1f3e19;
+  --fig-green-soft: #eef7f0;
+  --fig-orange: #ff9400;
+  --fig-orange-soft: #fff5e8;
+  --fig-text: #12151e;
+  --fig-muted: #67788f;
+  --fig-border: #e0e5eb;
+  --fig-bg: #fafafa;
+  --white: #ffffff;
+  --danger: #dc2626;
+  --danger-soft: #fef2f2;
+  --success: #15803d;
+  --success-soft: #ecfdf3;
+  --shadow-sm: 0 4px 18px rgba(18, 21, 30, 0.06);
+  --shadow-md: 0 12px 35px rgba(18, 21, 30, 0.09);
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+}
+
+.ad-root, .ad-root * {
+  box-sizing: border-box;
+}
+
+.ad-root {
+  background: var(--fig-bg);
+  color: var(--fig-text);
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.ad-header {
+  height: 82px;
+  background: var(--white);
+  border-bottom: 1px solid var(--fig-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 34px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  gap: 18px;
+}
+
+.ad-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.ad-brand img {
+  width: 46px;
+  height: auto;
+  object-fit: contain;
+}
+
+.ad-brand span {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--fig-text);
+  white-space: nowrap;
+}
+
+.ad-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  flex: 1;
+}
+
+.ad-nav-link {
+  padding: 10px 14px;
+  border-radius: var(--radius-lg);
+  color: var(--fig-muted);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: 0.15s ease;
+}
+
+.ad-nav-link:hover {
+  color: var(--fig-text);
+  background: var(--fig-bg);
+}
+
+.ad-nav-link.active {
+  color: var(--fig-green);
+  background: var(--fig-green-soft);
+}
+
+.ad-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.ad-btn-primary,
+.ad-btn-secondary,
+.ad-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 19px;
+  border-radius: var(--radius-lg);
+  font-weight: 700;
+  font-size: 14px;
+  font-family: inherit;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.15s ease;
+}
+
+.ad-btn-primary {
+  background: var(--fig-green);
+  color: var(--white);
+}
+
+.ad-btn-primary:hover {
+  background: var(--fig-green-dark);
+}
+
+.ad-btn-secondary {
+  background: #f7f7f7;
+  color: var(--fig-text);
+  border-color: var(--fig-border);
+}
+
+.ad-btn-secondary:hover {
+  background: var(--fig-orange-soft);
+  border-color: rgba(255, 148, 0, 0.35);
+  color: var(--fig-orange);
+}
+
+.ad-btn-danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.ad-btn-danger:hover {
+  background: #fde2e2;
+}
+
+/* =========================================================
+   LAYOUT / CARDS
+   ========================================================= */
+
+.ad-content {
+  padding: 32px 34px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.ad-card {
+  background: var(--white);
+  border: 1px solid var(--fig-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.ad-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.ad-panel-header h1 {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0 0 6px;
+  color: var(--fig-text);
+}
+
+.ad-panel-header p {
+  margin: 0;
+  color: var(--fig-muted);
+  font-size: 14px;
+}
+
+/* =========================================================
+   STAT TILES
+   ========================================================= */
+
+.ad-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.ad-stat-tile {
+  background: var(--white);
+  border: 1px solid var(--fig-border);
+  border-radius: var(--radius-xl);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ad-stat-value {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--fig-text);
+  line-height: 1.1;
+}
+
+.ad-stat-label {
+  margin-top: 6px;
+  color: var(--fig-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+
+.ad-table-wrap {
+  overflow-x: auto;
+}
+
+.ad-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.ad-table th {
+  text-align: left;
+  padding: 12px 16px;
+  color: var(--fig-muted);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--fig-border);
+  white-space: nowrap;
+}
+
+.ad-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #edf0ed;
+  color: var(--fig-text);
+}
+
+.ad-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ad-table-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--fig-muted);
+}
+
+/* =========================================================
+   BADGES / PILLS
+   ========================================================= */
+
+.ad-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ad-badge-success {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.ad-badge-warning {
+  background: var(--fig-orange-soft);
+  color: var(--fig-orange);
+}
+
+.ad-badge-danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.ad-badge-neutral {
+  background: var(--fig-bg);
+  color: var(--fig-muted);
+}
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+
+.ad-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 21, 30, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+
+.ad-modal {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.ad-modal-header {
+  padding: 22px 26px;
+  border-bottom: 1px solid var(--fig-border);
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.ad-modal-body {
+  padding: 26px;
+}
+
+.ad-modal-footer {
+  padding: 18px 26px;
+  border-top: 1px solid var(--fig-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* =========================================================
+   FORM CONTROLS (inputs, selects, textareas)
+
+   Scoped under .ad-root — every admin page wraps its content in
+   that div — so these rules win over each page's own older
+   input/select classes (.filter-group input, .db-toolbar-select,
+   .status-select, .db-field select, etc.) without !important.
+   ".ad-root" is deliberately repeated in every selector below:
+   a page-local rule like ".status-select:focus" or ".db-field
+   select" already reaches 2 selectors' worth of specificity, which
+   ties a plain ".ad-root select:focus" (also 2) — and on a tie the
+   later rule in the document wins, which is the page's own
+   <style> block, since it's always after this file's <link>. The
+   repeated class pushes every rule here to 3, so it wins outright
+   regardless of source order, and it's scoped to .ad-root either
+   way so it still can't leak onto the public site.
+   ========================================================= */
+
+.ad-root.ad-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]):not([type="file"]),
+.ad-root.ad-root textarea,
+.ad-root.ad-root select {
+  border: 1px solid var(--fig-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--white);
+  color: var(--fig-text);
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(18, 21, 30, 0.03);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.ad-root.ad-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]):not([type="file"])::placeholder,
+.ad-root.ad-root textarea::placeholder {
+  color: var(--fig-muted);
+}
+
+.ad-root.ad-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]):not([type="file"]):hover,
+.ad-root.ad-root textarea:hover,
+.ad-root.ad-root select:hover {
+  border-color: rgba(255, 148, 0, 0.4);
+}
+
+.ad-root.ad-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]):not([type="file"]):focus,
+.ad-root.ad-root textarea:focus,
+.ad-root.ad-root select:focus {
+  border-color: var(--fig-orange);
+  box-shadow: 0 0 0 3px rgba(255, 148, 0, 0.14);
+}
+
+.ad-root.ad-root input:disabled,
+.ad-root.ad-root textarea:disabled,
+.ad-root.ad-root select:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.ad-root.ad-root select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2367788f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 13px center;
+}
+
+/* =========================================================
+   TOASTS (in-app replacement for window.alert())
+   ========================================================= */
+
+.ad-toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: min(360px, calc(100vw - 40px));
+}
+
+.ad-toast {
+  padding: 14px 18px;
+  border-radius: var(--radius-lg);
+  background: var(--fig-text);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.ad-toast-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ad-toast-success {
+  background: var(--success);
+}
+
+.ad-toast-error {
+  background: var(--danger);
+}
+
+.ad-toast-info {
+  background: var(--fig-green);
+}
+
+@media (max-width: 720px) {
+  .ad-header {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 14px 20px;
+  }
+
+  .ad-nav {
+    order: 3;
+    width: 100%;
+  }
+
+  .ad-content {
+    padding: 20px 18px;
+  }
+}

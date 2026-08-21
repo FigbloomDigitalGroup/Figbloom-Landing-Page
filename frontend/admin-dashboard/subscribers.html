@@ -18,25 +18,10 @@
   <title>
     Subscribers | Figbloom Digital Group
   </title>
+  {% include "components/favicon.html" %}
+  <link rel="stylesheet" href="/assets/css/admin.css" />
 
   <style>
-
-    :root {
-      --fig-green: #183c22;
-      --fig-green-dark: #102d18;
-      --fig-orange: #ff9400;
-      --fig-orange-soft: #fff5e8;
-      --fig-bg: #f7f9f7;
-      --fig-border: #e5e9e5;
-      --fig-muted: #718096;
-      --white: #ffffff;
-      --success: #15803d;
-      --success-soft: #ecfdf3;
-      --danger: #dc2626;
-      --danger-soft: #fef2f2;
-      --shadow-sm: 0 4px 18px rgba(24, 60, 34, 0.06);
-      --shadow-md: 0 12px 35px rgba(24, 60, 34, 0.09);
-    }
 
     * {
       box-sizing: border-box;
@@ -45,14 +30,11 @@
     body {
       margin: 0;
       background: var(--fig-bg);
-      color: var(--fig-green);
+      color: var(--fig-text);
       font-family:
-        Inter,
+        "Outfit",
         ui-sans-serif,
         system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
         sans-serif;
     }
 
@@ -66,58 +48,8 @@
       cursor: pointer;
     }
 
-    /* HEADER */
-
-    .page-header {
-      height: 82px;
-      background: white;
-      border-bottom: 1px solid var(--fig-border);
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      padding: 0 34px;
-
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-
-    .header-left img {
-      width: 50px;
-    }
-
-    .header-title {
-      font-size: 21px;
-      font-weight: 800;
-    }
-
-    .back-button {
-      border: 1px solid var(--fig-border);
-      background: white;
-      color: var(--fig-green);
-
-      padding: 11px 18px;
-
-      border-radius: 10px;
-
-      font-weight: 800;
-
-      transition: 0.2s ease;
-    }
-
-    .back-button:hover {
-      background: var(--fig-orange-soft);
-      border-color: var(--fig-orange);
-      color: var(--fig-orange);
-    }
+    /* Header chrome now lives in admin.css (.ad-header, etc.), shared
+       via components/admin-header.html. */
 
     /* MAIN */
 
@@ -163,7 +95,7 @@
     .stat-card {
       background: white;
       border: 1px solid var(--fig-border);
-      border-radius: 16px;
+      border-radius: 0.75rem;
 
       padding: 22px;
 
@@ -184,7 +116,7 @@
 
       font-size: 32px;
       font-weight: 900;
-      color: var(--fig-green);
+      color: var(--fig-text);
     }
 
     /* FILTERS */
@@ -192,7 +124,7 @@
     .toolbar {
       background: white;
       border: 1px solid var(--fig-border);
-      border-radius: 16px;
+      border-radius: 0.75rem;
 
       padding: 18px;
 
@@ -235,7 +167,7 @@
       padding: 0 13px;
 
       background: white;
-      color: var(--fig-green);
+      color: var(--fig-text);
 
       outline: none;
     }
@@ -255,7 +187,7 @@
       background: white;
 
       border: 1px solid var(--fig-border);
-      border-radius: 17px;
+      border-radius: 0.75rem;
 
       box-shadow: var(--shadow-sm);
 
@@ -321,7 +253,7 @@
 
       border-bottom: 1px solid #edf0ed;
 
-      color: #27362d;
+      color: var(--fig-text);
 
       font-size: 14px;
     }
@@ -336,7 +268,7 @@
 
     .email {
       font-weight: 800;
-      color: var(--fig-green);
+      color: var(--fig-text);
     }
 
     .date {
@@ -406,21 +338,13 @@
     }
 
     .empty strong {
-      color: var(--fig-green);
+      color: var(--fig-text);
       font-size: 16px;
     }
 
     /* RESPONSIVE */
 
     @media (max-width: 800px) {
-
-      .page-header {
-        padding: 0 18px;
-      }
-
-      .header-title {
-        font-size: 17px;
-      }
 
       .page-container {
         width: min(
@@ -461,36 +385,8 @@
 
 
 <body>
-
-
-  <!-- HEADER -->
-
-  <header class="page-header">
-
-    <div class="header-left">
-
-      <img
-        src="/assets/images/figbloom_logo.png"
-        alt="Figbloom Digital Group"
-      />
-
-      <span class="header-title">
-        Subscribers
-      </span>
-
-    </div>
-
-
-    <button
-      type="button"
-      class="back-button"
-      id="back-dashboard"
-    >
-      ← Back to Dashboard
-    </button>
-
-  </header>
-
+<div class="ad-root">
+{% include "components/admin-header.html" %}
 
   <!-- MAIN -->
 
@@ -658,86 +554,13 @@
 
   </main>
 
+</div>
 
+  <script src="/assets/js/admin.js"></script>
   <script>
 
-    /* =====================================================
-       API CONFIG
-       ===================================================== */
-
-    const API_BASE =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1"
-        ? "http://127.0.0.1:8000"
-        : "";
-
-
-    /* =====================================================
-       CSRF
-       ===================================================== */
-
-    function getCsrfToken() {
-
-      return (
-        document.cookie
-          .split("; ")
-          .find(
-            row =>
-              row.startsWith(
-                "csrftoken="
-              )
-          )
-          ?.split("=")[1] || ""
-      );
-
-    }
-
-
-    /* =====================================================
-       API
-       ===================================================== */
-
-    async function apiFetch(
-      url,
-      options = {}
-    ) {
-
-      const response =
-        await fetch(
-          `${API_BASE}${url}`,
-          {
-            ...options,
-
-            credentials: "include",
-
-            headers: {
-              ...(options.headers || {}),
-              "X-CSRFToken":
-                getCsrfToken()
-            }
-
-          }
-        );
-
-
-      if (
-        response.status === 401 ||
-        response.status === 403
-      ) {
-
-        window.location.href =
-          "/admin-dashboard/login";
-
-        throw new Error(
-          "Not authenticated"
-        );
-
-      }
-
-
-      return response;
-
-    }
+    /* API_BASE / getCsrfToken / apiFetch / escapeHtml now come from
+       the shared /assets/js/admin.js, loaded before this script. */
 
 
     /* =====================================================
@@ -1005,6 +828,8 @@
                   Status
                 </th>
 
+                <th></th>
+
               </tr>
 
             </thead>
@@ -1090,6 +915,18 @@
 
                         </td>
 
+                        <td>
+
+                          <button
+                            type="button"
+                            class="ad-btn-secondary"
+                            onclick="deleteSubscriber(${subscriber.id})"
+                          >
+                            Delete
+                          </button>
+
+                        </td>
+
                       </tr>
 
                     `;
@@ -1110,32 +947,57 @@
 
 
     /* =====================================================
-       HTML ESCAPE
+       DELETE SUBSCRIBER
        ===================================================== */
 
-    function escapeHtml(value) {
+    async function deleteSubscriber(id) {
 
-      return String(value ?? "")
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
+      const confirmed =
+        await showConfirm(
+          "Remove this subscriber? They will stop receiving newsletters and this cannot be undone.",
+          { confirmText: "Delete", danger: true }
         );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+
+        const response =
+          await apiFetch(
+            `/api/admin/newsletter/${id}/`,
+            { method: "DELETE" }
+          );
+
+        if (!response.ok) {
+
+          throw new Error(
+            `Delete failed: ${response.status}`
+          );
+
+        }
+
+        await loadSubscribers();
+
+        showToast(
+          "Subscriber removed.",
+          "success"
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Delete subscriber error:",
+          error
+        );
+
+        showToast(
+          "Unable to remove this subscriber. Please try again.",
+          "error"
+        );
+
+      }
 
     }
 
@@ -1164,21 +1026,8 @@
       );
 
 
-    /* =====================================================
-       BACK TO DASHBOARD
-       ===================================================== */
-
-    document
-      .getElementById("back-dashboard")
-      .addEventListener(
-        "click",
-        () => {
-
-          window.location.href =
-            "/admin-dashboard/";
-
-        }
-      );
+    /* Back-to-dashboard is now the shared header's logo link +
+       "Dashboard" nav item — no page-specific handler needed. */
 
 
     /* =====================================================

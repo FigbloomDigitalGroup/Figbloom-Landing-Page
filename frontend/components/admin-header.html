@@ -1,0 +1,29 @@
+<!--
+    Shared admin-dashboard header/nav, mirroring how components/navbar.html
+    works for the public site. Logo is a real <a href> to the dashboard
+    home — fixes it linking nowhere on every page that had one. Active-item
+    highlighting is resolved server-side via the active_nav context
+    variable each view passes in, not guessed client-side.
+
+    Nav lists pages that are real separate routes today (Dashboard,
+    Subscribers, Contact) — Jobs/Applications/Newsletter still live as tabs
+    inside index.html.
+-->
+<header class="ad-header">
+    <a href="/admin-dashboard/" class="ad-brand">
+        <img src="/assets/images/figbloom_logo.png" alt="Figbloom Digital Group" />
+        <span>Admin Dashboard</span>
+    </a>
+
+    <nav class="ad-nav">
+        <a href="/admin-dashboard/" class="ad-nav-link{% if active_nav == 'dashboard' %} active{% endif %}">Dashboard</a>
+        <a href="/admin-dashboard/contact" class="ad-nav-link{% if active_nav == 'contact' %} active{% endif %}">Contact</a>
+        <a href="/admin-dashboard/subscribers" class="ad-nav-link{% if active_nav == 'subscribers' %} active{% endif %}">Subscribers</a>
+        <a href="/" target="_blank" rel="noopener" class="ad-nav-link">View Site &#8599;</a>
+    </nav>
+
+    <div class="ad-header-actions">
+        <a href="/admin-dashboard/profile-settings" class="ad-btn-secondary">Profile Settings</a>
+        <button type="button" class="ad-btn-secondary" id="admin-logout-btn">Log out</button>
+    </div>
+</header>

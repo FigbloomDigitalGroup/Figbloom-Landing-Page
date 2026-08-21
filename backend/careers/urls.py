@@ -8,13 +8,16 @@ from .views import (
     ContactCreateView,
     JobAdminViewSet,
     ApplicationAdminViewSet,
-    NewsletterAdminViewSet, csrf_token,
+    NewsletterAdminViewSet,
+    ContactAdminViewSet,
+    DashboardStatsView, csrf_token,
 )
 
 router = DefaultRouter()
 router.register('admin/jobs', JobAdminViewSet, basename='admin-jobs')
 router.register('admin/applications', ApplicationAdminViewSet, basename='admin-applications')
 router.register('admin/newsletter', NewsletterAdminViewSet, basename='admin-newsletter')
+router.register('admin/contact', ContactAdminViewSet, basename='admin-contact')
 
 urlpatterns = [
     path('jobs/', JobListView.as_view(), name='job-list'),
@@ -23,4 +26,5 @@ urlpatterns = [
     path('newsletter/subscribe/', NewsletterSubscribeView.as_view(), name='newsletter-subscribe'),
     path('contact/', ContactCreateView.as_view(), name='contact-create'),
     path('auth/csrf/', csrf_token, name='csrf-token'),
+    path('admin/stats/', DashboardStatsView.as_view(), name='admin-stats'),
 ] + router.urls

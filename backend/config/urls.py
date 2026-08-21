@@ -22,6 +22,8 @@ from careers.views import (
     admin_subscribers,
     admin_application_detail,
     admin_profile_settings,
+    admin_contact_page,
+    unsubscribe_view,
     ChangePasswordView,
 )
 from . import views
@@ -57,8 +59,10 @@ urlpatterns = [
     path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'),
     path("admin-dashboard/subscribers",admin_subscribers,name="admin-subscribers"),
     path("api/auth/change-password/",ChangePasswordView.as_view(),name="change-password"),
-    path("admin-dashboard/profile-settings",admin_profile_settings,name="admin-profile-settings"),     
-      
+    path("admin-dashboard/profile-settings",admin_profile_settings,name="admin-profile-settings"),
+    path("admin-dashboard/contact",admin_contact_page,name="admin-contact-page"),
+    path("unsubscribe/<str:token>/", unsubscribe_view, name="newsletter-unsubscribe"),
+
 ]
 
 if settings.DEBUG:

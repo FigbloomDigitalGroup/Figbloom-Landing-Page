@@ -18,11 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from careers.views import admin_subscribers
-from careers.views import(admin_application_detail, admin_profile_settings,ChangePasswordView,)
+from careers.views import (
+    admin_subscribers,
+    admin_application_detail,
+    admin_profile_settings,
+    ChangePasswordView,
+)
 from . import views
-from careers.views import admin_subscribers
-from careers.views import ChangePasswordView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,7 +36,6 @@ urlpatterns = [
     path('api/auth/logout/', views.admin_logout_api, name='admin-logout-api'),
     path('api/auth/user/', views.admin_user_api, name='admin-user-api'),
     path('admin-dashboard/', views.admin_dashboard_page, name='admin-dashboard'),
-    path("admin-dashboard/subscribers",admin_subscribers,name="admin-subscribers"),
     path('', views.home, name='home'),
     # Each page answers on BOTH /x and /x/ with a 200 instead of redirecting between
     # them. A redirect in either direction keeps breaking links whenever one form

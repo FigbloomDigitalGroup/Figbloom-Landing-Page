@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 from rest_framework.permissions import IsAdminUser
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -98,7 +99,7 @@ def apply_for_job(request, slug):
 class ChangePasswordView(APIView):
 
     authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
     def post(self, request):
 
@@ -204,32 +205,27 @@ class ChangePasswordView(APIView):
         )
 
 # Admin application details page
+@login_required(login_url='/admin-dashboard/login')
 def admin_application_detail(request):
     return render(
         request,
         "admin-dashboard/application-detail.html"
     )
 
+@login_required(login_url='/admin-dashboard/login')
 def admin_profile_settings(request):
     return render(
         request,
         "admin-dashboard/profile-settings.html"
-    )    
-def admin_subscribers(request):
-    return render(
-        request,
-        "admin-dashboard/subscribers.html"
     )
-def admin_subscribers(request):
-    return render(
-        request,
-        "admin-dashboard/subscribers.html"
-    )
-# --- Admin dashboard API ---
 
-class JobAdminViewSet(viewsets.ModelViewSet):
-    ...
-   
+@login_required(login_url='/admin-dashboard/login')
+def admin_subscribers(request):
+    return render(
+        request,
+        "admin-dashboard/subscribers.html"
+    )
+
 # --- Admin dashboard API ---
 # All views below require an authenticated, staff-level Django user
 
@@ -238,7 +234,7 @@ class JobAdminViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all().order_by('-created_at')
     serializer_class = JobSerializer
     authentication_classes = [SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
 
 class ApplicationAdminViewSet(viewsets.ModelViewSet):
@@ -246,14 +242,14 @@ class ApplicationAdminViewSet(viewsets.ModelViewSet):
     queryset = JobApplication.objects.all().order_by('-applied_at')
     serializer_class = JobApplicationAdminSerializer
     authentication_classes = [SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
 
 class NewsletterAdminViewSet(viewsets.ModelViewSet):
     queryset = NewsletterSubscriber.objects.all().order_by('-subscribed_at')
     serializer_class = NewsletterSubscriberSerializer
     authentication_classes = [SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
     def get_queryset(self):
         """

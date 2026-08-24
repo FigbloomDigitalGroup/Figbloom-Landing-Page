@@ -29,6 +29,112 @@ function mainFunction() {
 
 
 // ============================================================
+// "GET A QUOTE" MODAL FORM (footer.html, opened via contactModal)
+// Posts to the same /api/contact/ endpoint as the /contact/ page form.
+// ============================================================
+
+function quoteForm() {
+    return {
+        form: {
+            fullName: '',
+            email: '',
+            service: '',
+            brief: '',
+            budget: '',
+            timeline: '',
+            agree: false,
+            website: '', // honeypot — left blank by real visitors
+        },
+        sending: false,
+        success: false,
+        errorMsg: '',
+
+        resetForm() {
+            this.form = {
+                fullName: '',
+                email: '',
+                service: '',
+                brief: '',
+                budget: '',
+                timeline: '',
+                agree: false,
+                website: '',
+            };
+        },
+
+        validate() {
+            if (!this.form.fullName.trim()) return 'Please enter your full name.';
+            if (!this.form.email.trim()) return 'Please enter your work email.';
+            if (!this.form.service) return 'Please select a service you’re interested in.';
+            if (!this.form.budget) return 'Please select a project budget.';
+            if (!this.form.timeline) return 'Please select an expected timeline.';
+            if (!this.form.agree) return 'Please agree to be contacted before submitting.';
+            return null;
+        },
+
+        async submitForm() {
+            this.success = false;
+            this.errorMsg = '';
+
+            const validationError = this.validate();
+            if (validationError) {
+                this.errorMsg = validationError;
+                return;
+            }
+
+            this.sending = true;
+
+            try {
+                const csrfToken = document.cookie
+                    .split('; ')
+                    .find((row) => row.startsWith('csrftoken='))
+                    ?.split('=')[1] || '';
+
+                const response = await fetch('/api/contact/', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        full_name: this.form.fullName,
+                        email: this.form.email,
+                        service: this.form.service,
+                        brief: this.form.brief,
+                        budget: this.form.budget,
+                        timeline: this.form.timeline,
+                        website: this.form.website,
+                    }),
+                });
+
+                if (response.ok) {
+                    this.success = true;
+                    this.resetForm();
+                    setTimeout(() => {
+                        this.success = false;
+                        this.contactModal = false;
+                    }, 2000);
+                } else {
+                    const data = await response.json().catch(() => null);
+                    const firstError =
+                        data && typeof data === 'object'
+                            ? Object.values(data).flat().find((v) => typeof v === 'string')
+                            : null;
+                    this.errorMsg = firstError || 'We couldn’t send your message. Please try again.';
+                }
+            } catch (err) {
+                this.errorMsg = 'Network error — please check your connection and try again.';
+            } finally {
+                this.sending = false;
+            }
+        },
+    };
+}
+
+
+// ============================================================
 // LUCIDE ICONS
 // Renders every static data-lucide element once the DOM is parsed.
 // Icons created later by Alpine (x-for / x-if) are handled by the

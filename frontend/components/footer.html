@@ -336,6 +336,7 @@
         >
             <div
                 x-show="contactModal"
+                x-data="quoteForm()"
                 class="border-gray-light relative m-auto flex w-full max-w-150 flex-col gap-6 overflow-hidden rounded-xl border bg-white p-4 shadow-[0_40px_16px_-8px_rgba(13,13,13,0.2)] lg:gap-12 lg:p-12"
             >
                 <button
@@ -346,30 +347,76 @@
                     <i data-lucide="x" class="size-5"></i>
                     <span class="sr-only">Close</span>
                 </button>
-                <h2>Get a qoute</h2>
-                <form class="space-y-6 lg:space-y-8">
-                    <div class="flex flex-col gap-2.5 lg:gap-4">
-                        <label for="name">Full name</label>
+                <h2>Get a quote</h2>
+
+                <!-- Success card -->
+                <div
+                    x-show="success"
+                    x-transition
+                    x-cloak
+                    class="flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 p-4 text-green-800"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 size-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <p class="font-semibold">Message sent successfully!</p>
+                        <p class="text-sm">Thanks for reaching out — our team will get back to you within 1 Hour</p>
+                    </div>
+                </div>
+
+                <!-- Error card -->
+                <div
+                    x-show="errorMsg"
+                    x-transition
+                    x-cloak
+                    class="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 size-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <p class="font-semibold">Something went wrong</p>
+                        <p class="text-sm" x-text="errorMsg"></p>
+                    </div>
+                </div>
+
+                <form @submit.prevent="submitForm" class="space-y-6 lg:space-y-8" novalidate>
+                    <!-- Honeypot: invisible to real visitors, bots fill every field they can find. -->
+                    <div class="absolute" style="left: -9999px" aria-hidden="true">
+                        <label for="quoteWebsite">Website</label>
                         <input
+                            id="quoteWebsite"
                             type="text"
+                            x-model="form.website"
+                            tabindex="-1"
+                            autocomplete="off"
+                        />
+                    </div>
+
+                    <div class="flex flex-col gap-2.5 lg:gap-4">
+                        <label for="quoteFullName">Full name</label>
+                        <input
+                            id="quoteFullName"
+                            type="text"
+                            x-model="form.fullName"
                             placeholder="Enter your full name"
                             class="form-input"
                         />
                     </div>
                     <div class="flex flex-col gap-2.5 lg:gap-4">
-                        <label for="email">Work email</label>
+                        <label for="quoteEmail">Work email</label>
                         <input
-                            type="text"
+                            id="quoteEmail"
+                            type="email"
+                            x-model="form.email"
                             placeholder="Enter your email address"
                             class="form-input"
                         />
                     </div>
                     <div class="flex flex-col gap-2.5 lg:gap-4">
                         <label>I’m interested in</label>
-                        <div
-                            class="flex flex-wrap gap-4"
-                            x-data="{ selected: '' }"
-                        >
+                        <div class="flex flex-wrap gap-4">
                             <template
                                 x-for="item in [
                                                 'App Development',
@@ -383,9 +430,9 @@
                             >
                                 <button
                                     type="button"
-                                    @click="selected = item"
+                                    @click="form.service = item"
                                     class="border-gray-light rounded-lg border px-3 py-2 text-base/5.5 transition lg:px-4 lg:py-3"
-                                    :class="selected === item
+                                    :class="form.service === item
                                            ? 'bg-primary-light border-primary/20 text-primary'
                                             : 'bg-background hover:bg-primary-light hover:border-primary/20 hover:text-primary'"
                                 >
@@ -397,32 +444,29 @@
                     <div class="flex flex-col gap-2.5 lg:gap-4">
                         <label>Project brief</label>
                         <textarea
-                            type="text"
+                            x-model="form.brief"
                             placeholder="Briefly describe your requirements, goals, or challenges"
                             class="form-textarea"
                         ></textarea>
                     </div>
                     <div class="flex flex-col gap-2.5 lg:gap-4">
                         <label>Project Budget</label>
-                        <div
-                            class="flex flex-wrap gap-4"
-                            x-data="{ selected: '' }"
-                        >
+                        <div class="flex flex-wrap gap-4">
                             <template
                                 x-for="item in [
-                                                'Under $10,000',
-                                                '$10,000 – $25,000',
-                                                '$25,000 – $50,000',
-                                                '$50,000+',
+                                                'Under KSh 100,000',
+                                                'KSh 100,000 – KSh 250,000',
+                                                'KSh 250,000 – KSh 500,000',
+                                                'KSh 500,000+',
                                                 'Not sure yet',
                                             ]"
                                 :key="item"
                             >
                                 <button
                                     type="button"
-                                    @click="selected = item"
+                                    @click="form.budget = item"
                                     class="border-gray-light rounded-lg border px-3 py-2 text-base/5.5 transition lg:px-4 lg:py-3"
-                                    :class="selected === item
+                                    :class="form.budget === item
                                             ? 'bg-primary-light border-primary/20 text-primary'
                                             : 'bg-background hover:bg-primary-light hover:border-primary/20 hover:text-primary'"
                                 >
@@ -433,10 +477,7 @@
                     </div>
                     <div class="flex flex-col gap-2.5 lg:gap-4">
                         <label>Expected Timeline</label>
-                        <div
-                            class="flex flex-wrap gap-4"
-                            x-data="{ selected: '' }"
-                        >
+                        <div class="flex flex-wrap gap-4">
                             <template
                                 x-for="item in [
                                                 'Immediately',
@@ -448,9 +489,9 @@
                             >
                                 <button
                                     type="button"
-                                    @click="selected = item"
+                                    @click="form.timeline = item"
                                     class="border-gray-light rounded-lg border px-3 py-2 text-base/5.5 transition lg:px-4 lg:py-3"
-                                    :class="selected === item
+                                    :class="form.timeline === item
                                             ? 'bg-primary-light border-primary/20 text-primary'
                                             : 'bg-background hover:bg-primary-light hover:border-primary/20 hover:text-primary'"
                                 >
@@ -462,12 +503,22 @@
                     <label
                         class="text-gray flex items-start gap-2 text-base font-normal"
                     >
-                        <input type="checkbox" class="form-checkbox mt-1.25" />
+                        <input type="checkbox" x-model="form.agree" class="form-checkbox mt-1.25" />
                         <p>I agree to be contacted regarding my inquiry.</p>
                     </label>
                     <div class="mt-8 space-y-2 lg:mt-12">
-                        <button type="submit" class="btn w-full">
-                            Contact us
+                        <button
+                            type="submit"
+                            class="btn flex w-full items-center justify-center gap-2"
+                            :disabled="sending"
+                            :class="sending ? 'cursor-not-allowed opacity-70' : ''"
+                        >
+                            <span
+                                x-show="sending"
+                                x-cloak
+                                class="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+                            ></span>
+                            <span x-text="sending ? 'Sending...' : 'Contact us'"></span>
                         </button>
                         <p class="text-center text-base/6">
                             Our team typically responds within 1 business day.

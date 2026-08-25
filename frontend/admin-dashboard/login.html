@@ -115,6 +115,11 @@
         background: var(--fig-orange);
       }
 
+      .login-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
       .login-error {
         display: none;
         margin-top: 1rem;
@@ -169,6 +174,13 @@
     const errorBox = document.getElementById('login-error');
     errorBox.style.display = 'none';
 
+    const submitButton = event.target.querySelector('.login-submit');
+    const originalText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Signing in…';
+
+    let succeeded = false;
+
     try {
         // Get CSRF cookie from Django first
         await initializeCsrf();
@@ -196,12 +208,19 @@
             return;
         }
 
+        succeeded = true;
         window.location.href = '/admin-dashboard/';
     } catch (error) {
         console.error('Login error:', error);
         errorBox.textContent =
             'Unable to reach the server. Please try again.';
         errorBox.style.display = 'block';
+    } finally {
+        // Left disabled on success — the page is about to navigate away.
+        if (!succeeded) {
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+        }
     }
 });
   </script>

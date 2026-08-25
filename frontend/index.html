@@ -149,12 +149,14 @@
                             </div>
 
                             <h1 class="fb-hero__title">
-                                The infrastructure Kenyan business actually runs on.
+                                <span class="fb-hero__rotate" id="fbHeroRotate" aria-hidden="true">Internet</span><span class="fb-hero__rotate-dot" aria-hidden="true">.</span><br />
+                                Built beneath the breakthroughs, enabling progress at scale.
+                                <span class="sr-only">(Internet, CCTV, AI and software.)</span>
                             </h1>
 
                             <p class="fb-hero__lede">
-                                Internet connectivity, CCTV security, AI automation and custom
-                                software &mdash; delivered by one team, accountable end to end.
+                                Internet, CCTV, AI automation and software &mdash; one Nairobi
+                                team, accountable end to end.
                             </p>
 
                             <div class="fb-hero__actions">
@@ -839,6 +841,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
         annotation.show();
     });
+});
+</script>
+
+        <!--
+            Hero rotator: types out each word in "___. Built for Kenyan
+            business.", holds it for 3s, backspaces it, then types the next.
+            The blinking caret is pure CSS (border-right on .fb-hero__rotate,
+            see landing.css) so this script only ever touches textContent.
+            Skipped entirely under prefers-reduced-motion, in which case the
+            word stays put on "Internet".
+        -->
+        <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const rotateEl = document.getElementById("fbHeroRotate");
+    if (!rotateEl) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const words = ["Internet", "CCTV", "AI", "Software"];
+    const TYPE_MS = 90;
+    const DELETE_MS = 45;
+    const HOLD_MS = 3000;
+    let wordIndex = 0;
+
+    function typeWord(text, i, onDone) {
+        rotateEl.textContent = text.slice(0, i);
+        if (i === text.length) { onDone(); return; }
+        setTimeout(() => typeWord(text, i + 1, onDone), TYPE_MS);
+    }
+
+    function deleteWord(text, onDone) {
+        if (text.length === 0) { onDone(); return; }
+        const next = text.slice(0, -1);
+        rotateEl.textContent = next;
+        setTimeout(() => deleteWord(next, onDone), DELETE_MS);
+    }
+
+    function cycle() {
+        setTimeout(() => {
+            deleteWord(rotateEl.textContent, () => {
+                wordIndex = (wordIndex + 1) % words.length;
+                typeWord(words[wordIndex], 0, cycle);
+            });
+        }, HOLD_MS);
+    }
+
+    // Word 0 ("Internet") is already fully typed in the static markup, so
+    // the first thing that happens is holding it for HOLD_MS, same as every
+    // word after it.
+    cycle();
 });
 </script>
 

@@ -290,6 +290,20 @@
   text-wrap: pretty;
 }
 
+/* Word that types/deletes through internet / CCTV / AI / software in the
+   hero headline (see the fbHeroRotate script, which only ever sets
+   textContent). min-width keeps the dot after it from jumping left during
+   the brief moment the word is fully deleted. */
+.fb-hero__rotate {
+  display: inline-block;
+  position: relative;
+  min-width: 0.6em;
+  color: var(--fb-orange);
+}
+.fb-hero__rotate-dot {
+  color: var(--fb-orange);
+}
+
 .fb-hero__actions {
   display: flex;
   align-items: center;

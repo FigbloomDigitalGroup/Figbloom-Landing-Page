@@ -150,7 +150,17 @@
 
         <div class="login-field">
           <label for="password">Password</label>
-          <input id="password" name="password" type="password" required autocomplete="current-password" />
+          <div style="position: relative;">
+            <input id="password" name="password" type="password" required autocomplete="current-password" style="padding-right: 2.5rem;" />
+            <span
+              class="eye-toggle"
+              onclick="togglePassword('password', 'eye-password-on', 'eye-password-off')"
+              style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; color: var(--fig-muted); display:flex;"
+            >
+              <svg id="eye-password-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+              <svg id="eye-password-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /><line x1="3" y1="21" x2="21" y2="3" /></svg>
+            </span>
+          </div>
         </div>
 
         <button type="submit" class="login-submit">Sign in</button>
@@ -160,6 +170,22 @@
 
     <script src="/assets/js/admin.js"></script>
     <script>
+        function togglePassword(inputId, eyeOnId, eyeOffId) {
+          const input = document.getElementById(inputId);
+          const eyeOn = document.getElementById(eyeOnId);
+          const eyeOff = document.getElementById(eyeOffId);
+
+          if (input.type === "password") {
+            input.type = "text";
+            eyeOn.style.display = "none";
+            eyeOff.style.display = "block";
+          } else {
+            input.type = "password";
+            eyeOn.style.display = "block";
+            eyeOff.style.display = "none";
+          }
+        }
+
         initializeCsrf().catch(console.error);
       async function initializeCsrf() {
     await fetch('/api/auth/csrf/', {

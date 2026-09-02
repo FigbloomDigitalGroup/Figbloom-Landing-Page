@@ -24,6 +24,7 @@ from careers.views import (
     admin_profile_settings,
     admin_contact_page,
     unsubscribe_view,
+    withdraw_application_view,
     ChangePasswordView,
 )
 from . import views
@@ -62,6 +63,7 @@ urlpatterns = [
     path("admin-dashboard/profile-settings",admin_profile_settings,name="admin-profile-settings"),
     path("admin-dashboard/contact",admin_contact_page,name="admin-contact-page"),
     path("unsubscribe/<str:token>/", unsubscribe_view, name="newsletter-unsubscribe"),
+    path("career/withdraw/<str:token>/", withdraw_application_view, name="application-withdraw"),
 
 ]
 

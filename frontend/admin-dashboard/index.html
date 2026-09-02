@@ -55,39 +55,12 @@
       display: none !important;
     }
 
-    /* Header/logout chrome now lives in admin.css (.ad-header, etc.),
-       shared via components/admin-header.html. */
-
-    /* =========================================================
-       TABS
-       ========================================================= */
-
-    .db-tabs {
-      background: white;
-      border-bottom: 1px solid var(--fig-border);
-      display: flex;
-      padding: 0 34px;
-      gap: 8px;
-    }
-
-    .db-tab {
-      padding: 18px 22px;
-      color: var(--fig-muted);
-      font-weight: 700;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: 0.2s ease;
-      user-select: none;
-    }
-
-    .db-tab:hover {
-      color: var(--fig-text);
-    }
-
-    .db-tab.active {
-      color: var(--fig-text);
-      border-bottom-color: var(--fig-orange);
-    }
+    /* Sidebar nav chrome now lives in admin.css (.ad-sidebar, .ad-nav-item,
+       etc.), shared via components/admin-header.html. The .db-tab class
+       still marks Overview/Jobs/Applications/Newsletter sidebar links as
+       tab triggers for the JS below (querySelectorAll(".db-tab")) — it
+       just carries no styling of its own anymore, since .ad-nav-item
+       covers the visuals. */
 
     /* =========================================================
        MAIN CONTENT
@@ -158,7 +131,7 @@
 
     .db-btn-secondary {
       border: 1px solid var(--fig-border);
-      background: #f7f7f7;
+      background: var(--fig-bg);
       color: var(--fig-text);
       padding: 12px 19px;
       border-radius: var(--radius-lg);
@@ -179,7 +152,7 @@
     #jobs-table-wrap,
     #applications-table-wrap,
     #newsletter-table-wrap {
-      background: white;
+      background: var(--surface-raised);
       border: 1px solid var(--fig-border);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow-sm);
@@ -198,7 +171,7 @@
     }
 
     th {
-      background: #fafcfa;
+      background: var(--fig-bg);
       color: var(--fig-muted);
       text-align: left;
       padding: 15px 18px;
@@ -222,7 +195,7 @@
     }
 
     tbody tr:hover {
-      background: #fbfdfb;
+      background: var(--fig-bg);
     }
 
     .db-action-link {
@@ -264,12 +237,17 @@
 
     .badge-closed {
       color: var(--fig-muted);
-      background: #f1f5f9;
+      background: var(--fig-bg);
+    }
+
+    .badge-warning {
+      color: var(--fig-orange);
+      background: var(--fig-orange-soft);
     }
 
     .status-select {
       border: 1px solid var(--fig-border);
-      background: white;
+      background: var(--surface-raised);
       border-radius: var(--radius-lg);
       padding: 7px 10px;
       color: var(--fig-text);
@@ -349,7 +327,7 @@
        ========================================================= */
 
     .db-toolbar {
-      background: white;
+      background: var(--surface-raised);
       border: 1px solid var(--fig-border);
       border-radius: var(--radius-xl);
       padding: 18px;
@@ -381,7 +359,7 @@
       height: 44px;
       border: 1px solid var(--fig-border);
       border-radius: var(--radius-lg);
-      background: white;
+      background: var(--surface-raised);
       color: var(--fig-text);
       padding: 0 13px;
       font-weight: 700;
@@ -399,7 +377,7 @@
     */
 
     .newsletter-filters {
-      background: white;
+      background: var(--surface-raised);
       border: 1px solid var(--fig-border);
       border-radius: var(--radius-xl);
       padding: 18px;
@@ -431,7 +409,7 @@
       height: 44px;
       border: 1px solid var(--fig-border);
       border-radius: var(--radius-lg);
-      background: white;
+      background: var(--surface-raised);
       color: var(--fig-text);
       padding: 0 13px;
       font-weight: 700;
@@ -460,7 +438,7 @@
 
     .newsletter-composer,
     .newsletter-preview {
-      background: white;
+      background: var(--surface-raised);
       border: 1px solid var(--fig-border);
       border-radius: var(--radius-xl);
       padding: 24px;
@@ -487,7 +465,7 @@
       padding: 13px 14px;
       color: var(--fig-text);
       outline: none;
-      background: #fff;
+      background: var(--surface-raised);
       transition: 0.2s ease;
     }
 
@@ -532,7 +510,7 @@
     }
 
     .email-preview-card {
-      background: white;
+      background: var(--surface-raised);
       border: 1px solid var(--fig-border);
       border-radius: var(--radius-xl);
       overflow: hidden;
@@ -540,7 +518,7 @@
     }
 
     .email-preview-brand {
-      background: #ffffff;
+      background: var(--surface-raised);
       padding: 22px 25px 16px;
       text-align: center;
     }
@@ -584,7 +562,7 @@
     }
 
     .email-preview-footer {
-      background: #f8faf8;
+      background: var(--fig-bg);
       border-top: 1px solid var(--fig-border);
       text-align: center;
       padding: 19px;
@@ -618,7 +596,7 @@
     }
 
     .newsletter-subscribers-card {
-      background: white;
+      background: var(--surface-raised);
       border: 1px solid var(--fig-border);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow-sm);
@@ -656,13 +634,13 @@
     }
 
     .newsletter-status-active {
-      color: #166534;
-      background: #ecfdf3;
+      color: var(--success);
+      background: var(--success-soft);
     }
 
     .newsletter-status-inactive {
       color: var(--fig-muted);
-      background: #f1f5f9;
+      background: var(--fig-bg);
     }
 
     .newsletter-status-dot {
@@ -696,7 +674,7 @@
       width: min(760px, 100%);
       max-height: calc(100vh - 50px);
       overflow-y: auto;
-      background: white;
+      background: var(--surface-raised);
       border-radius: var(--radius-xl);
       padding: 28px;
       box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
@@ -728,7 +706,7 @@
       border-radius: var(--radius-lg);
       padding: 11px 13px;
       color: var(--fig-text);
-      background: white;
+      background: var(--surface-raised);
       outline: none;
     }
 
@@ -774,16 +752,6 @@
     }
 
     @media (max-width: 700px) {
-      .db-tabs {
-        padding: 0 12px;
-        overflow-x: auto;
-      }
-
-      .db-tab {
-        padding: 16px 14px;
-        white-space: nowrap;
-      }
-
       .db-content {
         width: min(100% - 28px, 1400px);
         padding-top: 25px;
@@ -818,42 +786,7 @@
 <div class="ad-root">
 {% include "components/admin-header.html" %}
 
-  <!-- =========================================================
-       TABS
-       ========================================================= -->
-
-  <nav class="db-tabs">
-
-    <div
-      class="db-tab active"
-      data-panel="overview"
-    >
-      Overview
-    </div>
-
-    <div
-      class="db-tab"
-      data-panel="jobs"
-    >
-      Jobs
-    </div>
-
-    <div
-      class="db-tab"
-      data-panel="applications"
-    >
-      Applications
-    </div>
-
-    <div
-      class="db-tab"
-      data-panel="newsletter"
-    >
-      Newsletter
-    </div>
-
-  </nav>
-
+<div class="ad-main">
 
   <main class="db-content">
 
@@ -1311,6 +1244,7 @@
 
   </main>
 
+</div>
 
   <!-- =========================================================
        JOB CREATE / EDIT MODAL
@@ -1697,6 +1631,28 @@ function yesterdayKey() {
       });
 
 
+    /* Sidebar links to Jobs/Applications/Newsletter point at
+       /admin-dashboard/#jobs etc. so they work as real links from other
+       pages (Contact, Subscribers, Profile Settings) — this opens the
+       matching tab on load when that hash is present, reusing the exact
+       same click handler above instead of duplicating the panel-swap
+       logic. */
+
+    const initialTabPanel =
+      window.location.hash.replace("#", "");
+
+    if (initialTabPanel) {
+
+      const initialTab =
+        document.querySelector(
+          `.db-tab[data-panel="${initialTabPanel}"]`
+        );
+
+      initialTab?.click();
+
+    }
+
+
     /* Profile Settings link + logout are now handled by the shared
        admin-header.html / admin.js (initAdminHeader wires
        #admin-logout-btn automatically). */
@@ -1729,8 +1685,8 @@ function yesterdayKey() {
 
           const matchesStatus =
             statusFilter === "all" ||
-            (statusFilter === "open" && job.is_open) ||
-            (statusFilter === "closed" && !job.is_open);
+            (statusFilter === "open" && job.is_currently_open) ||
+            (statusFilter === "closed" && !job.is_currently_open);
 
           return matchesSearch && matchesStatus;
 
@@ -1822,15 +1778,15 @@ function yesterdayKey() {
                     <td>
 
                       <span class="badge ${
-                        job.is_open
+                        job.is_currently_open
                           ? "badge-open"
-                          : "badge-closed"
+                          : (job.is_open ? "badge-warning" : "badge-closed")
                       }">
 
                         ${
-                          job.is_open
+                          job.is_currently_open
                             ? "Open"
-                            : "Closed"
+                            : (job.is_open ? "Deadline passed" : "Closed")
                         }
 
                       </span>
@@ -2738,6 +2694,46 @@ function yesterdayKey() {
        OVERVIEW
        ========================================================= */
 
+    const AD_STAT_ICONS = {
+      brand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+      accent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/><path d="M9 13h6M9 17h6"/></svg>',
+      info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+      warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/></svg>',
+    };
+
+    const AD_ACTIVITY_ICONS = {
+      application: AD_STAT_ICONS.accent,
+      contact: AD_STAT_ICONS.warn,
+      subscriber: AD_STAT_ICONS.info,
+    };
+
+    const AD_ACTIVITY_TONE = {
+      application: "accent",
+      contact: "warn",
+      subscriber: "info",
+    };
+
+    function relativeTime(value) {
+
+      if (!value) return "";
+
+      const diffMs = Date.now() - new Date(value).getTime();
+      const minutes = Math.round(diffMs / 60000);
+
+      if (minutes < 1) return "just now";
+      if (minutes < 60) return `${minutes} min ago`;
+
+      const hours = Math.round(minutes / 60);
+      if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+
+      const days = Math.round(hours / 24);
+      if (days < 30) return `${days} day${days === 1 ? "" : "s"} ago`;
+
+      const months = Math.round(days / 30);
+      return `${months} month${months === 1 ? "" : "s"} ago`;
+
+    }
+
     async function loadOverview() {
 
       const statsWrap =
@@ -2764,16 +2760,40 @@ function yesterdayKey() {
         const activity = data.recent_activity || [];
 
         const tiles = [
-          { label: "Open Jobs", value: stats.open_jobs },
-          { label: "Applications", value: stats.total_applications },
-          { label: "Active Subscribers", value: stats.active_subscribers },
-          { label: "Contact Inquiries", value: stats.contact_inquiries },
+          {
+            label: "Open Jobs",
+            value: stats.open_jobs,
+            tone: "brand",
+            delta: "",
+          },
+          {
+            label: "Applications",
+            value: stats.total_applications,
+            tone: "accent",
+            delta: stats.new_applications_7d ? `+${stats.new_applications_7d} this week` : "No change",
+          },
+          {
+            label: "Active Subscribers",
+            value: stats.active_subscribers,
+            tone: "info",
+            delta: stats.new_subscribers_7d ? `+${stats.new_subscribers_7d} this week` : "No change",
+          },
+          {
+            label: "Contact Inquiries",
+            value: stats.contact_inquiries,
+            tone: "warn",
+            delta: stats.new_contact_inquiries_7d ? `+${stats.new_contact_inquiries_7d} this week` : "No change",
+          },
         ];
 
         statsWrap.innerHTML = tiles.map(tile => `
           <div class="ad-stat-tile">
-            <div class="ad-stat-value">${escapeHtml(String(tile.value ?? 0))}</div>
-            <div class="ad-stat-label">${escapeHtml(tile.label)}</div>
+            <div class="ad-stat-icon ${tile.tone}">${AD_STAT_ICONS[tile.tone]}</div>
+            <div>
+              <div class="ad-stat-value ad-mono">${escapeHtml(String(tile.value ?? 0))}</div>
+              <div class="ad-stat-label">${escapeHtml(tile.label)}</div>
+            </div>
+            <div class="ad-stat-delta${tile.delta && tile.delta.startsWith("+") ? " up" : ""}">${escapeHtml(tile.delta || "")}</div>
           </div>
         `).join("");
 
@@ -2788,19 +2808,18 @@ function yesterdayKey() {
         }
 
         activityWrap.innerHTML = `
-          <div class="ad-card" style="padding: 6px 0;">
-            ${activity.map((item, index) => `
-              <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; padding:12px 22px; ${index === activity.length - 1 ? "" : "border-bottom:1px solid var(--fig-border);"}">
-                <a
-                  href="${escapeHtml(item.url || "#")}"
-                  style="color:var(--fig-text); text-decoration:none; font-weight:600; font-size:14px;"
-                >
-                  ${escapeHtml(item.label)}
-                </a>
-                <span style="color:var(--fig-muted); font-size:13px; white-space:nowrap;">
+          <div class="ad-card" style="padding: 4px 0;">
+            ${activity.map(item => `
+              <a href="${escapeHtml(item.url || "#")}" class="ad-activity-row">
+                <div class="ad-activity-icon ${AD_ACTIVITY_TONE[item.type] || "brand"}">
+                  ${AD_ACTIVITY_ICONS[item.type] || AD_STAT_ICONS.brand}
+                </div>
+                <div class="ad-activity-text">${escapeHtml(item.label)}</div>
+                <div class="ad-activity-time">
+                  <span class="rel">${escapeHtml(relativeTime(item.timestamp))}</span>
                   ${item.timestamp ? new Date(item.timestamp).toLocaleString() : ""}
-                </span>
-              </div>
+                </div>
+              </a>
             `).join("")}
           </div>
         `;

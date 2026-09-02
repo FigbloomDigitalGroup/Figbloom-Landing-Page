@@ -3,6 +3,8 @@ from .models import Job, JobApplication, NewsletterSubscriber, ContactInquiry
 
 
 class JobSerializer(serializers.ModelSerializer):
+    is_currently_open = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = Job
         fields = [
@@ -18,12 +20,13 @@ class JobSerializer(serializers.ModelSerializer):
             'requirements',
             'deadline',
             'is_open',
+            'is_currently_open',
             'created_at',
         ]
 
 
 class JobApplicationSerializer(serializers.ModelSerializer):
-    job = serializers.PrimaryKeyRelatedField(queryset=Job.objects.filter(is_open=True))
+    job = serializers.PrimaryKeyRelatedField(queryset=Job.objects.open())
 
     class Meta:
         model = JobApplication

@@ -15,17 +15,11 @@
     <title>Job Details | Figbloom Digital Group</title>
     {% include "components/favicon.html" %}
 
-    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
 
     <link rel="stylesheet" href="/assets/css/motion.css" />
-    <script src="../assets/js/alpine.min.js" defer></script>
-    <script src="../assets/js/lucide.min.js" defer></script>
-    <!--
-        Defines mainFunction() for the body's x-data (the included footer's
-        contact modal reads contactModal from it), runs lucide.createIcons() for
-        the navbar/footer icons, and adds the floating WhatsApp / scroll-top
-        buttons this page was missing. Deferred so it runs after lucide loads.
-    -->
+    <script src="/assets/js/alpine.min.js" defer></script>
+    <script src="/assets/js/lucide.min.js" defer></script>
     <script src="/assets/js/components.js" defer></script>
 
     <style>
@@ -47,6 +41,22 @@
       body {
         background: #f8faf8;
         color: var(--fig-text);
+      }
+
+      /* py-10/lg:py-14 on <main> below are Tailwind utilities that were
+         never compiled into style.css (see career/index.html's job-card
+         fix for the same root cause), so they no-op and the sticky navbar
+         touches the hero card. Set the gap explicitly instead. */
+      main.container {
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
+      }
+
+      @media (min-width: 1024px) {
+        main.container {
+          padding-top: 3.5rem;
+          padding-bottom: 3.5rem;
+        }
       }
 
       /* =========================================================
@@ -575,6 +585,14 @@
         font-weight: 650;
       }
 
+      /* .form-field label's color above (specificity 0,1,1) otherwise beats
+         .file-button's white text (0,1,0) now that the upload trigger is a
+         real <label>, making "Choose file" unreadable on its green
+         background. */
+      .form-field label.file-button {
+        color: #fff;
+      }
+
       .form-field input,
       .form-field textarea {
         width: 100%;
@@ -637,6 +655,32 @@
 
       .file-button svg {
         width: 14px;
+      }
+
+      .file-remove {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        border: none;
+        border-radius: 50%;
+        background: transparent;
+        color: #8b948b;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+
+      .file-remove:hover {
+        background: #fdeaea;
+        color: #c0392b;
+      }
+
+      .file-remove svg {
+        width: 14px;
+        pointer-events: none;
       }
 
       .file-name {
@@ -709,6 +753,60 @@
 
       .success-icon svg {
         width: 28px;
+      }
+
+      .success-icon--warning {
+        background: var(--fig-orange-light);
+        color: var(--fig-orange);
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin-bottom: 14px;
+      }
+
+      .status-badge--neutral {
+        background: #eef1ee;
+        color: #5b6157;
+      }
+
+      .status-badge--info {
+        background: var(--fig-orange-light);
+        color: var(--fig-orange);
+      }
+
+      .status-badge--success {
+        background: var(--fig-green-light);
+        color: var(--fig-green);
+      }
+
+      .status-badge--danger {
+        background: #fdeaea;
+        color: #c0392b;
+      }
+
+      .status-badge--muted {
+        background: #f1f1ef;
+        color: #9aa19a;
+      }
+
+      .status-withdraw-link {
+        display: inline-block;
+        margin-top: 12px;
+        font-size: 0.82rem;
+        color: #9aa19a;
+        text-decoration: underline;
+      }
+
+      .status-withdraw-link:hover {
+        color: #c0392b;
       }
 
       .success-state h3 {
@@ -1438,13 +1536,13 @@
 
                   <div class="file-upload">
 
-                    <span
+                    <label
                       for="cv_file"
                       class="text-red file-button"
                     >
                       <i data-lucide="upload" class="text-white"></i>
                       Choose file
-                  </span>
+                  </label>
 
                     <span
                       id="cv_file_name"
@@ -1452,6 +1550,16 @@
                     >
                       No file chosen
                     </span>
+
+                    <button
+                      type="button"
+                      id="cv_file_remove"
+                      class="file-remove"
+                      aria-label="Remove selected file"
+                      hidden
+                    >
+                      <i data-lucide="x"></i>
+                    </button>
 
                   </div>
 
@@ -1525,6 +1633,59 @@
 
               </div>
 
+
+              <!-- ALREADY APPLIED -->
+
+              <div
+                id="application-duplicate"
+                class="success-state hidden"
+              >
+
+                <div class="success-icon success-icon--warning">
+                  <i data-lucide="alert-circle"></i>
+                </div>
+
+                <h3>
+                  You've already applied for this position
+                </h3>
+
+                <p>
+                  We found an existing application from this email address
+                  for this role. Our team will be in touch if there's a
+                  match — no need to apply again.
+                </p>
+
+              </div>
+
+
+              <!-- APPLICATION STATUS (persists across visits) -->
+
+              <div
+                id="application-status"
+                class="success-state hidden"
+              >
+
+                <div id="status-badge" class="status-badge"></div>
+
+                <h3>
+                  Application for <span id="status-job-title"></span>
+                </h3>
+
+                <p>
+                  Applied on <span id="status-applied-date"></span>. Our
+                  team will be in touch if there's a match.
+                </p>
+
+                <a
+                  id="status-withdraw-link"
+                  href="#"
+                  class="status-withdraw-link"
+                >
+                  Withdraw application
+                </a>
+
+              </div>
+
             </section>
 
           </div>
@@ -1568,6 +1729,61 @@
         )
           ? "http://127.0.0.1:8000/api/applications/"
           : "/api/applications/";
+
+
+      const APPLICATION_STATUS_API_URL =
+        (
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1"
+        )
+          ? "http://127.0.0.1:8000/api/applications/status/"
+          : "/api/applications/status/";
+
+
+      /* =========================================================
+         APPLICATION TRACKING (localStorage)
+
+         No login exists for applicants, so "persist across visits" means
+         keeping the signed access token the backend hands back at
+         submission time, keyed by job slug (the same email can apply to
+         more than one job, so this needs to hold more than one entry).
+      ========================================================= */
+
+      const APPLICATIONS_STORAGE_KEY = "figbloom_applications";
+
+      function getSavedApplications() {
+        try {
+          const raw = localStorage.getItem(APPLICATIONS_STORAGE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function getSavedApplication(jobSlug) {
+        return getSavedApplications()[jobSlug] || null;
+      }
+
+      function saveApplication(jobSlug, token) {
+        try {
+          const map = getSavedApplications();
+          map[jobSlug] = { token };
+          localStorage.setItem(APPLICATIONS_STORAGE_KEY, JSON.stringify(map));
+        } catch (error) {
+          // localStorage unavailable (private browsing, quota) — the status
+          // card still shows for this visit, it just won't persist.
+        }
+      }
+
+      function clearSavedApplication(jobSlug) {
+        try {
+          const map = getSavedApplications();
+          delete map[jobSlug];
+          localStorage.setItem(APPLICATIONS_STORAGE_KEY, JSON.stringify(map));
+        } catch (error) {
+          // ignore
+        }
+      }
 
 
       /* =========================================================
@@ -1668,6 +1884,124 @@
         return types[value] ||
           value ||
           "Not specified";
+
+      }
+
+
+      function statusBadgeClass(statusValue) {
+
+        const map = {
+          new: "status-badge--neutral",
+          reviewed: "status-badge--info",
+          shortlisted: "status-badge--info",
+          interview: "status-badge--info",
+          hired: "status-badge--success",
+          rejected: "status-badge--danger",
+          withdrawn: "status-badge--muted",
+        };
+
+        return map[statusValue] || "status-badge--neutral";
+
+      }
+
+
+      function renderApplicationStatusCard(details) {
+
+        document
+          .getElementById("job-application-form")
+          .classList.add("hidden");
+
+        document
+          .getElementById("application-form-header")
+          .classList.add("hidden");
+
+        document
+          .getElementById("application-success")
+          .classList.add("hidden");
+
+        document
+          .getElementById("application-duplicate")
+          .classList.add("hidden");
+
+        document
+          .getElementById("status-job-title")
+          .textContent = details.jobTitle;
+
+        const badge =
+          document.getElementById("status-badge");
+
+        badge.textContent = details.statusDisplay;
+        badge.className =
+          "status-badge " + statusBadgeClass(details.statusValue);
+
+        document
+          .getElementById("status-applied-date")
+          .textContent = details.appliedAt
+            ? formatDate(details.appliedAt)
+            : "recently";
+
+        const withdrawLink =
+          document.getElementById("status-withdraw-link");
+
+        withdrawLink.href =
+          "/career/withdraw/" + encodeURIComponent(details.token) + "/";
+
+        const statusCard =
+          document.getElementById("application-status");
+
+        statusCard.classList.remove("hidden");
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+      }
+
+
+      async function checkExistingApplication(jobSlug, jobTitle) {
+
+        const saved = getSavedApplication(jobSlug);
+
+        if (!saved || !saved.token) {
+          return false;
+        }
+
+        try {
+
+          const response =
+            await fetch(
+              APPLICATION_STATUS_API_URL +
+                "?token=" +
+                encodeURIComponent(saved.token)
+            );
+
+          if (!response.ok) {
+            clearSavedApplication(jobSlug);
+            return false;
+          }
+
+          const data = await response.json();
+
+          renderApplicationStatusCard({
+            jobTitle: data.job_title || jobTitle,
+            statusValue: data.status,
+            statusDisplay: data.status_display,
+            appliedAt: data.applied_at,
+            token: saved.token,
+          });
+
+          return true;
+
+        } catch (error) {
+
+          console.error(
+            "Application status check failed:",
+            error
+          );
+
+          return false;
+
+        }
 
       }
 
@@ -1978,7 +2312,7 @@
          INITIALISE APPLICATION
       ========================================================== */
 
-      function setupApplicationForm() {
+      function setupApplicationForm(job) {
 
         const form =
           document.getElementById(
@@ -2022,6 +2356,12 @@
           );
 
 
+        const cvRemoveBtn =
+          document.getElementById(
+            "cv_file_remove"
+          );
+
+
         const errorBox =
           document.getElementById(
             "application-error"
@@ -2030,25 +2370,37 @@
 
         /* FILE */
 
+        function updateCvFileDisplay() {
+
+          if (
+            cvInput.files &&
+            cvInput.files.length
+          ) {
+
+            cvFileName.textContent =
+              cvInput.files[0].name;
+            cvRemoveBtn.hidden = false;
+
+          } else {
+
+            cvFileName.textContent =
+              "No file chosen";
+            cvRemoveBtn.hidden = true;
+
+          }
+
+        }
+
         cvInput.addEventListener(
           "change",
+          updateCvFileDisplay
+        );
+
+        cvRemoveBtn.addEventListener(
+          "click",
           () => {
-
-            if (
-              cvInput.files &&
-              cvInput.files.length
-            ) {
-
-              cvFileName.textContent =
-                cvInput.files[0].name;
-
-            } else {
-
-              cvFileName.textContent =
-                "No file chosen";
-
-            }
-
+            cvInput.value = "";
+            updateCvFileDisplay();
           }
         );
 
@@ -2120,6 +2472,65 @@
                   .catch(() => ({}));
 
 
+              if (response.status === 409) {
+
+                // The backend recovers the existing application's tracking
+                // token here, so a duplicate attempt shows real status
+                // (and re-saves it locally) instead of just a "you already
+                // applied" message — matters most when this browser never
+                // had the token saved in the first place (different
+                // device, cleared storage, etc).
+                const recoveredJobSlug =
+                  data.job_slug ||
+                  job.slug ||
+                  slugify(job.title || job.name || "");
+
+                if (recoveredJobSlug && data.tracking_token) {
+
+                  saveApplication(
+                    recoveredJobSlug,
+                    data.tracking_token
+                  );
+
+                  renderApplicationStatusCard({
+                    jobTitle: data.job_title || job.title || job.name || "this role",
+                    statusValue: data.status || "new",
+                    statusDisplay: data.status_display || "New",
+                    appliedAt: data.applied_at,
+                    token: data.tracking_token,
+                  });
+
+                } else {
+
+                  // Fallback if the token is missing for any reason.
+                  form.classList.add("hidden");
+
+                  document
+                    .getElementById("application-form-header")
+                    .classList.add("hidden");
+
+                  document
+                    .getElementById("application-duplicate")
+                    .classList.remove("hidden");
+
+                  if (window.lucide) {
+                    lucide.createIcons();
+                  }
+
+                }
+
+                document
+                  .getElementById("application-form-section")
+                  .scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                  });
+
+                return;
+
+              }
+
+
               if (!response.ok) {
 
                 console.error(
@@ -2160,37 +2571,49 @@
 
               /* SUCCESS */
 
-              form.classList.add(
-                "hidden"
-              );
+              const jobSlug =
+                job.slug ||
+                slugify(job.title || job.name || "");
 
+              if (jobSlug && data.tracking_token) {
 
-              document
-                .getElementById(
-                  "application-form-header"
-                )
-                .classList.add(
-                  "hidden"
+                saveApplication(
+                  jobSlug,
+                  data.tracking_token
                 );
 
+                renderApplicationStatusCard({
+                  jobTitle: job.title || job.name || "this role",
+                  statusValue: data.status || "new",
+                  statusDisplay: data.status_display || "New",
+                  appliedAt: null,
+                  token: data.tracking_token,
+                });
 
-              document
-                .getElementById(
-                  "application-success"
-                )
-                .classList.remove(
-                  "hidden"
-                );
+              } else {
 
+                // Fallback if the token is missing for any reason — still
+                // confirm the submission, just without a status card.
+                form.classList.add("hidden");
 
-              if (window.lucide) {
-                lucide.createIcons();
+                document
+                  .getElementById("application-form-header")
+                  .classList.add("hidden");
+
+                document
+                  .getElementById("application-success")
+                  .classList.remove("hidden");
+
+                if (window.lucide) {
+                  lucide.createIcons();
+                }
+
               }
 
 
               document
                 .getElementById(
-                  "application-success"
+                  "application-form-section"
                 )
                 .scrollIntoView({
                   behavior: "smooth",
@@ -2354,7 +2777,18 @@
 
             /* FORM */
 
-            setupApplicationForm();
+            setupApplicationForm(selectedJob);
+
+            const jobSlugForTracking =
+              selectedJob.slug ||
+              slugify(selectedJob.title || selectedJob.name || "");
+
+            if (jobSlugForTracking) {
+              await checkExistingApplication(
+                jobSlugForTracking,
+                selectedJob.title || selectedJob.name
+              );
+            }
 
 
             /* APPLY BUTTON */

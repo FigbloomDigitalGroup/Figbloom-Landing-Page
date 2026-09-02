@@ -80,7 +80,7 @@
     /* FILTERS */
 
     .toolbar {
-      background: white;
+      background: var(--surface-raised);
       border: 1px solid var(--fig-border);
       border-radius: 0.75rem;
 
@@ -123,7 +123,7 @@
 
       padding: 0 13px;
 
-      background: white;
+      background: var(--surface-raised);
       color: var(--fig-text);
 
       outline: none;
@@ -140,7 +140,7 @@
     /* TABLE */
 
     .table-card {
-      background: white;
+      background: var(--surface-raised);
 
       border: 1px solid var(--fig-border);
       border-radius: 0.75rem;
@@ -185,7 +185,7 @@
     }
 
     th {
-      background: #fafcfa;
+      background: var(--fig-bg);
       color: var(--fig-muted);
       text-align: left;
       padding: 15px 18px;
@@ -198,7 +198,7 @@
 
     td {
       padding: 17px 18px;
-      border-bottom: 1px solid #edf0ed;
+      border-bottom: 1px solid var(--fig-border-soft);
       color: var(--fig-text);
       font-size: 14px;
     }
@@ -208,7 +208,7 @@
     }
 
     tbody tr:hover {
-      background: #fbfdfb;
+      background: var(--fig-bg);
     }
 
     .contact-name {
@@ -308,6 +308,8 @@
 <body>
 <div class="ad-root">
 {% include "components/admin-header.html" %}
+
+<div class="ad-main">
 
   <!-- MAIN -->
 
@@ -426,6 +428,8 @@
 
 
   </main>
+
+</div>
 
 </div>
 

@@ -61,7 +61,66 @@ function initAdminHeader() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', initAdminHeader);
+/* Light/dark toggle for the admin dashboard. admin.css defines three
+   states: unset (follows the OS/browser preference), data-theme="light",
+   and data-theme="dark" — the toggle only ever sets an explicit light/dark
+   override once clicked, so until then the page keeps following system
+   preference like it always did. The choice is remembered per-browser via
+   localStorage so it persists across admin pages and future visits. */
+
+const THEME_STORAGE_KEY = 'figbloom-admin-theme';
+
+function getSystemPrefersDark() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function applyAdminTheme(theme) {
+  const root = document.documentElement;
+
+  if (theme === 'light' || theme === 'dark') {
+    root.dataset.theme = theme;
+  } else {
+    delete root.dataset.theme;
+  }
+
+  const toggle = document.getElementById('theme-toggle');
+  if (!toggle) return;
+
+  const isDark = theme === 'dark' || (theme !== 'light' && getSystemPrefersDark());
+  toggle.setAttribute('aria-checked', String(isDark));
+}
+
+function initThemeToggle() {
+  let saved = null;
+
+  try {
+    saved = localStorage.getItem(THEME_STORAGE_KEY);
+  } catch (error) {
+    // localStorage unavailable (private browsing) — falls back to
+    // following system preference every load, same as before this existed.
+  }
+
+  applyAdminTheme(saved);
+
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const current = document.documentElement.dataset.theme
+      || (getSystemPrefersDark() ? 'dark' : 'light');
+    const next = current === 'dark' ? 'light' : 'dark';
+
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, next);
+    } catch (error) {
+      // ignore — toggle still works for this page load, just won't persist
+    }
+
+    applyAdminTheme(next);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initAdminHeader();
+  initThemeToggle();
+});
 
 /* In-app replacements for window.confirm()/alert() — those render as
    raw browser chrome (address bar, OS dialog styling) instead of

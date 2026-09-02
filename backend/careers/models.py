@@ -1,7 +1,22 @@
 from django.db import models
+from django.db.models import Q
+from django.utils import timezone
 from django.utils.text import slugify
 
 # Create your models here.
+
+
+class JobQuerySet(models.QuerySet):
+    def open(self):
+        """Jobs actually visible/applicable-to on the public site: staff
+        hasn't closed them AND (no deadline, or the deadline hasn't passed
+        yet). A passed deadline auto-closes a job the same way manually
+        flipping is_open does, without ever touching the stored is_open
+        value — so extending the deadline later doesn't require a staff
+        member to remember to re-open it."""
+        return self.filter(is_open=True).filter(
+            Q(deadline__isnull=True) | Q(deadline__gte=timezone.localdate())
+        )
 
 
 class Job(models.Model):
@@ -10,6 +25,8 @@ class Job(models.Model):
         ('hybrid', 'Hybrid'),
         ('remote', 'Remote'),
     ]
+
+    objects = JobQuerySet.as_manager()
 
     title = models.CharField(max_length=200)
     department = models.CharField(max_length=100)
@@ -53,6 +70,10 @@ class Job(models.Model):
 
         super().save(*args, **kwargs)
 
+    @property
+    def is_currently_open(self):
+        return self.is_open and (self.deadline is None or self.deadline >= timezone.localdate())
+
     def __str__(self):
         return self.title
 
@@ -64,6 +85,7 @@ class JobApplication(models.Model):
         ('interview', 'Interview'),
         ('rejected', 'Rejected'),
         ('hired', 'Hired'),
+        ('withdrawn', 'Withdrawn'),
     ]
 
     job = models.ForeignKey(
@@ -85,6 +107,20 @@ class JobApplication(models.Model):
     )
 
     applied_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['job', 'email'],
+                name='unique_application_per_job_email',
+            ),
+        ]
+
+    def save(self, *args, **kwargs):
+        # Normalized so the (job, email) uniqueness check/constraint treats
+        # Foo@Bar.com and foo@bar.com as the same applicant.
+        self.email = self.email.strip().lower()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.full_name} - {self.job.title}"

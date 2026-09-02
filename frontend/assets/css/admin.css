@@ -720,6 +720,100 @@
 }
 
 /* =========================================================
+   RICH TEXT EDITOR (Quill, vendored as assets/js/quill.min.js +
+   assets/css/quill.snow.min.css — same "vendor a plain file, no build
+   step" pattern as alpine/swiper/lucide elsewhere in this repo)
+
+   Used for Newsletter Content, Job Description and Job Requirements —
+   anywhere staff need real bold/heading/bullet formatting instead of a
+   plain textarea, with formatting preserved on paste from Word/Docs
+   (Quill's clipboard module normalizes pasted HTML for that).
+   ========================================================= */
+
+.ad-rte {
+  border: 1px solid var(--fig-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ad-rte:focus-within {
+  border-color: var(--fig-orange);
+  box-shadow: 0 0 0 3px rgba(255, 148, 0, 0.12);
+}
+
+.ad-rte .ql-toolbar.ql-snow {
+  border: none;
+  border-bottom: 1px solid var(--fig-border);
+  background: var(--fig-bg);
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+}
+
+.ad-rte .ql-container.ql-snow {
+  border: none;
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  font-size: 14.5px;
+}
+
+.ad-rte .ql-editor {
+  min-height: 180px;
+  color: var(--fig-text);
+  line-height: 1.7;
+}
+
+.ad-rte .ql-editor h1,
+.ad-rte .ql-editor h2,
+.ad-rte .ql-editor h3 {
+  color: var(--fig-text);
+  font-weight: 800;
+}
+
+.ad-rte .ql-editor.ql-blank::before {
+  color: var(--fig-muted);
+  font-style: normal;
+}
+
+/* These selectors are Quill's own documented snow-theme hooks, not
+   guesses — .ql-stroke/.ql-fill/.ql-picker-label are how its SVG toolbar
+   icons and dropdown labels are meant to be recolored. */
+.ad-rte .ql-snow .ql-stroke {
+  stroke: var(--fig-muted);
+}
+
+.ad-rte .ql-snow .ql-fill {
+  fill: var(--fig-muted);
+}
+
+.ad-rte .ql-snow.ql-toolbar button:hover .ql-stroke,
+.ad-rte .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.ad-rte .ql-snow .ql-picker-label:hover .ql-stroke {
+  stroke: var(--fig-orange);
+}
+
+.ad-rte .ql-snow.ql-toolbar button:hover .ql-fill,
+.ad-rte .ql-snow.ql-toolbar button.ql-active .ql-fill {
+  fill: var(--fig-orange);
+}
+
+.ad-rte .ql-picker-label {
+  color: var(--fig-muted);
+}
+
+.ad-rte .ql-snow .ql-picker-options {
+  background: var(--surface-raised);
+  border-color: var(--fig-border);
+}
+
+.ad-rte .ql-snow .ql-picker-item {
+  color: var(--fig-text);
+}
+
+#newsletter-content-editor .ql-editor {
+  min-height: 280px;
+}
+
+/* =========================================================
    TOASTS (in-app replacement for window.alert())
    ========================================================= */
 

@@ -1074,7 +1074,7 @@
               <div class="career-card-header">
 
                 <div class="card-icon">
-                  <i data-lucide="check-check"></i>
+                  <i data-lucide="clipboard-pen-line"></i>
                 </div>
 
                 <div>
@@ -2067,6 +2067,21 @@
 
 
       /* =========================================================
+         HTML DETECTION
+
+         Jobs created before the rich-text editor was added have plain
+         text saved (line breaks, no tags); jobs saved since have real
+         HTML from Quill. Detect which one we've got instead of needing
+         a data migration — legacy plain-text postings keep rendering
+         exactly as before.
+      ========================================================== */
+
+      function looksLikeHtml(text) {
+        return /<[a-z][\s\S]*>/i.test(String(text || ""));
+      }
+
+
+      /* =========================================================
          FORMAT DESCRIPTION
       ========================================================== */
 
@@ -2074,6 +2089,10 @@
 
         if (!text) {
           return "<p>No information provided.</p>";
+        }
+
+        if (looksLikeHtml(text)) {
+          return text;
         }
 
         return String(text)
@@ -2102,21 +2121,82 @@
          FORMAT REQUIREMENTS
       ========================================================== */
 
+      function requirementItemsHtml(items) {
+
+        return items
+          .map(requirement => `
+            <div class="requirement-item">
+
+              <span class="requirement-check">
+                ✓
+              </span>
+
+              <span>
+                ${requirement}
+              </span>
+
+            </div>
+          `)
+          .join("");
+
+      }
+
+
       function formatRequirements(text) {
 
+        const noneListedHtml = `
+          <div class="requirement-item">
+            <span class="requirement-check">✓</span>
+            <span>
+              No specific requirements listed.
+            </span>
+          </div>
+        `;
+
         if (!text) {
-
-          return `
-            <div class="requirement-item">
-              <span class="requirement-check">✓</span>
-              <span>
-                No specific requirements listed.
-              </span>
-            </div>
-          `;
-
+          return noneListedHtml;
         }
 
+        if (looksLikeHtml(text)) {
+
+          // Quill's bullet-list button is the natural way staff write
+          // requirements — pull each <li>'s content out so it keeps the
+          // ✓ styling instead of falling back to a browser bullet. Any
+          // other formatting (headings, bold paragraphs with no list)
+          // just renders as authored.
+          const container =
+            document.createElement("div");
+
+          container.innerHTML = text;
+
+          const listItems =
+            Array.from(
+              container.querySelectorAll("li")
+            );
+
+          if (listItems.length) {
+
+            return requirementItemsHtml(
+              listItems.map(li => {
+
+                // Quill 2.x injects an empty UI marker span into every
+                // <li> for its own bullet rendering — strip it so it
+                // doesn't leak into the saved/rendered markup.
+                li.querySelectorAll(".ql-ui")
+                  .forEach(el => el.remove());
+
+                return li.innerHTML;
+
+              })
+            );
+
+          }
+
+          return text.trim()
+            ? text
+            : noneListedHtml;
+
+        }
 
         const lines =
           String(text)
@@ -2124,31 +2204,19 @@
             .map(line => line.trim())
             .filter(Boolean);
 
+        if (!lines.length) {
+          return noneListedHtml;
+        }
 
-        return lines
-          .map(requirement => {
-
-            const cleaned =
+        return requirementItemsHtml(
+          lines.map(requirement =>
+            escapeHtml(
               requirement
                 .replace(/^[-•*]\s*/, "")
-                .replace(/^\d+[.)]\s*/, "");
-
-            return `
-              <div class="requirement-item">
-
-                <span class="requirement-check">
-                  ✓
-                </span>
-
-                <span>
-                  ${escapeHtml(cleaned)}
-                </span>
-
-              </div>
-            `;
-
-          })
-          .join("");
+                .replace(/^\d+[.)]\s*/, "")
+            )
+          )
+        );
 
       }
 

@@ -15,6 +15,7 @@
 
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/admin.css" />
+  <link rel="stylesheet" href="/assets/css/quill.snow.min.css" />
 
   <style>
     /* =========================================================
@@ -688,36 +689,45 @@
     }
 
     /* =========================================================
-       JOB MODAL
+       JOB FORM PANEL
+
+       A full panel within the Jobs tab, same idea as the Newsletter
+       composer — not a modal. #jobs-list-view and #jobs-form-view are
+       simple show/hide siblings inside #panel-jobs.
        ========================================================= */
 
-    .db-modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(18, 21, 30, 0.55);
-      backdrop-filter: blur(4px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 25px;
-      z-index: 100;
-    }
-
-    .db-modal-backdrop.active {
-      display: flex;
-    }
-
-    .db-modal {
-      width: min(760px, 100%);
-      max-height: calc(100vh - 50px);
-      overflow-y: auto;
+    .job-form-panel {
       background: var(--surface-raised);
+      border: 1px solid var(--fig-border);
       border-radius: var(--radius-xl);
-      padding: 28px;
-      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
+      padding: 24px;
+      max-width: 760px;
     }
 
-    .db-modal h3 {
+    .job-form-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 18px;
+      color: var(--fig-muted);
+      font-weight: 700;
+      font-size: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .job-form-back-btn:hover {
+      color: var(--fig-orange);
+    }
+
+    .job-form-back-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    #jobs-form-view h3 {
       margin: 0 0 24px;
       font-size: 25px;
       color: var(--fig-text);
@@ -878,55 +888,304 @@
       class="db-panel"
     >
 
-      <div class="db-panel-header">
+      <div id="jobs-list-view">
 
-        <div>
-          <h2>Job Postings</h2>
-          <p>
-            Create, update and manage career opportunities.
-          </p>
+        <div class="db-panel-header">
+
+          <div>
+            <h2>Job Postings</h2>
+            <p>
+              Create, update and manage career opportunities.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="db-btn-primary"
+            id="new-job-btn"
+          >
+            + New Job
+          </button>
+
         </div>
+
+        <div class="db-toolbar">
+
+          <div class="db-toolbar-group">
+            <label for="jobs-search">Search</label>
+            <input
+              type="text"
+              id="jobs-search"
+              class="db-toolbar-input"
+              placeholder="Search by title or department..."
+            />
+          </div>
+
+          <div class="db-toolbar-group">
+            <label for="jobs-status-filter">Status</label>
+            <select
+              id="jobs-status-filter"
+              class="db-toolbar-select"
+            >
+              <option value="all">All jobs</option>
+              <option value="open">Open</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div id="jobs-table-wrap">
+
+          <div class="db-empty">
+            Loading jobs...
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           JOB CREATE / EDIT — full panel, same idea as the
+           Newsletter composer, not a modal.
+           ===================================================== -->
+
+      <div
+        id="jobs-form-view"
+        class="hidden"
+      >
 
         <button
           type="button"
-          class="db-btn-primary"
-          id="new-job-btn"
+          class="job-form-back-btn"
+          id="job-back-btn"
         >
-          + New Job
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          Back to Jobs
         </button>
 
-      </div>
+        <div class="job-form-panel">
 
-      <div class="db-toolbar">
+          <h3 id="job-modal-title">
+            New Job
+          </h3>
 
-        <div class="db-toolbar-group">
-          <label for="jobs-search">Search</label>
-          <input
-            type="text"
-            id="jobs-search"
-            class="db-toolbar-input"
-            placeholder="Search by title or department..."
-          />
-        </div>
 
-        <div class="db-toolbar-group">
-          <label for="jobs-status-filter">Status</label>
-          <select
-            id="jobs-status-filter"
-            class="db-toolbar-select"
-          >
-            <option value="all">All jobs</option>
-            <option value="open">Open</option>
-            <option value="closed">Closed</option>
-          </select>
-        </div>
+          <form id="job-form">
 
-      </div>
+            <input
+              type="hidden"
+              id="job-id"
+            />
 
-      <div id="jobs-table-wrap">
 
-        <div class="db-empty">
-          Loading jobs...
+            <div class="db-field">
+
+              <label for="job-title">
+                Job Title
+              </label>
+
+              <input
+                id="job-title"
+                required
+                placeholder="e.g. Frontend Developer"
+              />
+
+            </div>
+
+
+            <div class="db-row-grid">
+
+              <div class="db-field">
+
+                <label for="job-department">
+                  Department
+                </label>
+
+                <input
+                  id="job-department"
+                  required
+                  placeholder="e.g. IT"
+                />
+
+              </div>
+
+
+              <div class="db-field">
+
+                <label for="job-location">
+                  Work Arrangement
+                </label>
+
+                <select id="job-location">
+
+                  <option value="onsite">
+                    Onsite
+                  </option>
+
+                  <option value="hybrid">
+                    Hybrid
+                  </option>
+
+                  <option value="remote">
+                    Remote
+                  </option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+
+            <div class="db-row-grid">
+
+              <div class="db-field">
+
+                <label for="job-employment-type">
+                  Employment Type
+                </label>
+
+                <select id="job-employment-type">
+
+                  <option value="full_time">
+                    Full Time
+                  </option>
+
+                  <option value="part_time">
+                    Part Time
+                  </option>
+
+                  <option value="contract">
+                    Contract
+                  </option>
+
+                  <option value="internship">
+                    Internship
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="db-field">
+
+                <label for="job-experience">
+                  Experience
+                </label>
+
+                <input
+                  id="job-experience"
+                  placeholder="e.g. 2 years"
+                />
+
+              </div>
+
+            </div>
+
+
+            <div class="db-row-grid">
+
+              <div class="db-field">
+
+                <label for="job-salary">
+                  Salary
+                </label>
+
+                <input
+                  id="job-salary"
+                  placeholder="e.g. 45,000"
+                />
+
+              </div>
+
+
+              <div class="db-field">
+
+                <label for="job-deadline">
+                  Application Deadline
+                </label>
+
+                <input
+                  id="job-deadline"
+                  type="date"
+                />
+
+              </div>
+
+            </div>
+
+
+            <div class="db-field">
+
+              <label>
+                Job Description
+              </label>
+
+              <div class="ad-rte">
+                <div id="job-description-editor"></div>
+              </div>
+
+            </div>
+
+
+            <div class="db-field">
+
+              <label>
+                Requirements
+              </label>
+
+              <div class="ad-rte">
+                <div id="job-requirements-editor"></div>
+              </div>
+
+            </div>
+
+
+            <div class="db-field">
+
+              <label for="job-is-open">
+                Job Status
+              </label>
+
+              <select id="job-is-open">
+
+                <option value="true">
+                  Open
+                </option>
+
+                <option value="false">
+                  Closed
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="db-modal-actions">
+
+              <button
+                type="button"
+                class="db-btn-secondary"
+                id="job-cancel-btn"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                class="db-btn-primary"
+              >
+                Save Job
+              </button>
+
+            </div>
+
+          </form>
+
         </div>
 
       </div>
@@ -1137,7 +1396,7 @@
 
             <div class="newsletter-label-row">
 
-              <label for="newsletter-content">
+              <label>
                 Newsletter Content
               </label>
 
@@ -1147,10 +1406,9 @@
 
             </div>
 
-            <textarea
-              id="newsletter-content"
-              placeholder="Write your newsletter here..."
-            ></textarea>
+            <div class="ad-rte">
+              <div id="newsletter-content-editor"></div>
+            </div>
 
           </div>
 
@@ -1285,248 +1543,11 @@
 </div>
 
   <!-- =========================================================
-       JOB CREATE / EDIT MODAL
-       ========================================================= -->
-
-  <div
-    class="db-modal-backdrop"
-    id="job-modal-backdrop"
-  >
-
-    <div class="db-modal">
-
-      <h3 id="job-modal-title">
-        New Job
-      </h3>
-
-
-      <form id="job-form">
-
-        <input
-          type="hidden"
-          id="job-id"
-        />
-
-
-        <div class="db-field">
-
-          <label for="job-title">
-            Job Title
-          </label>
-
-          <input
-            id="job-title"
-            required
-            placeholder="e.g. Frontend Developer"
-          />
-
-        </div>
-
-
-        <div class="db-row-grid">
-
-          <div class="db-field">
-
-            <label for="job-department">
-              Department
-            </label>
-
-            <input
-              id="job-department"
-              required
-              placeholder="e.g. IT"
-            />
-
-          </div>
-
-
-          <div class="db-field">
-
-            <label for="job-location">
-              Work Arrangement
-            </label>
-
-            <select id="job-location">
-
-              <option value="onsite">
-                Onsite
-              </option>
-
-              <option value="hybrid">
-                Hybrid
-              </option>
-
-              <option value="remote">
-                Remote
-              </option>
-
-            </select>
-
-          </div>
-
-        </div>
-
-
-        <div class="db-row-grid">
-
-          <div class="db-field">
-
-            <label for="job-employment-type">
-              Employment Type
-            </label>
-
-            <select id="job-employment-type">
-
-              <option value="full_time">
-                Full Time
-              </option>
-
-              <option value="part_time">
-                Part Time
-              </option>
-
-              <option value="contract">
-                Contract
-              </option>
-
-              <option value="internship">
-                Internship
-              </option>
-
-            </select>
-
-          </div>
-
-
-          <div class="db-field">
-
-            <label for="job-experience">
-              Experience
-            </label>
-
-            <input
-              id="job-experience"
-              placeholder="e.g. 2 years"
-            />
-
-          </div>
-
-        </div>
-
-
-        <div class="db-row-grid">
-
-          <div class="db-field">
-
-            <label for="job-salary">
-              Salary
-            </label>
-
-            <input
-              id="job-salary"
-              placeholder="e.g. 45,000"
-            />
-
-          </div>
-
-
-          <div class="db-field">
-
-            <label for="job-deadline">
-              Application Deadline
-            </label>
-
-            <input
-              id="job-deadline"
-              type="date"
-            />
-
-          </div>
-
-        </div>
-
-
-        <div class="db-field">
-
-          <label for="job-description">
-            Job Description
-          </label>
-
-          <textarea
-            id="job-description"
-            required
-            placeholder="Describe the role..."
-          ></textarea>
-
-        </div>
-
-
-        <div class="db-field">
-
-          <label for="job-requirements">
-            Requirements
-          </label>
-
-          <textarea
-            id="job-requirements"
-            placeholder="List the requirements..."
-          ></textarea>
-
-        </div>
-
-
-        <div class="db-field">
-
-          <label for="job-is-open">
-            Job Status
-          </label>
-
-          <select id="job-is-open">
-
-            <option value="true">
-              Open
-            </option>
-
-            <option value="false">
-              Closed
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="db-modal-actions">
-
-          <button
-            type="button"
-            class="db-btn-secondary"
-            id="job-cancel-btn"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="submit"
-            class="db-btn-primary"
-          >
-            Save Job
-          </button>
-
-        </div>
-
-      </form>
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================================================
        JAVASCRIPT
        ========================================================= -->
 
   <script src="/assets/js/admin.js"></script>
+  <script src="/assets/js/quill.min.js"></script>
   <script>
 
     /* =========================================================
@@ -1956,30 +1977,112 @@ function yesterdayKey() {
 
 
     /* =========================================================
-       JOB MODAL
+       JOB DESCRIPTION / REQUIREMENTS EDITORS
        ========================================================= */
 
-    const jobModal =
+    const RTE_TOOLBAR = [
+      [{ header: [2, 3, false] }],
+      ["bold", "italic", "underline"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link"],
+      ["clean"],
+    ];
+
+    const jobDescriptionQuill = new Quill(
+      "#job-description-editor",
+      {
+        theme: "snow",
+        placeholder: "Describe the role...",
+        modules: { toolbar: RTE_TOOLBAR },
+      }
+    );
+
+    const jobRequirementsQuill = new Quill(
+      "#job-requirements-editor",
+      {
+        theme: "snow",
+        placeholder: "List the requirements...",
+        modules: { toolbar: RTE_TOOLBAR },
+      }
+    );
+
+    // Existing jobs in the database were saved as plain text (line breaks,
+    // no tags) before this editor existed. Loading that straight into
+    // Quill's innerHTML would either mis-render any stray < or & as HTML,
+    // or lose the line breaks entirely (HTML collapses bare whitespace).
+    // Only convert when it doesn't already look like HTML, so newly
+    // saved rich content round-trips unchanged.
+    function plainTextOrHtmlToEditorHtml(value) {
+
+      const text = value || "";
+
+      const looksLikeHtml =
+        /<[a-z][\s\S]*>/i.test(text);
+
+      if (looksLikeHtml) {
+        return text;
+      }
+
+      return text
+        .split(/\n\s*\n/)
+        .map(paragraph => paragraph.trim())
+        .filter(Boolean)
+        .map(paragraph =>
+          `<p>${escapeHtml(paragraph).replace(/\n/g, "<br>")}</p>`
+        )
+        .join("") || "<p></p>";
+
+    }
+
+
+    /* =========================================================
+       JOB FORM PANEL
+       ========================================================= */
+
+    const jobsListView =
       document.getElementById(
-        "job-modal-backdrop"
+        "jobs-list-view"
       );
 
 
-    function openJobModal() {
+    const jobsFormView =
+      document.getElementById(
+        "jobs-form-view"
+      );
 
-      jobModal.classList.add(
-        "active"
+
+    function showJobForm() {
+
+      jobsListView.classList.add(
+        "hidden"
+      );
+
+      jobsFormView.classList.remove(
+        "hidden"
+      );
+
+      jobsFormView.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+
+    }
+
+
+    function showJobsList() {
+
+      jobsFormView.classList.add(
+        "hidden"
+      );
+
+      jobsListView.classList.remove(
+        "hidden"
       );
 
     }
 
 
-    function closeJobModal() {
-
-      jobModal.classList.remove(
-        "active"
-      );
-
+    function resetJobForm() {
 
       document
         .getElementById(
@@ -1993,6 +2096,10 @@ function yesterdayKey() {
           "job-id"
         )
         .value = "";
+
+
+      jobDescriptionQuill.setText("");
+      jobRequirementsQuill.setText("");
 
 
       document
@@ -2013,11 +2120,17 @@ function yesterdayKey() {
         "click",
         () => {
 
-          closeJobModal();
-          openJobModal();
+          resetJobForm();
+          showJobForm();
 
         }
       );
+
+
+    function cancelJobForm() {
+      resetJobForm();
+      showJobsList();
+    }
 
 
     document
@@ -2026,7 +2139,17 @@ function yesterdayKey() {
       )
       .addEventListener(
         "click",
-        closeJobModal
+        cancelJobForm
+      );
+
+
+    document
+      .getElementById(
+        "job-back-btn"
+      )
+      .addEventListener(
+        "click",
+        cancelJobForm
       );
 
 
@@ -2099,16 +2222,16 @@ function yesterdayKey() {
           job.deadline || "";
 
 
-        document.getElementById(
-          "job-description"
-        ).value =
-          job.description || "";
+        jobDescriptionQuill.root.innerHTML =
+          plainTextOrHtmlToEditorHtml(
+            job.description
+          );
 
 
-        document.getElementById(
-          "job-requirements"
-        ).value =
-          job.requirements || "";
+        jobRequirementsQuill.root.innerHTML =
+          plainTextOrHtmlToEditorHtml(
+            job.requirements
+          );
 
 
         document.getElementById(
@@ -2125,7 +2248,7 @@ function yesterdayKey() {
           "Edit Job";
 
 
-        openJobModal();
+        showJobForm();
 
       };
 
@@ -2202,6 +2325,23 @@ function yesterdayKey() {
           event.stopPropagation();
 
 
+          // The old plain <textarea> had a native "required" attribute
+          // for this — a Quill editor has no such thing, so it's checked
+          // by hand here instead.
+          if (!jobDescriptionQuill.getText().trim()) {
+
+            showToast(
+              "Please enter a job description.",
+              "error"
+            );
+
+            jobDescriptionQuill.focus();
+
+            return;
+
+          }
+
+
           const saveButton =
             event.target.querySelector(
               'button[type="submit"]'
@@ -2263,14 +2403,12 @@ function yesterdayKey() {
               ).value || null,
 
             description:
-              document.getElementById(
-                "job-description"
-              ).value.trim(),
+              jobDescriptionQuill.root.innerHTML,
 
             requirements:
-              document.getElementById(
-                "job-requirements"
-              ).value.trim(),
+              jobRequirementsQuill.getText().trim()
+                ? jobRequirementsQuill.root.innerHTML
+                : "",
 
             is_open:
               document.getElementById(
@@ -2345,7 +2483,8 @@ function yesterdayKey() {
              * We do NOT redirect anywhere.
              */
 
-            closeJobModal();
+            resetJobForm();
+            showJobsList();
 
             await loadJobs();
 
@@ -3457,10 +3596,30 @@ if (subscriberCountCard) {
       );
 
 
-    const newsletterContent =
+    const newsletterContentEditor =
       document.getElementById(
-        "newsletter-content"
+        "newsletter-content-editor"
       );
+
+    const newsletterQuill =
+      newsletterContentEditor
+        ? new Quill(
+            newsletterContentEditor,
+            {
+              theme: "snow",
+              placeholder: "Write your newsletter here...",
+              modules: {
+                toolbar: [
+                  [{ header: [2, 3, false] }],
+                  ["bold", "italic", "underline"],
+                  [{ list: "ordered" }, { list: "bullet" }],
+                  ["link"],
+                  ["clean"],
+                ],
+              },
+            }
+          )
+        : null;
 
 
     const previewSubject =
@@ -3485,7 +3644,7 @@ if (subscriberCountCard) {
 
       if (
         !newsletterSubject ||
-        !newsletterContent ||
+        !newsletterQuill ||
         !previewSubject ||
         !previewContent ||
         !wordCount
@@ -3500,8 +3659,16 @@ if (subscriberCountCard) {
         newsletterSubject.value.trim();
 
 
+      // .root.innerHTML is Quill's actual formatted output (headings,
+      // bold, bullets, whatever pasted-in formatting survived) — this is
+      // exactly what gets sent as the email body, so the preview and the
+      // real send always match.
       const content =
-        newsletterContent.value.trim();
+        newsletterQuill.root.innerHTML;
+
+
+      const plainText =
+        newsletterQuill.getText().trim();
 
 
       previewSubject.textContent =
@@ -3510,13 +3677,8 @@ if (subscriberCountCard) {
 
 
       previewContent.innerHTML =
-        content
-          ? `<p>${escapeHtml(
-              content
-            ).replace(
-              /\n/g,
-              "<br>"
-            )}</p>`
+        plainText
+          ? content
           : `
             <p>
               Your newsletter content will appear here.
@@ -3525,8 +3687,8 @@ if (subscriberCountCard) {
 
 
       const words =
-        content
-          ? content.split(
+        plainText
+          ? plainText.split(
               /\s+/
             ).filter(Boolean)
           : [];
@@ -3565,10 +3727,10 @@ if (subscriberCountCard) {
     }
 
 
-    if (newsletterContent) {
+    if (newsletterQuill) {
 
-      newsletterContent.addEventListener(
-        "input",
+      newsletterQuill.on(
+        "text-change",
         updateNewsletterPreview
       );
 
@@ -3627,7 +3789,7 @@ if (subscriberCountCard) {
 
           if (
             !newsletterSubject ||
-            !newsletterContent
+            !newsletterQuill
           ) {
 
             return;
@@ -3640,7 +3802,7 @@ if (subscriberCountCard) {
 
 
           const content =
-            newsletterContent.value.trim();
+            newsletterQuill.root.innerHTML;
 
 
           if (!subject) {
@@ -3657,14 +3819,14 @@ if (subscriberCountCard) {
           }
 
 
-          if (!content) {
+          if (!newsletterQuill.getText().trim()) {
 
             showToast(
               "Please enter newsletter content.",
               "error"
             );
 
-            newsletterContent.focus();
+            newsletterQuill.focus();
 
             return;
 
@@ -3800,8 +3962,7 @@ if (subscriberCountCard) {
               "";
 
 
-            newsletterContent.value =
-              "";
+            newsletterQuill.setText("");
 
 
             updateNewsletterPreview();

@@ -1433,6 +1433,18 @@
                   name="slug"
                 />
 
+                <!-- Honeypot: invisible to real visitors, bots fill every field they can find. -->
+                <div style="position:absolute; left:-9999px;" aria-hidden="true">
+                  <label for="application-website">Website</label>
+                  <input
+                    id="application-website"
+                    name="website"
+                    type="text"
+                    tabindex="-1"
+                    autocomplete="off"
+                  />
+                </div>
+
 
                 <!-- FULL NAME -->
 

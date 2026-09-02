@@ -260,6 +260,43 @@
       box-shadow: 0 0 0 3px rgba(255, 148, 0, 0.12);
     }
 
+    /* Per-status accent so the pipeline stage is readable at a glance, not
+       just from the text. "new" gets no modifier — the plain look above is
+       its color. admin.css's .ad-root.ad-root select rule is deliberately
+       over-specified (0,2,1) so it always wins for plain form controls;
+       matching its .ad-root.ad-root shape here is the documented way to
+       override it per status. */
+    .ad-root.ad-root select.status-select--reviewed {
+      background: var(--info-soft);
+      color: var(--info);
+      border-color: var(--info-soft);
+    }
+
+    .ad-root.ad-root select.status-select--shortlisted {
+      background: var(--warning-soft);
+      color: var(--warning);
+      border-color: var(--warning-soft);
+    }
+
+    .ad-root.ad-root select.status-select--interview {
+      background: var(--fig-orange-soft);
+      color: var(--fig-orange);
+      border-color: var(--fig-orange-soft);
+    }
+
+    .ad-root.ad-root select.status-select--hired {
+      background: var(--success-soft);
+      color: var(--success);
+      border-color: var(--success-soft);
+    }
+
+    .ad-root.ad-root select.status-select--rejected,
+    .ad-root.ad-root select.status-select--withdrawn {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border-color: var(--danger-soft);
+    }
+
     /* =========================================================
        NEWSLETTER
        ========================================================= */
@@ -942,6 +979,7 @@
             <option value="interview">Interview</option>
             <option value="rejected">Rejected</option>
             <option value="hired">Hired</option>
+            <option value="withdrawn">Withdrawn</option>
           </select>
         </div>
 
@@ -2376,6 +2414,25 @@ function yesterdayKey() {
     }
 
 
+    // "new" intentionally has no entry — the plain .status-select look is
+    // its color, everything else gets an accent so the pipeline stage
+    // reads at a glance from the table, not just from the text. Shared
+    // between the initial table render and the live onchange update below.
+    const STATUS_SELECT_MODIFIER = {
+      reviewed: "status-select--reviewed",
+      shortlisted: "status-select--shortlisted",
+      interview: "status-select--interview",
+      hired: "status-select--hired",
+      rejected: "status-select--rejected",
+      withdrawn: "status-select--withdrawn",
+    };
+
+    function statusSelectClass(status) {
+      const modifier = STATUS_SELECT_MODIFIER[status];
+      return modifier ? `status-select ${modifier}` : "status-select";
+    }
+
+
     function renderApplicationsTable(applications) {
 
       const wrap =
@@ -2417,7 +2474,8 @@ function yesterdayKey() {
         "shortlisted",
         "interview",
         "rejected",
-        "hired"
+        "hired",
+        "withdrawn"
       ];
 
       wrap.innerHTML = `
@@ -2490,10 +2548,11 @@ function yesterdayKey() {
                     <td>
 
                       <select
-                        class="status-select"
+                        class="${statusSelectClass(app.status)}"
                         onchange="updateApplicationStatus(
                           ${app.id},
-                          this.value
+                          this.value,
+                          this
                         )"
                       >
 
@@ -2636,7 +2695,8 @@ function yesterdayKey() {
     window.updateApplicationStatus =
       async function(
         id,
-        status
+        status,
+        selectEl
       ) {
 
         try {
@@ -2676,6 +2736,10 @@ function yesterdayKey() {
 
           if (cached) {
             cached.status = status;
+          }
+
+          if (selectEl) {
+            selectEl.className = statusSelectClass(status);
           }
 
         } catch (error) {

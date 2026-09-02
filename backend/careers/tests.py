@@ -218,6 +218,13 @@ class JobApplicationAPITests(TestCase):
         data.update(overrides)
         return self.client.post(reverse('application-create'), data, format='multipart')
 
+    def test_honeypot_fakes_success_without_saving_or_emailing(self):
+        response = self._apply(website='http://spam.example.com')
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(JobApplication.objects.count(), 0)
+        self.assertEqual(len(mail.outbox), 0)
+
     def test_duplicate_application_for_same_job_and_email_is_rejected(self):
         first = self._apply()
         self.assertEqual(first.status_code, 201)
@@ -367,7 +374,10 @@ class ApplicationWithdrawalTests(TestCase):
         self.assertEqual(len(mail.outbox), 2)
         recipients = [set(m.to) for m in mail.outbox]
         self.assertIn({'jane@example.com'}, recipients)
-        self.assertIn({'sales@figbloom.org'}, recipients)
+        self.assertIn(
+            {'sales@figbloom.org', 'humanresource@figbloom.org', 'operations@figbloom.org'},
+            recipients,
+        )
 
     def test_withdrawing_twice_shows_already_withdrawn_without_resending(self):
         self.application.status = 'withdrawn'
@@ -421,7 +431,8 @@ class ApplicationStatusChangeNotificationTests(TestCase):
         response = self._patch_status('shortlisted')
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(mail.outbox), 1)
+        # One to the applicant, one internal copy to the HR/ops/sales list.
+        self.assertEqual(len(mail.outbox), 2)
 
         sent = mail.outbox[0]
         self.assertEqual(sent.to, ['jane@example.com'])
@@ -429,6 +440,19 @@ class ApplicationStatusChangeNotificationTests(TestCase):
         self.assertIn(self.job.title, sent.subject)
         self.assertIn('shortlisted', sent.body.lower())
         self.assertIn('/career/withdraw/', sent.alternatives[0][0])
+
+    @patch('careers.views.threading.Thread', _ImmediateThread)
+    def test_status_change_notifies_hr_ops_and_sales(self):
+        self._patch_status('shortlisted')
+
+        staff_email = mail.outbox[1]
+        self.assertEqual(
+            set(staff_email.to),
+            {'sales@figbloom.org', 'humanresource@figbloom.org', 'operations@figbloom.org'},
+        )
+        self.assertIn(self.application.full_name, staff_email.body)
+        self.assertIn('New', staff_email.body)
+        self.assertIn('Shortlisted', staff_email.body)
 
     @patch('careers.views.threading.Thread', _ImmediateThread)
     def test_rejected_status_uses_gentler_full_message(self):
@@ -460,7 +484,7 @@ class ApplicationStatusChangeNotificationTests(TestCase):
     @patch('careers.views.threading.Thread', _ImmediateThread)
     def test_re_patching_same_status_sends_no_further_email(self):
         self._patch_status('shortlisted')
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
 
         self._patch_status('shortlisted')
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)

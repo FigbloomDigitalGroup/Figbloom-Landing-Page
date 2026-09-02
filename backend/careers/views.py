@@ -262,6 +262,16 @@ class ApplicationCreateView(generics.CreateAPIView):
     serializer_class = JobApplicationSerializer
 
     def create(self, request, *args, **kwargs):
+        # Honeypot: a genuine applicant never fills this hidden field, so a
+        # non-empty value means a bot. Fake success — telling a bot it was
+        # rejected just teaches it to try again differently — but skip
+        # saving and emailing entirely. Same pattern as ContactCreateView.
+        if request.data.get('website'):
+            return Response(
+                {'message': 'Application submitted successfully.'},
+                status=status.HTTP_201_CREATED,
+            )
+
         job_id = request.data.get('job')
         email = request.data.get('email', '').strip().lower()
 
@@ -617,7 +627,7 @@ class ApplicationAdminViewSet(viewsets.ModelViewSet):
 
             threading.Thread(
                 target=_notify_status_change_safely,
-                args=(application, withdraw_url),
+                args=(application, withdraw_url, previous_status),
                 daemon=True,
             ).start()
 
@@ -1127,10 +1137,10 @@ def _notify_withdrawal(application):
         subject=f'Applicant withdrew: {application.full_name} — {application.job.title}',
         body=(
             f'{application.full_name} ({application.email}) withdrew their application '
-            f'for {application.job.title}.'
+            f'for {application.job.title} on {timezone.localtime(timezone.now()):%b %d, %Y at %I:%M %p}.'
         ),
         from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[CONTACT_NOTIFICATION_RECIPIENT],
+        to=APPLICANT_PIPELINE_RECIPIENTS,
     ).send(fail_silently=False)
 
 
@@ -1144,14 +1154,14 @@ STATUS_CHANGE_MESSAGES = {
 }
 
 
-def _notify_status_change_safely(application, withdraw_url):
+def _notify_status_change_safely(application, withdraw_url, previous_status):
     try:
-        _notify_status_change(application, withdraw_url)
+        _notify_status_change(application, withdraw_url, previous_status)
     except Exception:
         logger.exception('Failed to send application status-change notification email')
 
 
-def _notify_status_change(application, withdraw_url):
+def _notify_status_change(application, withdraw_url, previous_status):
     first_name = application.full_name.split(' ')[0] or application.full_name
     status_display = application.get_status_display()
 
@@ -1223,8 +1233,33 @@ def _notify_status_change(application, withdraw_url):
 
     email.send(fail_silently=False)
 
+    # Quiet internal copy, same reasoning as the withdrawal notice — HR and
+    # ops want visibility into every pipeline move, not just the ones they
+    # happened to make themselves in the dashboard.
+    previous_display = dict(JobApplication.STATUS_CHOICES).get(previous_status, previous_status)
+
+    EmailMultiAlternatives(
+        subject=f'Status update: {application.full_name} — {application.job.title} ({status_display})',
+        body=(
+            f"{application.full_name} ({application.email})'s application for "
+            f'{application.job.title} moved from {previous_display} to {status_display} '
+            f'on {timezone.localtime(timezone.now()):%b %d, %Y at %I:%M %p}.'
+        ),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=APPLICANT_PIPELINE_RECIPIENTS,
+    ).send(fail_silently=False)
+
 
 CONTACT_NOTIFICATION_RECIPIENT = 'sales@figbloom.org'
+
+# Applicant-pipeline visibility (new statuses, withdrawals) goes to all
+# three of these — broader than CONTACT_NOTIFICATION_RECIPIENT above,
+# which stays sales-only for website contact-form inquiries.
+APPLICANT_PIPELINE_RECIPIENTS = [
+    'sales@figbloom.org',
+    'humanresource@figbloom.org',
+    'operations@figbloom.org',
+]
 
 
 class ContactCreateView(generics.CreateAPIView):

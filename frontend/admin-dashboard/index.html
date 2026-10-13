@@ -410,10 +410,6 @@
       box-shadow: 0 0 0 3px rgba(255, 148, 0, 0.12);
     }
 
-    /* IMPORTANT:
-       Filters are now INSIDE newsletter panel only.
-    */
-
     .newsletter-filters {
       background: var(--surface-raised);
       border: 1px solid var(--fig-border);
@@ -433,7 +429,7 @@
       gap: 7px;
     }
 
-    .newsletter-filter-group label {
+    .newsletter-filter-label {
       font-size: 11px;
       color: var(--fig-muted);
       text-transform: uppercase;
@@ -441,23 +437,63 @@
       font-weight: 900;
     }
 
-    .newsletter-filter-select,
-    .newsletter-filter-input {
-      min-width: 190px;
-      height: 44px;
+    /* Segmented All / Selected switch */
+
+    .newsletter-audience {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--fig-bg);
       border: 1px solid var(--fig-border);
       border-radius: var(--radius-lg);
-      background: var(--surface-raised);
-      color: var(--fig-text);
-      padding: 0 13px;
-      font-weight: 700;
-      outline: none;
     }
 
-    .newsletter-filter-select:focus,
-    .newsletter-filter-input:focus {
-      border-color: var(--fig-orange);
-      box-shadow: 0 0 0 3px rgba(255, 148, 0, 0.12);
+    .newsletter-audience-option {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .newsletter-audience-option input {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .newsletter-audience-option span {
+      display: block;
+      padding: 9px 16px;
+      border-radius: var(--radius-md);
+      color: var(--fig-muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .newsletter-audience-option input:checked + span {
+      background: var(--fig-green);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .newsletter-audience-option input:focus-visible + span {
+      outline: 2px solid var(--fig-orange);
+      outline-offset: 2px;
+    }
+
+    .newsletter-select-col {
+      width: 44px;
+    }
+
+    .newsletter-select-col input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--fig-green);
+      cursor: pointer;
+    }
+
+    .newsletter-select-col input:disabled {
+      cursor: not-allowed;
     }
 
     .newsletter-filter-note {
@@ -686,6 +722,63 @@
       height: 7px;
       border-radius: 50%;
       background: currentColor;
+    }
+
+    .newsletter-status-suspended {
+      color: var(--warning);
+      background: var(--warning-soft);
+    }
+
+    .newsletter-status-failed {
+      color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    /* =========================================================
+       SENT NEWSLETTERS
+       ========================================================= */
+
+    .newsletter-history-subject {
+      color: var(--fig-text);
+      font-weight: 700;
+    }
+
+    .newsletter-history-meta {
+      display: block;
+      margin-top: 3px;
+      color: var(--fig-muted);
+      font-size: 12px;
+    }
+
+    .newsletter-history-modal {
+      max-width: 720px;
+      width: 100%;
+    }
+
+    .newsletter-history-modal .ad-modal-body {
+      display: grid;
+      gap: 16px;
+    }
+
+    .newsletter-history-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .newsletter-history-frame {
+      width: 100%;
+      min-height: 320px;
+      border: 1px solid var(--fig-border);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+    }
+
+    .newsletter-history-failed {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--fig-muted);
+      font-size: 13px;
     }
 
     /* =========================================================
@@ -1299,66 +1392,38 @@
 
 
       <!-- =====================================================
-           NEWSLETTER FILTERS
-           IMPORTANT: THESE ARE INSIDE NEWSLETTER ONLY
+           NEWSLETTER AUDIENCE
            ===================================================== -->
 
       <div class="newsletter-filters">
 
         <div class="newsletter-filter-group">
 
-          <label for="newsletter-date-filter">
-            Subscription Date
-          </label>
+          <span class="newsletter-filter-label">
+            Send to
+          </span>
 
-          <select
-            id="newsletter-date-filter"
-            class="newsletter-filter-select"
-          >
+          <div class="newsletter-audience" role="radiogroup" aria-label="Send to">
 
-            <option value="everyone">
-              Everyone
-            </option>
+            <label class="newsletter-audience-option">
+              <input type="radio" name="newsletter-audience" value="all" checked />
+              <span>All subscribers</span>
+            </label>
 
-            <option value="today">
-              Today
-            </option>
+            <label class="newsletter-audience-option">
+              <input type="radio" name="newsletter-audience" value="selected" />
+              <span>Selected subscribers</span>
+            </label>
 
-            <option value="yesterday">
-              Yesterday
-            </option>
-
-            <option value="specific">
-              Select date
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div
-          id="newsletter-specific-date-wrap"
-          class="newsletter-filter-group hidden"
-        >
-
-          <label for="newsletter-specific-date">
-            Select Date
-          </label>
-
-          <input
-            type="date"
-            id="newsletter-specific-date"
-            class="newsletter-filter-input"
-          />
+          </div>
 
         </div>
 
 
         <div class="newsletter-filter-note">
 
-          <span id="newsletter-filter-summary">
-            Showing all active subscribers
+          <span id="newsletter-audience-summary">
+            Loading subscribers...
           </span>
 
         </div>
@@ -1538,6 +1603,53 @@
 
     </section>
 
+
+    <!-- =========================================================
+         MY NEWSLETTERS (sent history)
+         ========================================================= -->
+
+    <section
+      id="panel-sent-newsletters"
+      class="db-panel"
+    >
+
+      <div class="db-panel-header">
+
+        <div>
+          <h2>My Newsletters</h2>
+          <p>
+            Every newsletter sent from the dashboard, with its delivery results.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="newsletter-subscribers-card">
+
+        <div class="newsletter-subscribers-header">
+
+          <div>
+            <h3>Sent Newsletters</h3>
+
+            <span id="newsletter-history-description">
+              Newsletters you've already sent
+            </span>
+          </div>
+
+        </div>
+
+        <div id="newsletter-history-wrap">
+
+          <div class="db-empty">
+            Loading sent newsletters...
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
   </main>
 
 </div>
@@ -1561,63 +1673,6 @@
   
     /* API_BASE / getCsrfToken / apiFetch / escapeHtml now come from
        the shared /assets/js/admin.js, loaded before this script. */
-
-
-    /* =========================================================
-       DATE HELPERS
-       ========================================================= */
-
-    function localDateKey(date) {
-
-      const year =
-        date.getFullYear();
-
-      const month =
-        String(
-          date.getMonth() + 1
-        ).padStart(2, "0");
-
-      const day =
-        String(
-          date.getDate()
-        ).padStart(2, "0");
-
-      return `${year}-${month}-${day}`;
-
-    }
-
-
-    function subscriberDateKey(value) {
-
-      if (!value) {
-        return null;
-      }
-
-      const date =
-        new Date(value);
-
-      if (Number.isNaN(date.getTime())) {
-        return null;
-      }
-
-      return date.toLocaleDateString("en-CA");
-
-    }
-
-
-    function todayKey() {
-    const now = new Date();
-
-    return now.toLocaleDateString("en-CA");
-}
-
-function yesterdayKey() {
-    const date = new Date();
-
-    date.setDate(date.getDate() - 1);
-
-    return date.toLocaleDateString("en-CA");
-}
 
 
     /* =========================================================
@@ -1681,6 +1736,16 @@ function yesterdayKey() {
             ) {
 
               loadNewsletter();
+
+            }
+
+
+            if (
+              tab.dataset.panel ===
+              "sent-newsletters"
+            ) {
+
+              loadSentNewsletters();
 
             }
 
@@ -3052,7 +3117,11 @@ function yesterdayKey() {
 
     let allSubscribers = [];
 
-    let filteredSubscribers = [];
+    /* "all" sends to every active subscriber; "selected" only to the
+       subscribers ticked in the Subscribers table. */
+    let newsletterAudience = "all";
+
+    const selectedSubscriberIds = new Set();
 
 
     /* =========================================================
@@ -3078,512 +3147,503 @@ if (subscriberCountCard) {
   );
 
 }   
-    async function loadNewsletter() {
+    /* A subscriber only receives newsletters when they're subscribed
+       AND staff haven't suspended them. */
 
-      const wrap =
-        document.getElementById(
-          "newsletter-table-wrap"
-        );
-
-
-      const countElement =
-        document.getElementById(
-          "subscriber-count"
-        );
+    function isReceiving(subscriber) {
+      return (
+        subscriber.is_active === true &&
+        subscriber.is_suspended !== true
+      );
+    }
 
 
-      const summary =
-        document.getElementById(
-          "newsletter-filter-summary"
-        );
+    /* =========================================================
+       SENT NEWSLETTERS
+       ========================================================= */
+
+    let sentNewsletters = [];
 
 
-      const tableDescription =
-        document.getElementById(
-          "newsletter-table-description"
-        );
+    function formatSentDate(value) {
+      return value
+        ? new Date(value).toLocaleString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+          })
+        : "—";
+    }
 
+
+    function audienceLabel(item) {
+      return item.audience === "selected"
+        ? `${item.total_recipients} selected subscriber${item.total_recipients === 1 ? "" : "s"}`
+        : "All subscribers";
+    }
+
+
+    async function loadSentNewsletters() {
+
+      const wrap = document.getElementById("newsletter-history-wrap");
+      const description = document.getElementById("newsletter-history-description");
 
       if (!wrap) {
         return;
       }
 
-
       try {
 
-        const response =
-          await apiFetch(
-            "/api/admin/newsletter/"
-          );
-
+        const response = await apiFetch("/api/admin/newsletter-history/");
 
         if (!response.ok) {
-
-          throw new Error(
-            `Newsletter request failed: ${response.status}`
-          );
-
+          throw new Error(`Request failed: ${response.status}`);
         }
 
+        const data = await response.json();
 
-        const data =
-          await response.json();
-
-
-        allSubscribers =
-          Array.isArray(data)
-            ? data
-            : data.results || [];
-
-
-        /*
-         * Determine selected filter.
-         */
-
-        const filterElement =
-          document.getElementById(
-            "newsletter-date-filter"
-          );
-
-
-        const dateFilter =
-          filterElement?.value ||
-          "everyone";
-
-
-        let selectedDate =
-          null;
-
-
-        if (
-          dateFilter ===
-          "today"
-        ) {
-
-          selectedDate =
-            todayKey();
-
-        }
-
-
-        if (
-          dateFilter ===
-          "yesterday"
-        ) {
-
-          selectedDate =
-            yesterdayKey();
-
-        }
-
-
-        if (
-          dateFilter ===
-          "specific"
-        ) {
-
-          selectedDate =
-            document.getElementById(
-              "newsletter-specific-date"
-            )?.value ||
-            null;
-
-        }
-
-
-        /*
-         * FILTER LOCALLY
-         */
-
-        filteredSubscribers =
-          allSubscribers.filter(
-            subscriber => {
-
-              if (
-                !selectedDate
-              ) {
-
-                return true;
-
-              }
-
-
-              return (
-                subscriberDateKey(
-                  subscriber.subscribed_at
-                ) ===
-                selectedDate
-              );
-
-            }
-          );
-
-
-        /*
-         * ACTIVE SUBSCRIBERS ONLY
-         */
-
-        const activeSubscribers =
-        filteredSubscribers.filter(
-        subscriber =>
-            subscriber.is_active === true ||
-            subscriber.is_active === 1 ||
-            subscriber.is_active === "true"
-    );
-
-
-        /*
-         * UPDATE COUNT
-         */
-
-        if (countElement) {
-
-          countElement.textContent =
-            activeSubscribers.length;
-
-        }
-
-
-        /*
-         * UPDATE SUMMARY
-         */
-
-        if (summary) {
-
-          if (
-            dateFilter ===
-            "today"
-          ) {
-
-            summary.textContent =
-              `Showing ${activeSubscribers.length} active subscriber${
-                activeSubscribers.length === 1
-                  ? ""
-                  : "s"
-              } from today`;
-
-          } else if (
-            dateFilter ===
-            "yesterday"
-          ) {
-
-            summary.textContent =
-              `Showing ${activeSubscribers.length} active subscriber${
-                activeSubscribers.length === 1
-                  ? ""
-                  : "s"
-              } from yesterday`;
-
-          } else if (
-            dateFilter ===
-            "specific"
-          ) {
-
-            if (selectedDate) {
-
-              const prettyDate =
-                new Date(
-                  `${selectedDate}T00:00:00`
-                ).toLocaleDateString(
-                  "en-US",
-                  {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                  }
-                );
-
-
-              summary.textContent =
-                `Showing ${activeSubscribers.length} active subscriber${
-                  activeSubscribers.length === 1
-                    ? ""
-                    : "s"
-                } from ${prettyDate}`;
-
-            } else {
-
-              summary.textContent =
-                "Select a date to filter subscribers";
-
-            }
-
-          } else {
-
-            summary.textContent =
-              `Showing ${activeSubscribers.length} active subscriber${
-                activeSubscribers.length === 1
-                  ? ""
-                  : "s"
-              }`;
-
-          }
-
-        }
-
-
-        if (tableDescription) {
-
-          tableDescription.textContent =
-            `${filteredSubscribers.length} subscriber${
-              filteredSubscribers.length === 1
-                ? ""
-                : "s"
-            } found`;
-
-        }
-
-
-        /*
-         * RENDER TABLE
-         */
-
-        if (
-          !filteredSubscribers.length
-        ) {
-
-          wrap.innerHTML = `
-
-            <div class="db-empty">
-
-              <div
-                style="
-                  font-size:32px;
-                  margin-bottom:10px;
-                "
-              >
-                📭
-              </div>
-
-              <strong>
-                No subscribers found
-              </strong>
-
-              <span>
-                No subscribers match the selected date.
-              </span>
-
-            </div>
-
-          `;
-
-          return;
-
-        }
-
-
-        wrap.innerHTML = `
-
-          <div class="db-table-scroll">
-
-            <table>
-
-              <thead>
-
-                <tr>
-                  <th>Email</th>
-                  <th>Subscribed</th>
-                  <th>Status</th>
-                </tr>
-
-              </thead>
-
-              <tbody>
-
-                ${filteredSubscribers.map(
-                  subscriber => {
-
-                    const date =
-                      subscriber.subscribed_at
-                        ? new Date(
-                            subscriber.subscribed_at
-                          ).toLocaleString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                              hour: "numeric",
-                              minute: "2-digit"
-                            }
-                          )
-                        : "—";
-
-
-                    return `
-
-                      <tr>
-
-                        <td>
-                          <strong>
-                            ${escapeHtml(
-                              subscriber.email
-                            )}
-                          </strong>
-                        </td>
-
-                        <td>
-                          ${date}
-                        </td>
-
-                        <td>
-
-                          <span
-                            class="
-                              newsletter-status
-                              ${
-                                subscriber.is_active
-                                  ? "newsletter-status-active"
-                                  : "newsletter-status-inactive"
-                              }
-                            "
-                          >
-
-                            <span
-                              class="newsletter-status-dot"
-                            ></span>
-
-                            ${
-                              subscriber.is_active
-                                ? "Active"
-                                : "Inactive"
-                            }
-
-                          </span>
-
-                        </td>
-
-                      </tr>
-
-                    `;
-
-                  }
-                ).join("")}
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        `;
-
+        sentNewsletters = Array.isArray(data) ? data : data.results || [];
 
       } catch (error) {
 
-        console.error(
-          "Newsletter error:",
-          error
-        );
-
+        console.error("Sent newsletters loading error:", error);
 
         wrap.innerHTML = `
-
           <div class="db-empty">
-
-            <strong>
-              Unable to load subscribers
-            </strong>
-
-            <span>
-              Please refresh the page and try again.
-            </span>
-
+            <strong>Unable to load sent newsletters</strong>
+            <span>Please refresh the page and try again.</span>
           </div>
-
         `;
+
+        return;
+
+      }
+
+      if (description) {
+        description.textContent = `${sentNewsletters.length} newsletter${sentNewsletters.length === 1 ? "" : "s"} sent`;
+      }
+
+      if (!sentNewsletters.length) {
+
+        wrap.innerHTML = `
+          <div class="db-empty">
+            <strong>No newsletters sent yet</strong>
+            <span>Newsletters you send from this page will be listed here.</span>
+          </div>
+        `;
+
+        return;
+
+      }
+
+      wrap.innerHTML = `
+        <div class="db-table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Sent</th>
+                <th>Audience</th>
+                <th>Delivery</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sentNewsletters.map(item => `
+                <tr>
+                  <td>
+                    <span class="newsletter-history-subject">${escapeHtml(item.subject)}</span>
+                    ${item.sent_by ? `<span class="newsletter-history-meta">by ${escapeHtml(item.sent_by)}</span>` : ""}
+                  </td>
+                  <td>${formatSentDate(item.sent_at)}</td>
+                  <td>${escapeHtml(audienceLabel(item))}</td>
+                  <td>
+                    <span class="newsletter-status newsletter-status-active">
+                      <span class="newsletter-status-dot"></span>
+                      ${item.sent_count} of ${item.total_recipients} sent
+                    </span>
+                    ${item.failed_count ? `
+                      <span class="newsletter-status newsletter-status-failed">
+                        <span class="newsletter-status-dot"></span>
+                        ${item.failed_count} failed
+                      </span>
+                    ` : ""}
+                  </td>
+                  <td>
+                    <button type="button" class="db-btn-secondary" onclick="openSentNewsletter(${item.id})">
+                      View
+                    </button>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+    }
+
+
+    function openSentNewsletter(id) {
+
+      const item = sentNewsletters.find(entry => entry.id === id);
+
+      if (!item) {
+        return;
+      }
+
+      let backdrop = document.getElementById("newsletter-history-backdrop");
+
+      if (!backdrop) {
+
+        backdrop = document.createElement("div");
+        backdrop.id = "newsletter-history-backdrop";
+        backdrop.className = "ad-modal-backdrop";
+
+        backdrop.addEventListener("click", event => {
+          if (event.target === backdrop || event.target.closest("[data-close]")) {
+            backdrop.style.display = "none";
+          }
+        });
+
+        document.body.appendChild(backdrop);
+
+      }
+
+      backdrop.innerHTML = `
+        <div class="ad-modal newsletter-history-modal" role="dialog" aria-modal="true">
+          <div class="ad-modal-header">${escapeHtml(item.subject)}</div>
+          <div class="ad-modal-body">
+            <div class="newsletter-history-stats">
+              <span class="newsletter-status newsletter-status-inactive">${formatSentDate(item.sent_at)}</span>
+              <span class="newsletter-status newsletter-status-inactive">${escapeHtml(audienceLabel(item))}</span>
+              ${item.sent_by ? `<span class="newsletter-status newsletter-status-inactive">by ${escapeHtml(item.sent_by)}</span>` : ""}
+              <span class="newsletter-status newsletter-status-active">${item.sent_count} of ${item.total_recipients} sent</span>
+              ${item.failed_count ? `<span class="newsletter-status newsletter-status-failed">${item.failed_count} failed</span>` : ""}
+            </div>
+            <iframe class="newsletter-history-frame" sandbox title="Newsletter content"></iframe>
+            ${item.failed_emails && item.failed_emails.length ? `
+              <div>
+                <strong>Failed recipients</strong>
+                <ul class="newsletter-history-failed">
+                  ${item.failed_emails.map(failure => `<li>${escapeHtml(failure.email)} — ${escapeHtml(failure.error)}</li>`).join("")}
+                </ul>
+              </div>
+            ` : ""}
+          </div>
+          <div class="ad-modal-footer">
+            <button type="button" class="ad-btn-secondary" data-close>Close</button>
+          </div>
+        </div>
+      `;
+
+      // The stored content is the composer's HTML; render it in a sandboxed
+      // frame so it can't run scripts or pick up the dashboard's styles.
+      backdrop.querySelector("iframe").srcdoc = `
+        <!doctype html>
+        <meta charset="utf-8">
+        <style>body { font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #12151e; margin: 20px; }</style>
+        ${item.content.replace(/\n/g, "<br>")}
+      `;
+
+      backdrop.style.display = "flex";
+
+    }
+
+
+    function newsletterRecipients() {
+
+      const receiving =
+        allSubscribers.filter(isReceiving);
+
+      return newsletterAudience === "all"
+        ? receiving
+        : receiving.filter(subscriber => selectedSubscriberIds.has(subscriber.id));
+
+    }
+
+
+    function updateAudienceSummary() {
+
+      const summary =
+        document.getElementById("newsletter-audience-summary");
+
+      if (!summary) {
+        return;
+      }
+
+      const count =
+        newsletterRecipients().length;
+
+      const plural =
+        count === 1 ? "" : "s";
+
+      if (newsletterAudience === "all") {
+
+        summary.textContent =
+          `Sending to all ${count} active subscriber${plural}`;
+
+      } else {
+
+        summary.textContent =
+          count
+            ? `Sending to ${count} selected subscriber${plural}`
+            : "Tick the subscribers you want to send to in the list below";
 
       }
 
     }
 
 
+    async function loadNewsletter() {
+
+      const wrap =
+        document.getElementById("newsletter-table-wrap");
+
+      const countElement =
+        document.getElementById("subscriber-count");
+
+      if (!wrap) {
+        return;
+      }
+
+      try {
+
+        const response =
+          await apiFetch("/api/admin/newsletter/");
+
+        if (!response.ok) {
+          throw new Error(`Newsletter request failed: ${response.status}`);
+        }
+
+        const data =
+          await response.json();
+
+        allSubscribers =
+          Array.isArray(data) ? data : data.results || [];
+
+      } catch (error) {
+
+        console.error("Newsletter error:", error);
+
+        wrap.innerHTML = `
+          <div class="db-empty">
+            <strong>Unable to load subscribers</strong>
+            <span>Please refresh the page and try again.</span>
+          </div>
+        `;
+
+        return;
+
+      }
+
+      // Drop selections for anyone who has since been suspended,
+      // unsubscribed or deleted.
+      const receivingIds =
+        new Set(allSubscribers.filter(isReceiving).map(subscriber => subscriber.id));
+
+      for (const id of [...selectedSubscriberIds]) {
+        if (!receivingIds.has(id)) {
+          selectedSubscriberIds.delete(id);
+        }
+      }
+
+      if (countElement) {
+        countElement.textContent = receivingIds.size;
+      }
+
+      renderNewsletterSubscribers();
+
+    }
+
+
+    function renderNewsletterSubscribers() {
+
+      const wrap =
+        document.getElementById("newsletter-table-wrap");
+
+      const tableDescription =
+        document.getElementById("newsletter-table-description");
+
+      if (!wrap) {
+        return;
+      }
+
+      updateAudienceSummary();
+
+      const selecting =
+        newsletterAudience === "selected";
+
+      const receiving =
+        allSubscribers.filter(isReceiving);
+
+      if (tableDescription) {
+
+        tableDescription.textContent =
+          selecting
+            ? `${selectedSubscriberIds.size} of ${receiving.length} active subscribers selected`
+            : `${allSubscribers.length} subscriber${allSubscribers.length === 1 ? "" : "s"}`;
+
+      }
+
+      if (!allSubscribers.length) {
+
+        wrap.innerHTML = `
+          <div class="db-empty">
+            <div style="font-size:32px; margin-bottom:10px;">📭</div>
+            <strong>No subscribers yet</strong>
+            <span>People who sign up for the newsletter on the website will appear here.</span>
+          </div>
+        `;
+
+        return;
+
+      }
+
+      const allChecked =
+        receiving.length > 0 &&
+        receiving.every(subscriber => selectedSubscriberIds.has(subscriber.id));
+
+      wrap.innerHTML = `
+        <div class="db-table-scroll">
+          <table>
+            <thead>
+              <tr>
+                ${selecting ? `
+                  <th class="newsletter-select-col">
+                    <input
+                      type="checkbox"
+                      id="newsletter-select-all"
+                      aria-label="Select all active subscribers"
+                      ${allChecked ? "checked" : ""}
+                    />
+                  </th>
+                ` : ""}
+                <th>Email</th>
+                <th>Subscribed</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${allSubscribers.map(subscriber => {
+
+                const date =
+                  subscriber.subscribed_at
+                    ? new Date(subscriber.subscribed_at).toLocaleString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit"
+                      })
+                    : "—";
+
+                const statusClass =
+                  subscriber.is_suspended
+                    ? "newsletter-status-suspended"
+                    : subscriber.is_active
+                      ? "newsletter-status-active"
+                      : "newsletter-status-inactive";
+
+                const statusText =
+                  subscriber.is_suspended
+                    ? "Suspended"
+                    : subscriber.is_active
+                      ? "Active"
+                      : "Unsubscribed";
+
+                return `
+                  <tr>
+                    ${selecting ? `
+                      <td class="newsletter-select-col">
+                        <input
+                          type="checkbox"
+                          class="newsletter-select"
+                          value="${subscriber.id}"
+                          aria-label="Send to ${escapeHtml(subscriber.email)}"
+                          ${selectedSubscriberIds.has(subscriber.id) ? "checked" : ""}
+                          ${isReceiving(subscriber) ? "" : `disabled title="${statusText} subscribers can't receive newsletters"`}
+                        />
+                      </td>
+                    ` : ""}
+                    <td><strong>${escapeHtml(subscriber.email)}</strong></td>
+                    <td>${date}</td>
+                    <td>
+                      <span class="newsletter-status ${statusClass}">
+                        <span class="newsletter-status-dot"></span>
+                        ${statusText}
+                      </span>
+                    </td>
+                  </tr>
+                `;
+
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+    }
+
+
     /* =========================================================
-       NEWSLETTER DATE FILTER
+       NEWSLETTER AUDIENCE
        ========================================================= */
 
-    const newsletterDateFilter =
-      document.getElementById(
-        "newsletter-date-filter"
-      );
+    document
+      .querySelectorAll('input[name="newsletter-audience"]')
+      .forEach(radio => {
+
+        radio.addEventListener("change", () => {
+
+          newsletterAudience = radio.value;
+
+          renderNewsletterSubscribers();
+
+        });
+
+      });
 
 
-    const newsletterSpecificDate =
-      document.getElementById(
-        "newsletter-specific-date"
-      );
+    document
+      .getElementById("newsletter-table-wrap")
+      ?.addEventListener("change", event => {
 
+        const target = event.target;
 
-    const newsletterSpecificDateWrap =
-      document.getElementById(
-        "newsletter-specific-date-wrap"
-      );
+        if (target.id === "newsletter-select-all") {
 
+          allSubscribers
+            .filter(isReceiving)
+            .forEach(subscriber => {
+              if (target.checked) {
+                selectedSubscriberIds.add(subscriber.id);
+              } else {
+                selectedSubscriberIds.delete(subscriber.id);
+              }
+            });
 
-    if (newsletterDateFilter) {
+        } else if (target.classList.contains("newsletter-select")) {
 
-      newsletterDateFilter.addEventListener(
-        "change",
-        async function() {
+          const id = Number(target.value);
 
-          if (
-            this.value ===
-            "specific"
-          ) {
-
-            newsletterSpecificDateWrap
-              ?.classList
-              .remove("hidden");
-
-
-            /*
-             * Do not load until
-             * an actual date is selected.
-             */
-
-            return;
-
+          if (target.checked) {
+            selectedSubscriberIds.add(id);
+          } else {
+            selectedSubscriberIds.delete(id);
           }
 
+        } else {
 
-          newsletterSpecificDateWrap
-            ?.classList
-            .add("hidden");
-
-
-          if (newsletterSpecificDate) {
-
-            newsletterSpecificDate.value =
-              "";
-
-          }
-
-
-          await loadNewsletter();
+          return;
 
         }
-      );
 
-    }
+        renderNewsletterSubscribers();
 
-
-    if (newsletterSpecificDate) {
-
-      newsletterSpecificDate.addEventListener(
-        "change",
-        async function() {
-
-          if (!this.value) {
-            return;
-          }
-
-
-          await loadNewsletter();
-
-        }
-      );
-
-    }
+      });
 
 
     /* =========================================================
@@ -3833,23 +3893,16 @@ if (subscriberCountCard) {
           }
 
 
-          /*
-           * Get current filtered active
-           * subscribers.
-           */
-
           const recipients =
-            filteredSubscribers.filter(
-              subscriber =>
-                subscriber.is_active ===
-                true
-            );
+            newsletterRecipients();
 
 
           if (!recipients.length) {
 
             showToast(
-              "There are no active subscribers matching the selected filter.",
+              newsletterAudience === "selected"
+                ? "Select at least one subscriber to send to."
+                : "There are no active subscribers to send to.",
               "error"
             );
 
@@ -3860,7 +3913,9 @@ if (subscriberCountCard) {
 
           const confirmed =
             await showConfirm(
-              `Send this newsletter to ${recipients.length} active subscriber${
+              `Send this newsletter to ${recipients.length} ${
+                newsletterAudience === "selected" ? "selected" : "active"
+              } subscriber${
                 recipients.length === 1
                   ? ""
                   : "s"
@@ -3884,13 +3939,6 @@ if (subscriberCountCard) {
 
           try {
 
-            /*
-             * Send recipient emails to the backend.
-             *
-             * The backend send endpoint should use
-             * recipient_emails when supplied.
-             */
-
             const recipientEmails =
               recipients.map(
                 subscriber =>
@@ -3910,19 +3958,14 @@ if (subscriberCountCard) {
                   },
 
                   body: JSON.stringify({
-    subject,
-    content,
-    date:
-        document.getElementById(
-            'newsletter-date-filter'
-        )?.value === 'specific'
-            ? document.getElementById(
-                'newsletter-specific-date'
-              )?.value
-            : document.getElementById(
-                'newsletter-date-filter'
-              )?.value || 'everyone'
-})
+                    subject,
+                    content,
+                    audience: newsletterAudience,
+                    subscriber_ids:
+                      newsletterAudience === "selected"
+                        ? recipients.map(subscriber => subscriber.id)
+                        : [],
+                  })
                 }
               );
 
@@ -3966,6 +4009,15 @@ if (subscriberCountCard) {
 
 
             updateNewsletterPreview();
+
+
+            selectedSubscriberIds.clear();
+
+
+            renderNewsletterSubscribers();
+
+
+            loadSentNewsletters();
 
 
           } catch (error) {
@@ -4017,6 +4069,7 @@ if (subscriberCountCard) {
           loadJobs(),
           loadApplications(),
           loadNewsletter().then(updateNewsletterPreview),
+          loadSentNewsletters(),
         ]);
 
       }

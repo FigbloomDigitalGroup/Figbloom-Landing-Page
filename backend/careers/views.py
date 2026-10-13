@@ -3,12 +3,12 @@ from rest_framework import generics, status, viewsets, permissions
 from rest_framework.authentication import SessionAuthentication
 from datetime import timedelta
 from django.utils import timezone
-from django.utils.dateparse import parse_date
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import APIView, action
-from .models import Job, JobApplication, NewsletterSubscriber, ContactInquiry
-from .serializers import (JobSerializer, JobApplicationSerializer, NewsletterSubscriberSerializer,JobApplicationAdminSerializer, ContactInquirySerializer, ContactInquiryAdminSerializer)
+from .models import Job, JobApplication, NewsletterSubscriber, SentNewsletter, ContactInquiry
+from .serializers import (JobSerializer, JobApplicationSerializer, NewsletterSubscriberSerializer,JobApplicationAdminSerializer, ContactInquirySerializer, ContactInquiryAdminSerializer, SentNewsletterSerializer)
 from django.contrib import messages
 from .forms import JobApplicationForm
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -639,81 +639,33 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
     def get_queryset(self):
-        """
-        Filter newsletter subscribers.
-
-        Supported filters:
-
-        ?filter=everyone
-        ?filter=today
-        ?filter=yesterday
-        ?filter=date&date=2026-08-10
-        """
-
-        queryset = NewsletterSubscriber.objects.filter(
-            is_active=True
+        # Suspended subscribers stay listed (whether or not they're still
+        # subscribed) so staff can see and lift the suspension.
+        return NewsletterSubscriber.objects.filter(
+            Q(is_active=True) | Q(is_suspended=True)
         ).order_by('-subscribed_at')
 
-        filter_type = self.request.query_params.get(
-            'filter',
-            'everyone'
-        )
+    @action(detail=True, methods=["post"])
+    def suspend(self, request, pk=None):
+        subscriber = self.get_object()
 
-        today = timezone.localdate()
+        if not subscriber.is_suspended:
+            subscriber.is_suspended = True
+            subscriber.suspended_at = timezone.now()
+            subscriber.save(update_fields=["is_suspended", "suspended_at"])
 
-        # -------------------------
-        # EVERYONE
-        # -------------------------
+        return Response(self.get_serializer(subscriber).data)
 
-        if filter_type == 'everyone':
-            return queryset
+    @action(detail=True, methods=["post"])
+    def unsuspend(self, request, pk=None):
+        subscriber = self.get_object()
 
-        # -------------------------
-        # TODAY
-        # -------------------------
+        if subscriber.is_suspended:
+            subscriber.is_suspended = False
+            subscriber.suspended_at = None
+            subscriber.save(update_fields=["is_suspended", "suspended_at"])
 
-        if filter_type == 'today':
-
-            return queryset.filter(
-                subscribed_at__date=today
-            )
-
-        # -------------------------
-        # YESTERDAY
-        # -------------------------
-
-        if filter_type == 'yesterday':
-
-            yesterday = today - timedelta(days=1)
-
-            return queryset.filter(
-                subscribed_at__date=yesterday
-            )
-
-        # -------------------------
-        # SPECIFIC DATE
-        # -------------------------
-
-        if filter_type == 'date':
-
-            selected_date = self.request.query_params.get(
-                'date'
-            )
-
-            if not selected_date:
-                return queryset.none()
-
-            parsed_date = parse_date(selected_date)
-
-            if not parsed_date:
-                return queryset.none()
-
-            return queryset.filter(
-                subscribed_at__date=parsed_date
-            )
-
-        # Unknown filter
-        return queryset
+        return Response(self.get_serializer(subscriber).data)
 
     @action(
         detail=False,
@@ -724,8 +676,31 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
         subject = request.data.get("subject", "").strip()
         html_content = request.data.get("content", "").strip()
 
-        # Get the selected date/filter from frontend
-        date_filter = request.data.get("date", "everyone")
+        # "all" sends to every active subscriber; "selected" only to the
+        # subscriber_ids picked in the dashboard.
+        audience = request.data.get("audience", "all")
+        subscriber_ids = request.data.get("subscriber_ids") or []
+
+        if audience not in ("all", "selected"):
+            return Response(
+                {"detail": "Audience must be 'all' or 'selected'."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if audience == "selected":
+            try:
+                subscriber_ids = [int(pk) for pk in subscriber_ids]
+            except (TypeError, ValueError):
+                return Response(
+                    {"detail": "subscriber_ids must be a list of IDs."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if not subscriber_ids:
+                return Response(
+                    {"detail": "Select at least one subscriber."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         if not subject:
             return Response(
@@ -744,43 +719,14 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
         # ---------------------------------------------------------
 
         subscribers = NewsletterSubscriber.objects.filter(
-            is_active=True
+            is_active=True,
+            is_suspended=False,
         )
 
-        # ---------------------------------------------------------
-        # APPLY DATE FILTER
-        # ---------------------------------------------------------
-
-        today = timezone.localdate()
-
-        if date_filter == "today":
-
-            subscribers = subscribers.filter(
-                subscribed_at__date=today
-            )
-
-        elif date_filter == "yesterday":
-
-            yesterday = today - timedelta(days=1)
-
-            subscribers = subscribers.filter(
-                subscribed_at__date=yesterday
-            )
-
-        elif date_filter not in ["everyone", "", None]:
-
-            # Specific date from date picker
-            try:
-
-                selected_date = parse_date(date_filter)
-
-                if selected_date:
-                    subscribers = subscribers.filter(
-                        subscribed_at__date=selected_date
-                    )
-
-            except Exception:
-                pass
+        # Selected IDs still go through the active/unsuspended filter
+        # above, so a stale selection can't reach a suspended subscriber.
+        if audience == "selected":
+            subscribers = subscribers.filter(id__in=subscriber_ids)
 
         # ---------------------------------------------------------
         # GET EMAIL ADDRESSES
@@ -797,7 +743,7 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
 
             return Response(
                 {
-                    "detail": "No active subscribers found for the selected filter.",
+                    "detail": "None of the chosen subscribers can receive newsletters.",
                     "sent": 0,
                     "failed": 0,
                     "total": 0,
@@ -943,8 +889,20 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
 
             connection.close()
 
+        record = SentNewsletter.objects.create(
+            subject=subject,
+            content=html_content,
+            audience=audience,
+            total_recipients=len(recipients),
+            sent_count=sent,
+            failed_count=failed,
+            failed_emails=failed_emails,
+            sent_by=request.user,
+        )
+
         return Response(
             {
+                "id": record.id,
                 "detail": "Newsletter processing completed.",
                 "sent": sent,
                 "failed": failed,
@@ -1348,6 +1306,14 @@ class ContactAdminViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
 
+class SentNewsletterAdminViewSet(viewsets.ReadOnlyModelViewSet):
+    """History of newsletters sent, newest first, for the dashboard Newsletter tab."""
+    queryset = SentNewsletter.objects.select_related('sent_by').order_by('-sent_at')
+    serializer_class = SentNewsletterSerializer
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+
 class DashboardStatsView(APIView):
     """Aggregate counts + a merged recent-activity feed for the dashboard Overview tab."""
 
@@ -1361,7 +1327,7 @@ class DashboardStatsView(APIView):
             'open_jobs': Job.objects.open().count(),
             'total_applications': JobApplication.objects.count(),
             'new_applications_7d': JobApplication.objects.filter(applied_at__gte=week_ago).count(),
-            'active_subscribers': NewsletterSubscriber.objects.filter(is_active=True).count(),
+            'active_subscribers': NewsletterSubscriber.objects.filter(is_active=True, is_suspended=False).count(),
             'new_subscribers_7d': NewsletterSubscriber.objects.filter(subscribed_at__gte=week_ago).count(),
             'contact_inquiries': ContactInquiry.objects.count(),
             'new_contact_inquiries_7d': ContactInquiry.objects.filter(created_at__gte=week_ago).count(),

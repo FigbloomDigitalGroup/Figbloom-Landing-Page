@@ -6,8 +6,8 @@
     Contact, Subscribers) is resolved server-side via the active_nav
     context variable each view passes in — unchanged from before.
 
-    Jobs/Applications/Newsletter are still tabs inside index.html, not
-    separate routes, so those three links carry class="db-tab" and
+    Jobs/Applications/Newsletter/My Newsletters are still tabs inside
+    index.html, not separate routes, so those links carry class="db-tab" and
     data-panel="..." — index.html's existing tab-switching JS
     (querySelectorAll(".db-tab")) already wires up click handling for any
     element with that class regardless of where it lives in the DOM, so
@@ -42,6 +42,11 @@
         <a href="/admin-dashboard/#newsletter" class="ad-nav-item db-tab" data-panel="newsletter">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
             Newsletter
+        </a>
+
+        <a href="/admin-dashboard/#sent-newsletters" class="ad-nav-item db-tab" data-panel="sent-newsletters">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            My Newsletters
         </a>
     </nav>
 

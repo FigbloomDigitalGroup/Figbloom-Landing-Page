@@ -148,6 +148,9 @@ class SentNewsletter(models.Model):
     """A record of each newsletter sent, for the dashboard's history."""
 
     subject = models.CharField(max_length=200)
+    # Public web address: /newsletters/<slug>/. Set once from the subject
+    # and never changed, so links already shared keep working.
+    slug = models.SlugField(max_length=220, unique=True, null=True, blank=True)
     content = models.TextField()
     # Who it went to: "all" active subscribers or "selected" ones.
     audience = models.CharField(max_length=50, blank=True, default='all')
@@ -167,8 +170,31 @@ class SentNewsletter(models.Model):
     class Meta:
         ordering = ['-sent_at']
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = unique_newsletter_slug(SentNewsletter, self.subject, exclude_pk=self.pk)
+
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return f'/newsletters/{self.slug}/'
+
     def __str__(self):
         return self.subject
+
+
+def unique_newsletter_slug(model, subject, exclude_pk=None):
+    """Slug from the subject, with -2, -3… added if it's already taken.
+    Takes the model class so the data migration can reuse it."""
+    base_slug = slugify(subject)[:200] or 'newsletter'
+    slug = base_slug
+    counter = 2
+
+    while model.objects.filter(slug=slug).exclude(pk=exclude_pk).exists():
+        slug = f'{base_slug}-{counter}'
+        counter += 1
+
+    return slug
 
 
 class ContactInquiry(models.Model):

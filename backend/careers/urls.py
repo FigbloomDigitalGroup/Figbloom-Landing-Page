@@ -13,6 +13,7 @@ from .views import (
     ContactAdminViewSet,
     SentNewsletterAdminViewSet,
     DashboardStatsView, csrf_token,
+    newsletter_unlock_view,
 )
 
 router = DefaultRouter()
@@ -28,6 +29,7 @@ urlpatterns = [
     path('applications/', ApplicationCreateView.as_view(), name='application-create'),
     path('applications/status/', ApplicationStatusView.as_view(), name='application-status'),
     path('newsletter/subscribe/', NewsletterSubscribeView.as_view(), name='newsletter-subscribe'),
+    path('newsletters/<slug:slug>/unlock/', newsletter_unlock_view, name='newsletter-unlock'),
     path('contact/', ContactCreateView.as_view(), name='contact-create'),
     path('auth/csrf/', csrf_token, name='csrf-token'),
     path('admin/stats/', DashboardStatsView.as_view(), name='admin-stats'),

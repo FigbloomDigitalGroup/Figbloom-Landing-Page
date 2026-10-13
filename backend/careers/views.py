@@ -13,12 +13,17 @@ from django.contrib import messages
 from .forms import JobApplicationForm
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import JsonResponse
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.utils.html import strip_tags
+from django.utils.text import Truncator
 from django.core.mail import EmailMultiAlternatives
 from django.core import signing
 from django.conf import settings
 from html import escape
 from email.mime.image import MIMEImage
+import json
 import logging
 import os
 import threading
@@ -996,6 +1001,112 @@ def unsubscribe_view(request, token):
         'unsubscribe/index.html',
         {'state': 'unsubscribed', 'email': subscriber.email},
     )
+
+
+# ---------------------------------------------------------------------
+# PUBLIC NEWSLETTER PAGES
+#
+# Each sent newsletter has a shareable page at /newsletters/<slug>/.
+# Visitors see the first NEWSLETTER_TEASER_WORDS words; entering an email
+# that's subscribed unlocks the rest, and anyone else is offered a
+# one-click subscribe that unlocks it immediately. A signed cookie
+# remembers the reader so they don't re-enter their email every time.
+# ---------------------------------------------------------------------
+
+NEWSLETTER_TEASER_WORDS = 55
+NEWSLETTER_READER_COOKIE = 'figbloom_reader'
+NEWSLETTER_READER_SALT = 'newsletter-reader'
+
+
+def _newsletter_body_html(newsletter):
+    # Same newline handling as the sent email, so the page matches it.
+    return newsletter.content.replace('\n', '<br>')
+
+
+def _reader_is_subscribed(request):
+    try:
+        email = signing.loads(
+            request.COOKIES.get(NEWSLETTER_READER_COOKIE, ''),
+            salt=NEWSLETTER_READER_SALT,
+        )
+    except signing.BadSignature:
+        return False
+
+    return NewsletterSubscriber.objects.filter(email__iexact=email, is_active=True).exists()
+
+
+@ensure_csrf_cookie
+def newsletter_public_view(request, slug):
+    newsletter = get_object_or_404(SentNewsletter, slug=slug)
+
+    body_html = _newsletter_body_html(newsletter)
+    plain_text = ' '.join(strip_tags(body_html).split())
+    word_count = len(plain_text.split())
+
+    locked = word_count > NEWSLETTER_TEASER_WORDS and not _reader_is_subscribed(request)
+
+    return render(request, 'newsletters/detail.html', {
+        'newsletter': newsletter,
+        # Locked pages never include the full text, so it can't be read
+        # from the page source.
+        'content_html': (
+            Truncator(body_html).words(NEWSLETTER_TEASER_WORDS, html=True, truncate='…')
+            if locked else body_html
+        ),
+        'locked': locked,
+        'reading_minutes': max(1, round(word_count / 200)),
+        'description': Truncator(plain_text).words(30, truncate='…'),
+        'page_url': request.build_absolute_uri(newsletter.get_absolute_url()),
+    })
+
+
+@require_POST
+def newsletter_unlock_view(request, slug):
+    newsletter = get_object_or_404(SentNewsletter, slug=slug)
+
+    try:
+        data = json.loads(request.body or '{}')
+    except ValueError:
+        data = {}
+
+    email = str(data.get('email', '')).strip().lower()
+
+    try:
+        validate_email(email)
+    except ValidationError:
+        return JsonResponse({'detail': 'Please enter a valid email address.'}, status=400)
+
+    subscriber = NewsletterSubscriber.objects.filter(email__iexact=email).first()
+
+    if subscriber and subscriber.is_active:
+        result = 'unlocked'
+    elif not data.get('subscribe'):
+        # Not subscribed (or unsubscribed earlier): the page asks if they
+        # want to subscribe before unlocking.
+        return JsonResponse({'status': 'not_subscribed'})
+    else:
+        if subscriber:
+            subscriber.is_active = True
+            subscriber.save(update_fields=['is_active'])
+        else:
+            NewsletterSubscriber.objects.get_or_create(email=email)
+
+        result = 'subscribed'
+
+    response = JsonResponse({
+        'status': result,
+        'content_html': _newsletter_body_html(newsletter),
+    })
+    response.set_cookie(
+        NEWSLETTER_READER_COOKIE,
+        signing.dumps(email, salt=NEWSLETTER_READER_SALT),
+        max_age=60 * 60 * 24 * 365,
+        httponly=True,
+        samesite='Lax',
+        secure=request.is_secure(),
+    )
+
+    return response
 
 
 def withdraw_application_view(request, token):

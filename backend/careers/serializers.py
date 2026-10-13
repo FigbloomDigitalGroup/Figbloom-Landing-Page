@@ -61,12 +61,20 @@ class NewsletterSubscriberSerializer(serializers.ModelSerializer):
 
 class SentNewsletterSerializer(serializers.ModelSerializer):
     sent_by = serializers.CharField(source="sent_by.username", default="", read_only=True)
+    public_url = serializers.SerializerMethodField()
+
+    def get_public_url(self, obj):
+        request = self.context.get("request")
+        path = obj.get_absolute_url()
+        return request.build_absolute_uri(path) if request else path
 
     class Meta:
         model = SentNewsletter
         fields = [
             "id",
             "subject",
+            "slug",
+            "public_url",
             "content",
             "audience",
             "total_recipients",

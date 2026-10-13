@@ -108,7 +108,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [FRONTEND_DIR],
-        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
@@ -118,6 +117,19 @@ TEMPLATES = [
         },
     },
 ]
+
+_TEMPLATE_LOADERS = [
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+]
+
+# Locally, re-read templates on every request: only `runserver` clears
+# Django's template cache when a file changes, so under uvicorn (local
+# HTTPS) edited pages would otherwise keep showing the old version.
+TEMPLATES[0]['OPTIONS']['loaders'] = (
+    _TEMPLATE_LOADERS if DEBUG
+    else [('django.template.loaders.cached.Loader', _TEMPLATE_LOADERS)]
+)
 
 WSGI_APPLICATION = 'config.wsgi.application'
 

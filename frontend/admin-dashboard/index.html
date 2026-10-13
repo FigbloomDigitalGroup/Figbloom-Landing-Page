@@ -635,6 +635,11 @@
       line-height: 1.75;
     }
 
+    /* Quill 2 writes bullet lists as <ol> + data-list="bullet". */
+    #preview-content li[data-list="bullet"] {
+      list-style-type: disc;
+    }
+
     .email-preview-footer {
       background: var(--fig-bg);
       border-top: 1px solid var(--fig-border);
@@ -748,6 +753,35 @@
       margin-top: 3px;
       color: var(--fig-muted);
       font-size: 12px;
+    }
+
+    .newsletter-history-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      max-width: 100%;
+      margin-top: 6px;
+      color: var(--fig-green);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+
+    .newsletter-history-link:hover {
+      text-decoration: underline;
+    }
+
+    .newsletter-history-link svg {
+      flex: none;
+      width: 13px;
+      height: 13px;
+    }
+
+    .newsletter-history-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
     }
 
     .newsletter-history-modal {
@@ -3256,6 +3290,12 @@ if (subscriberCountCard) {
                   <td>
                     <span class="newsletter-history-subject">${escapeHtml(item.subject)}</span>
                     ${item.sent_by ? `<span class="newsletter-history-meta">by ${escapeHtml(item.sent_by)}</span>` : ""}
+                    ${item.public_url ? `
+                      <a class="newsletter-history-link" href="${escapeHtml(item.public_url)}" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+                        ${escapeHtml(item.public_url.replace(/^https?:\/\//, ""))}
+                      </a>
+                    ` : ""}
                   </td>
                   <td>${formatSentDate(item.sent_at)}</td>
                   <td>${escapeHtml(audienceLabel(item))}</td>
@@ -3272,9 +3312,16 @@ if (subscriberCountCard) {
                     ` : ""}
                   </td>
                   <td>
-                    <button type="button" class="db-btn-secondary" onclick="openSentNewsletter(${item.id})">
-                      View
-                    </button>
+                    <div class="newsletter-history-actions">
+                      ${item.public_url ? `
+                        <button type="button" class="db-btn-secondary" onclick="copyNewsletterLink(${item.id})">
+                          Copy link
+                        </button>
+                      ` : ""}
+                      <button type="button" class="db-btn-secondary" onclick="openSentNewsletter(${item.id})">
+                        View
+                      </button>
+                    </div>
                   </td>
                 </tr>
               `).join("")}
@@ -3282,6 +3329,24 @@ if (subscriberCountCard) {
           </table>
         </div>
       `;
+
+    }
+
+
+    async function copyNewsletterLink(id) {
+
+      const item = sentNewsletters.find(entry => entry.id === id);
+
+      if (!item) {
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(item.public_url);
+        showToast("Newsletter link copied.", "success");
+      } catch (error) {
+        window.prompt("Copy this link:", item.public_url);
+      }
 
     }
 
@@ -3344,7 +3409,7 @@ if (subscriberCountCard) {
       backdrop.querySelector("iframe").srcdoc = `
         <!doctype html>
         <meta charset="utf-8">
-        <style>body { font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #12151e; margin: 20px; }</style>
+        <style>body { font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #12151e; margin: 20px; } li[data-list="bullet"] { list-style-type: disc; }</style>
         ${item.content.replace(/\n/g, "<br>")}
       `;
 

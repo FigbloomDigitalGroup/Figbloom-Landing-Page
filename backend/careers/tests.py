@@ -623,3 +623,116 @@ class NewsletterSuspensionAndHistoryTests(TestCase):
         response = APIClient().get(reverse('admin-newsletter-history-list'))
 
         self.assertIn(response.status_code, (401, 403))
+
+
+class PublicNewsletterPageTests(TestCase):
+    def setUp(self):
+        from django.test import Client
+
+        # enforce_csrf_checks so the tests exercise the same CSRF path as
+        # the real page's fetch().
+        self.client = Client(enforce_csrf_checks=True)
+        words = ' '.join(f'word{i}' for i in range(1, 121))
+        self.newsletter = SentNewsletter.objects.create(
+            subject='October Updates from Figbloom!',
+            content=f'<p>{words} SECRET-ENDING</p>',
+        )
+        self.url = reverse('newsletter-public', kwargs={'slug': self.newsletter.slug})
+        self.unlock_url = reverse('newsletter-unlock', kwargs={'slug': self.newsletter.slug})
+
+    def _unlock(self, email, subscribe=False):
+        self.client.get(self.url)  # sets the CSRF cookie, like the page does
+
+        return self.client.post(
+            self.unlock_url,
+            data={'email': email, 'subscribe': subscribe},
+            content_type='application/json',
+            HTTP_X_CSRFTOKEN=self.client.cookies['csrftoken'].value,
+        )
+
+    def test_slug_comes_from_subject_and_stays_unique(self):
+        self.assertEqual(self.newsletter.slug, 'october-updates-from-figbloom')
+
+        again = SentNewsletter.objects.create(subject='October Updates from Figbloom!', content='x')
+        self.assertEqual(again.slug, 'october-updates-from-figbloom-2')
+
+        again.subject = 'Renamed'
+        again.save()
+        self.assertEqual(again.slug, 'october-updates-from-figbloom-2')
+
+    def test_page_shows_only_a_55_word_teaser(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context['locked'])
+        self.assertContains(response, 'word55')
+        self.assertNotContains(response, 'word56')
+        self.assertNotContains(response, 'SECRET-ENDING')
+
+    def test_page_works_without_trailing_slash_and_404s_for_unknown(self):
+        self.assertEqual(self.client.get(self.url.rstrip('/')).status_code, 200)
+        self.assertEqual(self.client.get('/newsletters/does-not-exist/').status_code, 404)
+
+    def test_subscriber_unlocks_and_is_remembered(self):
+        NewsletterSubscriber.objects.create(email='reader@example.com')
+
+        response = self._unlock('Reader@Example.com')
+
+        self.assertEqual(response.json()['status'], 'unlocked')
+        self.assertIn('SECRET-ENDING', response.json()['content_html'])
+
+        page = self.client.get(self.url)
+        self.assertFalse(page.context['locked'])
+        self.assertContains(page, 'SECRET-ENDING')
+
+    def test_non_subscriber_is_asked_and_can_subscribe(self):
+        response = self._unlock('new@example.com')
+
+        self.assertEqual(response.json(), {'status': 'not_subscribed'})
+        self.assertFalse(NewsletterSubscriber.objects.filter(email='new@example.com').exists())
+        self.assertTrue(self.client.get(self.url).context['locked'])
+
+        response = self._unlock('new@example.com', subscribe=True)
+
+        self.assertEqual(response.json()['status'], 'subscribed')
+        self.assertTrue(NewsletterSubscriber.objects.get(email='new@example.com').is_active)
+        self.assertFalse(self.client.get(self.url).context['locked'])
+
+    def test_unsubscribed_reader_is_asked_again_and_can_resubscribe(self):
+        NewsletterSubscriber.objects.create(email='left@example.com', is_active=False)
+
+        self.assertEqual(self._unlock('left@example.com').json()['status'], 'not_subscribed')
+        self.assertEqual(self._unlock('left@example.com', subscribe=True).json()['status'], 'subscribed')
+        self.assertTrue(NewsletterSubscriber.objects.get(email='left@example.com').is_active)
+
+    def test_unsubscribing_later_locks_the_page_again(self):
+        subscriber = NewsletterSubscriber.objects.create(email='reader@example.com')
+        self._unlock('reader@example.com')
+
+        subscriber.is_active = False
+        subscriber.save()
+
+        self.assertTrue(self.client.get(self.url).context['locked'])
+
+    def test_invalid_email_is_rejected(self):
+        response = self._unlock('not-an-email', subscribe=True)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(NewsletterSubscriber.objects.count(), 0)
+
+    def test_short_newsletter_is_not_locked(self):
+        short = SentNewsletter.objects.create(subject='Short one', content='<p>Just a few words.</p>')
+
+        response = self.client.get(reverse('newsletter-public', kwargs={'slug': short.slug}))
+
+        self.assertFalse(response.context['locked'])
+
+    def test_admin_history_includes_public_link(self):
+        from django.contrib.auth import get_user_model
+
+        api = APIClient()
+        api.force_authenticate(get_user_model().objects.create_user('staff', password='pw', is_staff=True))
+
+        row = api.get(reverse('admin-newsletter-history-list')).json()[0]
+
+        self.assertEqual(row['public_url'], 'http://testserver/newsletters/october-updates-from-figbloom/')

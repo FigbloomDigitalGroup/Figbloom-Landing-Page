@@ -62,6 +62,23 @@ def _load_logo_mime_image():
     return logo_image
 
 
+def newsletter_content_html(content):
+    """Newsletter HTML from the dashboard editor, ready for the email and
+    the public page.
+
+    Quill 2 writes every list as <ol> and marks bullet items with
+    data-list="bullet", so outside the editor bullet lists render
+    numbered. Bullet items get an explicit style (inline, since email
+    clients ignore stylesheets), and the editor-only marker spans go.
+    """
+    return (
+        content
+        .replace('\n', '<br>')
+        .replace('<span class="ql-ui" contenteditable="false"></span>', '')
+        .replace('<li data-list="bullet">', '<li data-list="bullet" style="list-style-type: disc;">')
+    )
+
+
 def build_branded_email_html(*, eyebrow, title, body_html, preheader='', footer_note_html='', footer_action_html=''):
     """Shared HTML wrapper for every outbound email (newsletter, application
     received, application withdrawn) — same header/logo/accent-bar/footer
@@ -790,7 +807,7 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
                 eyebrow='Newsletter Update',
                 title=subject,
                 preheader='Figbloom Digital Group • Newsletter',
-                body_html=html_content.replace(chr(10), '<br>'),
+                body_html=newsletter_content_html(html_content),
                 footer_note_html=(
                     "You're receiving this email because you subscribed to updates from "
                     "figbloom.org. Thank you for being part of our community."
@@ -1019,8 +1036,8 @@ NEWSLETTER_READER_SALT = 'newsletter-reader'
 
 
 def _newsletter_body_html(newsletter):
-    # Same newline handling as the sent email, so the page matches it.
-    return newsletter.content.replace('\n', '<br>')
+    # Same transform as the sent email, so the page matches it.
+    return newsletter_content_html(newsletter.content)
 
 
 def _reader_is_subscribed(request):

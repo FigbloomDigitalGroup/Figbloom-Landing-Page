@@ -481,19 +481,191 @@
       outline-offset: 2px;
     }
 
-    .newsletter-select-col {
-      width: 44px;
+    /* Subscriber picker dropdown ("Selected subscribers") */
+
+    .newsletter-picker {
+      position: relative;
     }
 
-    .newsletter-select-col input {
+    .newsletter-picker[hidden],
+    .newsletter-picker-panel[hidden],
+    .newsletter-picker-chips[hidden] {
+      display: none;
+    }
+
+    .newsletter-picker-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-width: 260px;
+      height: 46px;
+      padding: 0 14px;
+      border: 1px solid var(--fig-border);
+      border-radius: var(--radius-lg);
+      background: var(--surface-raised);
+      color: var(--fig-text);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .newsletter-picker-toggle:hover,
+    .newsletter-picker-toggle[aria-expanded="true"] {
+      border-color: var(--fig-orange);
+    }
+
+    .newsletter-picker-toggle:focus-visible {
+      outline: 2px solid var(--fig-orange);
+      outline-offset: 2px;
+    }
+
+    .newsletter-picker-toggle svg {
+      width: 18px;
+      height: 18px;
+      color: var(--fig-muted);
+      transition: transform 0.2s ease;
+    }
+
+    .newsletter-picker-toggle[aria-expanded="true"] svg {
+      transform: rotate(180deg);
+    }
+
+    .newsletter-picker-panel {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 30;
+      width: min(380px, calc(100vw - 48px));
+      padding: 10px;
+      border: 1px solid var(--fig-border);
+      border-radius: var(--radius-lg);
+      background: var(--surface-raised);
+      box-shadow: var(--shadow-md);
+    }
+
+    .newsletter-picker-search {
+      width: 100%;
+      height: 40px;
+      margin-bottom: 6px;
+      padding: 0 12px;
+      border: 1px solid var(--fig-border);
+      border-radius: var(--radius-md);
+      background: var(--fig-bg);
+      color: var(--fig-text);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .newsletter-picker-search:focus {
+      border-color: var(--fig-orange);
+    }
+
+    .newsletter-picker-list {
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .newsletter-picker-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--radius-sm);
+      color: var(--fig-text);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .newsletter-picker-option:hover {
+      background: var(--fig-bg);
+    }
+
+    .newsletter-picker-option input {
+      flex: none;
       width: 16px;
       height: 16px;
       accent-color: var(--fig-green);
       cursor: pointer;
     }
 
-    .newsletter-select-col input:disabled {
+    .newsletter-picker-option > span:first-of-type {
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .newsletter-picker-option.is-disabled {
+      color: var(--fig-faint);
       cursor: not-allowed;
+    }
+
+    .newsletter-picker-option.is-disabled input {
+      cursor: not-allowed;
+    }
+
+    .newsletter-picker-all {
+      border-bottom: 1px solid var(--fig-border);
+      border-radius: 0;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .newsletter-picker-tag {
+      flex: none;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--warning-soft);
+      color: var(--warning);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .newsletter-picker-empty {
+      padding: 14px 10px;
+      color: var(--fig-muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .newsletter-picker-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      flex-basis: 100%;
+    }
+
+    .newsletter-picker-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 100%;
+      padding: 5px 6px 5px 12px;
+      border-radius: 999px;
+      background: var(--fig-green-soft);
+      color: var(--fig-green);
+      font-size: 13px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .newsletter-picker-chip button {
+      display: grid;
+      place-items: center;
+      flex: none;
+      width: 22px;
+      height: 22px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: inherit;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .newsletter-picker-chip button:hover {
+      background: rgba(44, 83, 34, 0.12);
     }
 
     .newsletter-filter-note {
@@ -1454,6 +1626,55 @@
         </div>
 
 
+        <!-- Subscriber picker, shown only for "Selected subscribers" -->
+
+        <div class="newsletter-filter-group newsletter-picker" id="newsletter-picker" hidden>
+
+          <span class="newsletter-filter-label" id="newsletter-picker-heading">
+            Subscribers
+          </span>
+
+          <button
+            type="button"
+            class="newsletter-picker-toggle"
+            id="newsletter-picker-toggle"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-controls="newsletter-picker-panel"
+            aria-labelledby="newsletter-picker-heading newsletter-picker-label"
+          >
+            <span id="newsletter-picker-label">Choose subscribers</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+
+          <div class="newsletter-picker-panel" id="newsletter-picker-panel" hidden>
+
+            <input
+              type="search"
+              id="newsletter-picker-search"
+              class="newsletter-picker-search"
+              placeholder="Search by email..."
+              aria-label="Search subscribers"
+              autocomplete="off"
+            />
+
+            <label class="newsletter-picker-option newsletter-picker-all">
+              <input type="checkbox" id="newsletter-picker-all" />
+              <span>Select all active</span>
+            </label>
+
+            <div
+              class="newsletter-picker-list"
+              id="newsletter-picker-list"
+              role="listbox"
+              aria-multiselectable="true"
+            ></div>
+
+          </div>
+
+        </div>
+
+
         <div class="newsletter-filter-note">
 
           <span id="newsletter-audience-summary">
@@ -1461,6 +1682,11 @@
           </span>
 
         </div>
+
+
+        <!-- Chosen subscribers as removable chips -->
+
+        <div class="newsletter-picker-chips" id="newsletter-picker-chips" hidden></div>
 
       </div>
 
@@ -3455,7 +3681,7 @@ if (subscriberCountCard) {
         summary.textContent =
           count
             ? `Sending to ${count} selected subscriber${plural}`
-            : "Tick the subscribers you want to send to in the list below";
+            : "Choose who to send to from the Subscribers dropdown";
 
       }
 
@@ -3538,18 +3764,12 @@ if (subscriberCountCard) {
 
       updateAudienceSummary();
 
-      const selecting =
-        newsletterAudience === "selected";
-
-      const receiving =
-        allSubscribers.filter(isReceiving);
+      renderSubscriberPicker();
 
       if (tableDescription) {
 
         tableDescription.textContent =
-          selecting
-            ? `${selectedSubscriberIds.size} of ${receiving.length} active subscribers selected`
-            : `${allSubscribers.length} subscriber${allSubscribers.length === 1 ? "" : "s"}`;
+          `${allSubscribers.length} subscriber${allSubscribers.length === 1 ? "" : "s"}`;
 
       }
 
@@ -3567,25 +3787,11 @@ if (subscriberCountCard) {
 
       }
 
-      const allChecked =
-        receiving.length > 0 &&
-        receiving.every(subscriber => selectedSubscriberIds.has(subscriber.id));
-
       wrap.innerHTML = `
         <div class="db-table-scroll">
           <table>
             <thead>
               <tr>
-                ${selecting ? `
-                  <th class="newsletter-select-col">
-                    <input
-                      type="checkbox"
-                      id="newsletter-select-all"
-                      aria-label="Select all active subscribers"
-                      ${allChecked ? "checked" : ""}
-                    />
-                  </th>
-                ` : ""}
                 <th>Email</th>
                 <th>Subscribed</th>
                 <th>Status</th>
@@ -3621,18 +3827,6 @@ if (subscriberCountCard) {
 
                 return `
                   <tr>
-                    ${selecting ? `
-                      <td class="newsletter-select-col">
-                        <input
-                          type="checkbox"
-                          class="newsletter-select"
-                          value="${subscriber.id}"
-                          aria-label="Send to ${escapeHtml(subscriber.email)}"
-                          ${selectedSubscriberIds.has(subscriber.id) ? "checked" : ""}
-                          ${isReceiving(subscriber) ? "" : `disabled title="${statusText} subscribers can't receive newsletters"`}
-                        />
-                      </td>
-                    ` : ""}
                     <td><strong>${escapeHtml(subscriber.email)}</strong></td>
                     <td>${date}</td>
                     <td>
@@ -3667,48 +3861,217 @@ if (subscriberCountCard) {
 
           renderNewsletterSubscribers();
 
+          // Open the picker straight away so it's obvious where to choose.
+          if (newsletterAudience === "selected" && !selectedSubscriberIds.size) {
+            setPickerOpen(true);
+          }
+
         });
 
       });
 
 
-    document
-      .getElementById("newsletter-table-wrap")
-      ?.addEventListener("change", event => {
+    /* =========================================================
+       SUBSCRIBER PICKER
+       Dropdown in the "Send to" card for choosing recipients when
+       "Selected subscribers" is on. Suspended and unsubscribed people
+       are listed but can't be ticked.
+       ========================================================= */
 
-        const target = event.target;
+    const pickerToggle = document.getElementById("newsletter-picker-toggle");
+    const pickerPanel = document.getElementById("newsletter-picker-panel");
+    const pickerSearch = document.getElementById("newsletter-picker-search");
+    const pickerList = document.getElementById("newsletter-picker-list");
+    const pickerAll = document.getElementById("newsletter-picker-all");
+    const pickerChips = document.getElementById("newsletter-picker-chips");
 
-        if (target.id === "newsletter-select-all") {
 
-          allSubscribers
-            .filter(isReceiving)
-            .forEach(subscriber => {
-              if (target.checked) {
-                selectedSubscriberIds.add(subscriber.id);
-              } else {
-                selectedSubscriberIds.delete(subscriber.id);
-              }
-            });
+    function setPickerOpen(open) {
 
-        } else if (target.classList.contains("newsletter-select")) {
+      if (!pickerPanel || !pickerToggle) {
+        return;
+      }
 
-          const id = Number(target.value);
+      pickerPanel.hidden = !open;
+      pickerToggle.setAttribute("aria-expanded", String(open));
 
-          if (target.checked) {
-            selectedSubscriberIds.add(id);
+      if (open) {
+        pickerSearch.focus();
+      }
+
+    }
+
+
+    function pickerMatches() {
+
+      const query = (pickerSearch?.value || "").trim().toLowerCase();
+
+      return allSubscribers.filter(subscriber =>
+        !query || String(subscriber.email).toLowerCase().includes(query)
+      );
+
+    }
+
+
+    function renderSubscriberPicker() {
+
+      const picker = document.getElementById("newsletter-picker");
+
+      if (!picker) {
+        return;
+      }
+
+      const selecting = newsletterAudience === "selected";
+
+      picker.hidden = !selecting;
+      pickerChips.hidden = !selecting || !selectedSubscriberIds.size;
+
+      if (!selecting) {
+        setPickerOpen(false);
+        return;
+      }
+
+      const count = selectedSubscriberIds.size;
+
+      document.getElementById("newsletter-picker-label").textContent =
+        count
+          ? `${count} subscriber${count === 1 ? "" : "s"} selected`
+          : "Choose subscribers";
+
+      const matches = pickerMatches();
+      const receivingMatches = matches.filter(isReceiving);
+
+      // The list is re-rendered on every tick; keep keyboard focus on the
+      // same checkbox.
+      const focusedId =
+        pickerList.contains(document.activeElement) ? document.activeElement.value : null;
+
+      pickerAll.checked =
+        receivingMatches.length > 0 &&
+        receivingMatches.every(subscriber => selectedSubscriberIds.has(subscriber.id));
+      pickerAll.disabled = !receivingMatches.length;
+      pickerAll.nextElementSibling.textContent =
+        pickerSearch.value.trim() ? "Select all matching" : "Select all active";
+
+      pickerList.innerHTML = matches.length
+        ? matches.map(subscriber => {
+
+            const receiving = isReceiving(subscriber);
+            const tag = subscriber.is_suspended
+              ? "Suspended"
+              : subscriber.is_active ? "" : "Unsubscribed";
+
+            return `
+              <label class="newsletter-picker-option${receiving ? "" : " is-disabled"}" role="option" aria-selected="${selectedSubscriberIds.has(subscriber.id)}">
+                <input
+                  type="checkbox"
+                  value="${subscriber.id}"
+                  ${selectedSubscriberIds.has(subscriber.id) ? "checked" : ""}
+                  ${receiving ? "" : "disabled"}
+                />
+                <span>${escapeHtml(subscriber.email)}</span>
+                ${tag ? `<span class="newsletter-picker-tag">${tag}</span>` : ""}
+              </label>
+            `;
+
+          }).join("")
+        : `<div class="newsletter-picker-empty">${
+            allSubscribers.length ? "No subscribers match your search." : "No subscribers yet."
+          }</div>`;
+
+      if (focusedId) {
+        pickerList.querySelector(`input[value="${focusedId}"]`)?.focus();
+      }
+
+      // Chips in the order they were chosen.
+      const subscribersById = new Map(allSubscribers.map(subscriber => [subscriber.id, subscriber]));
+
+      pickerChips.innerHTML = [...selectedSubscriberIds]
+        .map(id => subscribersById.get(id))
+        .filter(Boolean)
+        .map(subscriber => `
+          <span class="newsletter-picker-chip">
+            ${escapeHtml(subscriber.email)}
+            <button type="button" data-remove="${subscriber.id}" aria-label="Remove ${escapeHtml(subscriber.email)}">×</button>
+          </span>
+        `)
+        .join("");
+
+    }
+
+
+    pickerToggle?.addEventListener("click", () => {
+      setPickerOpen(pickerPanel.hidden);
+    });
+
+
+    pickerSearch?.addEventListener("input", renderSubscriberPicker);
+
+
+    pickerAll?.addEventListener("change", () => {
+
+      pickerMatches()
+        .filter(isReceiving)
+        .forEach(subscriber => {
+          if (pickerAll.checked) {
+            selectedSubscriberIds.add(subscriber.id);
           } else {
-            selectedSubscriberIds.delete(id);
+            selectedSubscriberIds.delete(subscriber.id);
           }
+        });
 
-        } else {
+      renderNewsletterSubscribers();
 
-          return;
+    });
 
-        }
 
-        renderNewsletterSubscribers();
+    pickerList?.addEventListener("change", event => {
 
-      });
+      const id = Number(event.target.value);
+
+      if (event.target.checked) {
+        selectedSubscriberIds.add(id);
+      } else {
+        selectedSubscriberIds.delete(id);
+      }
+
+      renderNewsletterSubscribers();
+
+    });
+
+
+    pickerChips?.addEventListener("click", event => {
+
+      const button = event.target.closest("[data-remove]");
+
+      if (!button) {
+        return;
+      }
+
+      selectedSubscriberIds.delete(Number(button.dataset.remove));
+
+      renderNewsletterSubscribers();
+
+    });
+
+
+    // Close on outside click or Escape.
+    document.addEventListener("click", event => {
+      // The Send-to switch opens the picker itself, so its click must not close it.
+      if (
+        pickerPanel && !pickerPanel.hidden &&
+        !event.target.closest("#newsletter-picker, .newsletter-audience")
+      ) {
+        setPickerOpen(false);
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && pickerPanel && !pickerPanel.hidden) {
+        setPickerOpen(false);
+        pickerToggle.focus();
+      }
+    });
 
 
     /* =========================================================

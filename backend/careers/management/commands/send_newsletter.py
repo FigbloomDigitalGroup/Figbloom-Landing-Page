@@ -2,6 +2,7 @@ import os
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
+from ...models import SentNewsletter
 from ...utils import send_newsletter
 
 
@@ -41,5 +42,15 @@ class Command(BaseCommand):
             for r in sent:
                 self.stdout.write(f' - {r}')
             return
+
+        # Test sends aren't real newsletters, so only full sends go in the history.
+        if not test_email:
+            SentNewsletter.objects.create(
+                subject=subject,
+                content=html_body or body,
+                audience='all',
+                total_recipients=len(sent),
+                sent_count=len(sent),
+            )
 
         self.stdout.write(self.style.SUCCESS(f'Newsletter sent to {len(sent)} recipients'))

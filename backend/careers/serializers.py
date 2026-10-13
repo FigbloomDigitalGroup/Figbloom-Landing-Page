@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Job, JobApplication, NewsletterSubscriber, ContactInquiry
+from .models import Job, JobApplication, NewsletterSubscriber, SentNewsletter, ContactInquiry
 
 
 class JobSerializer(serializers.ModelSerializer):
@@ -54,8 +54,29 @@ ApplicationSerializer = JobApplicationSerializer
 class NewsletterSubscriberSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsletterSubscriber
-        fields = ["id", "email", "is_active", "subscribed_at"]
-        read_only_fields = ["id", "subscribed_at"]
+        fields = ["id", "email", "is_active", "is_suspended", "suspended_at", "subscribed_at"]
+        # Suspension only changes through the admin suspend/unsuspend actions.
+        read_only_fields = ["id", "is_suspended", "suspended_at", "subscribed_at"]
+
+
+class SentNewsletterSerializer(serializers.ModelSerializer):
+    sent_by = serializers.CharField(source="sent_by.username", default="", read_only=True)
+
+    class Meta:
+        model = SentNewsletter
+        fields = [
+            "id",
+            "subject",
+            "content",
+            "audience",
+            "total_recipients",
+            "sent_count",
+            "failed_count",
+            "failed_emails",
+            "sent_by",
+            "sent_at",
+        ]
+        read_only_fields = fields
 
 
 class ContactInquirySerializer(serializers.ModelSerializer):

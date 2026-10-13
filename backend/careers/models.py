@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
@@ -133,9 +134,41 @@ class NewsletterSubscriber(models.Model):
     email = models.EmailField(unique=True)
     subscribed_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    # Staff-imposed block, kept separate from is_active (which the
+    # subscriber controls via subscribe/unsubscribe) so re-subscribing
+    # from the public form can't lift a suspension.
+    is_suspended = models.BooleanField(default=False)
+    suspended_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.email
+
+
+class SentNewsletter(models.Model):
+    """A record of each newsletter sent, for the dashboard's history."""
+
+    subject = models.CharField(max_length=200)
+    content = models.TextField()
+    # Who it went to: "all" active subscribers or "selected" ones.
+    audience = models.CharField(max_length=50, blank=True, default='all')
+    total_recipients = models.PositiveIntegerField(default=0)
+    sent_count = models.PositiveIntegerField(default=0)
+    failed_count = models.PositiveIntegerField(default=0)
+    failed_emails = models.JSONField(default=list, blank=True)
+    sent_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-sent_at']
+
+    def __str__(self):
+        return self.subject
 
 
 class ContactInquiry(models.Model):

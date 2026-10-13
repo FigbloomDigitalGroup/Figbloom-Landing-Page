@@ -22,7 +22,7 @@ def send_newsletter(
     """
 
     if recipients is None:
-        qs = NewsletterSubscriber.objects.filter(is_active=True).order_by('-subscribed_at')
+        qs = NewsletterSubscriber.objects.filter(is_active=True, is_suspended=False).order_by('-subscribed_at')
         emails = list(qs.values_list('email', flat=True))
     else:
         emails = list(recipients)

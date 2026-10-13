@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework.test import APIClient
 
-from .models import Job, JobApplication
+from .models import Job, JobApplication, NewsletterSubscriber, SentNewsletter
 
 
 class _ImmediateThread:
@@ -488,3 +488,138 @@ class ApplicationStatusChangeNotificationTests(TestCase):
 
         self._patch_status('shortlisted')
         self.assertEqual(len(mail.outbox), 2)
+
+
+class NewsletterSuspensionAndHistoryTests(TestCase):
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+
+        self.client = APIClient()
+        self.staff_user = get_user_model().objects.create_user(
+            username='staff', password='pw', is_staff=True,
+        )
+        self.client.force_authenticate(user=self.staff_user)
+
+        self.active = NewsletterSubscriber.objects.create(email='active@example.com')
+        self.suspended = NewsletterSubscriber.objects.create(email='suspended@example.com')
+
+    def _suspend(self, subscriber):
+        return self.client.post(
+            reverse('admin-newsletter-suspend', kwargs={'pk': subscriber.id}),
+        )
+
+    def _send(self, **extra):
+        return self.client.post(
+            reverse('admin-newsletter-send-newsletter'),
+            {'subject': 'October update', 'content': '<p>Hello</p>', 'audience': 'all', **extra},
+            format='json',
+        )
+
+    def test_send_to_selected_subscribers_only(self):
+        other = NewsletterSubscriber.objects.create(email='other@example.com')
+
+        response = self._send(audience='selected', subscriber_ids=[other.id])
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([m.to for m in mail.outbox], [['other@example.com']])
+
+        record = SentNewsletter.objects.get()
+        self.assertEqual(record.audience, 'selected')
+        self.assertEqual(record.total_recipients, 1)
+
+    def test_selected_send_skips_suspended_and_requires_a_selection(self):
+        self._suspend(self.suspended)
+
+        response = self._send(audience='selected', subscriber_ids=[self.suspended.id, self.active.id])
+        self.assertEqual([m.to for m in mail.outbox], [['active@example.com']])
+
+        response = self._send(audience='selected', subscriber_ids=[])
+        self.assertEqual(response.status_code, 400)
+
+        response = self._send(audience='selected', subscriber_ids=['abc'])
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_suspend_and_unsuspend(self):
+        response = self._suspend(self.suspended)
+
+        self.assertEqual(response.status_code, 200)
+        self.suspended.refresh_from_db()
+        self.assertTrue(self.suspended.is_suspended)
+        self.assertIsNotNone(self.suspended.suspended_at)
+
+        response = self.client.post(
+            reverse('admin-newsletter-unsuspend', kwargs={'pk': self.suspended.id}),
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.suspended.refresh_from_db()
+        self.assertFalse(self.suspended.is_suspended)
+        self.assertIsNone(self.suspended.suspended_at)
+
+    def test_suspended_subscriber_stays_listed_and_cannot_be_suspended_via_patch(self):
+        self._suspend(self.suspended)
+        # Unsubscribing shouldn't hide a suspension from staff.
+        NewsletterSubscriber.objects.filter(pk=self.suspended.pk).update(is_active=False)
+
+        listed = self.client.get(reverse('admin-newsletter-list')).json()
+        emails = {row['email'] for row in listed}
+        self.assertEqual(emails, {'active@example.com', 'suspended@example.com'})
+
+        self.client.patch(
+            reverse('admin-newsletter-detail', kwargs={'pk': self.active.id}),
+            {'is_suspended': True},
+            format='json',
+        )
+        self.active.refresh_from_db()
+        self.assertFalse(self.active.is_suspended)
+
+    def test_send_skips_suspended_subscribers_and_records_history(self):
+        self._suspend(self.suspended)
+
+        response = self._send()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['sent'], 1)
+        self.assertEqual([m.to for m in mail.outbox], [['active@example.com']])
+
+        record = SentNewsletter.objects.get()
+        self.assertEqual(record.subject, 'October update')
+        self.assertEqual(record.content, '<p>Hello</p>')
+        self.assertEqual(record.total_recipients, 1)
+        self.assertEqual(record.sent_count, 1)
+        self.assertEqual(record.failed_count, 0)
+        self.assertEqual(record.sent_by, self.staff_user)
+
+        history = self.client.get(reverse('admin-newsletter-history-list')).json()
+        self.assertEqual(len(history), 1)
+        self.assertEqual(history[0]['subject'], 'October update')
+        self.assertEqual(history[0]['sent_by'], 'staff')
+
+    def test_resubscribing_does_not_lift_suspension(self):
+        self._suspend(self.suspended)
+        NewsletterSubscriber.objects.filter(pk=self.suspended.pk).update(is_active=False)
+
+        APIClient().post(
+            reverse('newsletter-subscribe'),
+            {'email': 'suspended@example.com'},
+            format='json',
+        )
+
+        self.suspended.refresh_from_db()
+        self.assertTrue(self.suspended.is_suspended)
+
+        self._send()
+        self.assertEqual([m.to for m in mail.outbox], [['active@example.com']])
+
+    def test_stats_exclude_suspended_subscribers(self):
+        self._suspend(self.suspended)
+
+        stats = self.client.get(reverse('admin-stats')).json()
+
+        self.assertEqual(stats['stats']['active_subscribers'], 1)
+
+    def test_history_requires_staff(self):
+        response = APIClient().get(reverse('admin-newsletter-history-list'))
+
+        self.assertIn(response.status_code, (401, 403))

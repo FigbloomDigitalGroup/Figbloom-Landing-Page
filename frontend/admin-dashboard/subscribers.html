@@ -312,6 +312,17 @@
       background: var(--fig-bg);
         }
 
+    .status.suspended {
+      color: var(--warning);
+      background: var(--warning-soft);
+    }
+
+    .row-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
     /* EMPTY */
 
     .empty {
@@ -453,12 +464,12 @@
       <div class="stat-card">
 
         <span class="stat-label">
-          Inactive Subscribers
+          Suspended
         </span>
 
         <strong
           class="stat-number"
-          id="inactive-count"
+          id="suspended-count"
         >
           0
         </strong>
@@ -503,8 +514,8 @@
             Active Only
           </option>
 
-          <option value="inactive">
-            Inactive Only
+          <option value="suspended">
+            Suspended Only
           </option>
 
         </select>
@@ -654,6 +665,30 @@
 
 
     /* =====================================================
+       STATUS HELPERS
+       A subscriber only receives newsletters when they're
+       subscribed (is_active) AND staff haven't suspended them.
+       ===================================================== */
+
+    function isReceiving(subscriber) {
+      return (
+        subscriber.is_active === true &&
+        subscriber.is_suspended !== true
+      );
+    }
+
+    function statusClass(subscriber) {
+      if (subscriber.is_suspended) return "suspended";
+      return subscriber.is_active ? "active" : "inactive";
+    }
+
+    function statusLabel(subscriber) {
+      if (subscriber.is_suspended) return "Suspended";
+      return subscriber.is_active ? "Active" : "Unsubscribed";
+    }
+
+
+    /* =====================================================
        STATISTICS
        ===================================================== */
 
@@ -663,15 +698,15 @@
         subscribers.length;
 
 
-      const active =
+      const suspended =
         subscribers.filter(
           subscriber =>
-            subscriber.is_active === true
+            subscriber.is_suspended === true
         ).length;
 
 
-      const inactive =
-        total - active;
+      const active =
+        subscribers.filter(isReceiving).length;
 
 
       document.getElementById(
@@ -687,9 +722,9 @@
 
 
       document.getElementById(
-        "inactive-count"
+        "suspended-count"
       ).textContent =
-        inactive;
+        suspended;
 
     }
 
@@ -733,11 +768,11 @@
               status === "all" ||
               (
                 status === "active" &&
-                subscriber.is_active === true
+                isReceiving(subscriber)
               ) ||
               (
-                status === "inactive" &&
-                subscriber.is_active !== true
+                status === "suspended" &&
+                subscriber.is_suspended === true
               );
 
 
@@ -898,22 +933,19 @@
                         <td>
 
                           <span
-                            class="status ${
-                              subscriber.is_active
-                                ? "active"
-                                : "inactive"
-                            }"
+                            class="status ${statusClass(subscriber)}"
+                            ${
+                              subscriber.is_suspended && subscriber.suspended_at
+                                ? `title="Suspended ${new Date(subscriber.suspended_at).toLocaleString("en-US", { year: "numeric", month: "short", day: "numeric" })}"`
+                                : ""
+                            }
                           >
 
                             <span
                               class="status-dot"
                             ></span>
 
-                            ${
-                              subscriber.is_active
-                                ? "Active"
-                                : "Inactive"
-                            }
+                            ${statusLabel(subscriber)}
 
                           </span>
 
@@ -921,13 +953,25 @@
 
                         <td>
 
-                          <button
-                            type="button"
-                            class="ad-btn-secondary"
-                            onclick="deleteSubscriber(${subscriber.id})"
-                          >
-                            Delete
-                          </button>
+                          <div class="row-actions">
+
+                            <button
+                              type="button"
+                              class="ad-btn-secondary"
+                              onclick="setSuspended(${subscriber.id}, ${!subscriber.is_suspended})"
+                            >
+                              ${subscriber.is_suspended ? "Reactivate" : "Suspend"}
+                            </button>
+
+                            <button
+                              type="button"
+                              class="ad-btn-secondary"
+                              onclick="deleteSubscriber(${subscriber.id})"
+                            >
+                              Delete
+                            </button>
+
+                          </div>
 
                         </td>
 
@@ -946,6 +990,68 @@
         </div>
 
       `;
+
+    }
+
+
+    /* =====================================================
+       SUSPEND / REACTIVATE SUBSCRIBER
+       ===================================================== */
+
+    async function setSuspended(id, suspend) {
+
+      if (suspend) {
+
+        const confirmed =
+          await showConfirm(
+            "Suspend this subscriber? They will stop receiving newsletters until you reactivate them, even if they sign up again.",
+            { confirmText: "Suspend", danger: true }
+          );
+
+        if (!confirmed) {
+          return;
+        }
+
+      }
+
+      try {
+
+        const response =
+          await apiFetch(
+            `/api/admin/newsletter/${id}/${suspend ? "suspend" : "unsuspend"}/`,
+            { method: "POST" }
+          );
+
+        if (!response.ok) {
+
+          throw new Error(
+            `Request failed: ${response.status}`
+          );
+
+        }
+
+        await loadSubscribers();
+
+        showToast(
+          suspend
+            ? "Subscriber suspended."
+            : "Subscriber reactivated.",
+          "success"
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Suspend subscriber error:",
+          error
+        );
+
+        showToast(
+          "Unable to update this subscriber. Please try again.",
+          "error"
+        );
+
+      }
 
     }
 

@@ -56,7 +56,7 @@ def admin_logout_api(request):
 
 @login_required(login_url='/admin-dashboard/login')
 def admin_dashboard_page(request):
-    return render(request, 'admin-dashboard/index.html')
+    return render(request, 'admin-dashboard/index.html', {'active_nav': 'dashboard'})
 
 
 @ensure_csrf_cookie
@@ -68,4 +68,5 @@ def admin_user_api(request):
         'is_authenticated': is_auth,
         'is_staff': user.is_staff if is_auth else False,
         'username': user.username if is_auth else '',
+        'email': user.email if is_auth else '',
     })

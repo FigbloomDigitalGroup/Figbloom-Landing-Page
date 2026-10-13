@@ -1,8 +1,10 @@
 from rest_framework import serializers
-from .models import Job, JobApplication, NewsletterSubscriber
+from .models import Job, JobApplication, NewsletterSubscriber, ContactInquiry
 
 
 class JobSerializer(serializers.ModelSerializer):
+    is_currently_open = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = Job
         fields = [
@@ -18,12 +20,13 @@ class JobSerializer(serializers.ModelSerializer):
             'requirements',
             'deadline',
             'is_open',
+            'is_currently_open',
             'created_at',
         ]
 
 
 class JobApplicationSerializer(serializers.ModelSerializer):
-    job = serializers.PrimaryKeyRelatedField(queryset=Job.objects.filter(is_open=True))
+    job = serializers.PrimaryKeyRelatedField(queryset=Job.objects.open())
 
     class Meta:
         model = JobApplication
@@ -55,6 +58,24 @@ class NewsletterSubscriberSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "subscribed_at"]
 
 
+class ContactInquirySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInquiry
+        fields = [
+            'id',
+            'full_name',
+            'company',
+            'email',
+            'phone',
+            'service',
+            'budget',
+            'timeline',
+            'brief',
+            'created_at',
+        ]
+        read_only_fields = ['id', 'created_at']
+
+
 # --- Admin-facing serializers ---
 # Used by the protected /api/admin/... endpoints. Unlike the public
 # serializers above, these expose all fields (including status) and are
@@ -65,4 +86,10 @@ class JobApplicationAdminSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobApplication
+        fields = '__all__'
+
+
+class ContactInquiryAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInquiry
         fields = '__all__'

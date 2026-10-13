@@ -1,0 +1,51 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git ls-tree *)",
+      "Bash(cd \"c:/Users/Admin/Desktop/Figbloom-Landing-Page/backend\" && echo \"=== middleware ===\" && sed -n '/MIDDLEWARE/,/]/p' config/settings.py && echo \"=== whitenoise settings ===\" && grep -n \"WHITENOISE\\\\|STATICFILES_STORAGE\\\\|STORAGES\" -A4 config/settings.py | head -30)",
+      "Bash(python manage.py test careers)",
+      "Bash(curl -s -o /dev/null http://127.0.0.1:8000/)",
+      "Bash(git status *)",
+      "Bash(git check-ignore *)",
+      "Bash(echo \"---exit $?---\")",
+      "Bash(awk '/<script>/{print NR\": <script> found\"} /<\\\\/style>/{print NR\": </style> found\"}' frontend/admin-dashboard/application-detail.html)",
+      "Bash(python manage.py shell -c ' *)",
+      "Bash(curl -s http://127.0.0.1:8000/admin-dashboard/login)",
+      "Bash(command -v chromium-cli)",
+      "Bash(node -e \"require.resolve\\('playwright'\\); console.log\\('node-playwright-ok'\\)\")",
+      "Bash(python -c \"import playwright; print\\('py-playwright-ok'\\)\")",
+      "Bash(npx --yes playwright --version)",
+      "Bash(curl -s -H \"Cookie: sessionid=o6pjc16yu3y85x46p5hag1xc1mgw6166\" -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:8000/api/admin/jobs/)",
+      "Bash(npx --yes playwright install chromium --with-deps)",
+      "Bash(npx --yes playwright install chromium)",
+      "Bash(mkdir -p /c/Users/Admin/AppData/Local/Temp/claude/c--Users-Admin-Desktop-Figbloom-Landing-Page/4006652f-cee7-47b4-aa41-bde4c0ec4a67/scratchpad/pw)",
+      "Read(//c/Users/Admin/AppData/Local/Temp/claude/c--Users-Admin-Desktop-Figbloom-Landing-Page/4006652f-cee7-47b4-aa41-bde4c0ec4a67/scratchpad/**)",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(npx playwright *)",
+      "Bash(rm -f \"C:/Users/Admin/AppData/Local/Temp/claude/c--Users-Admin-Desktop-Figbloom-Landing-Page/f5273f1b-b38d-470d-b363-3a7635237082/scratchpad/ns.jar\" \"C:/Users/Admin/AppData/Local/Temp/claude/c--Users-Admin-Desktop-Figbloom-Landing-Page/f5273f1b-b38d-470d-b363-3a7635237082/scratchpad/staff.jar\")",
+      "Read(//c/Users/Admin/AppData/Local/ms-playwright/**)",
+      "Bash(node shot.js)",
+      "Bash(python -c ' *)",
+      "Bash(node shot2.js)",
+      "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --window-size=500,700 --virtual-time-budget=2000 --screenshot=C:/Users/Admin/AppData/Local/Temp/claude/c--Users-Admin-Desktop-Figbloom-Landing-Page/f5273f1b-b38d-470d-b363-3a7635237082/scratchpad/login_refresh.png http://127.0.0.1:8000/admin-dashboard/login)",
+      "Bash(netstat -ano)",
+      "Bash(curl -s -b C:/Users/Admin/AppData/Local/Temp/claude/c--Users-Admin-Desktop-Figbloom-Landing-Page/f5273f1b-b38d-470d-b363-3a7635237082/scratchpad/view.jar http://127.0.0.1:8000/admin-dashboard/ -o C:/Users/Admin/AppData/Local/Temp/claude/c--Users-Admin-Desktop-Figbloom-Landing-Page/f5273f1b-b38d-470d-b363-3a7635237082/scratchpad/dash_raw.html)",
+      "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --window-size=1400,900 --virtual-time-budget=3000 --screenshot=C:/Users/Admin/AppData/Local/Temp/claude/c--Users-Admin-Desktop-Figbloom-Landing-Page/f5273f1b-b38d-470d-b363-3a7635237082/scratchpad/dash_view.png C:/Users/Admin/AppData/Local/Temp/claude/c--Users-Admin-Desktop-Figbloom-Landing-Page/f5273f1b-b38d-470d-b363-3a7635237082/scratchpad/dash_view.html)",
+      "Bash(git commit *)",
+      "Bash(git merge *)",
+      "Bash(Get-Process)",
+      "PowerShell(Stop-Process -Id 4792 -Force -ErrorAction SilentlyContinue)",
+      "Bash(curl -s -o /dev/null -w \"temp harness served: %{http_code}\\\\n\" http://127.0.0.1:8000/_test_goto.html)",
+      "Bash(node shot3.js)",
+      "Bash(node shot4.js)",
+      "Bash(tail -60 /tmp/django.log 2>&1)",
+      "Read(//tmp/**)",
+      "Bash(curl -s \"http://127.0.0.1:8000/unsubscribe/NA:1wxLWq:6GIyWyoIIp5dBPNStrONmeuiTWCXiuGYKdU78qEDH54/\" -o /tmp/unsub_valid.html -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s \"http://127.0.0.1:8000/unsubscribe/garbage-token/\" -o /tmp/unsub_invalid.html -w \"%{http_code}\\\\n\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Admin\\Desktop\\Figbloom-Landing-Page\\backend\\config"
+    ]
+  }
+}

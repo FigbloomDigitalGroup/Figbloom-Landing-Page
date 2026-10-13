@@ -18,8 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
-from careers.views import admin_application_detail
+from careers.views import (
+    admin_subscribers,
+    admin_application_detail,
+    admin_profile_settings,
+    admin_contact_page,
+    unsubscribe_view,
+    withdraw_application_view,
+    ChangePasswordView,
+)
 from . import views
 
 urlpatterns = [
@@ -32,16 +39,32 @@ urlpatterns = [
     path('api/auth/logout/', views.admin_logout_api, name='admin-logout-api'),
     path('api/auth/user/', views.admin_user_api, name='admin-user-api'),
     path('admin-dashboard/', views.admin_dashboard_page, name='admin-dashboard'),
-
     path('', views.home, name='home'),
-    path('about-us', views.about_us, name='about-us'),
-    path('career', views.career, name='career'),
-    path('career/detail', views.job_detail_page, name='job-detail-page'),
-    path('contact', views.contact, name='contact'),
-    path('projects', views.projects, name='projects'),
-    path('service', views.service, name='service'),
-    path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'
-),
+    # Each page answers on BOTH /x and /x/ with a 200 instead of redirecting between
+    # them. A redirect in either direction keeps breaking links whenever one form
+    # or the other gets normalised. The sitemap and rel=canonical advertise the
+    # trailing-slash form, so that pattern carries the URL name and is what
+    # reverse() returns; the bare pattern is an unnamed alias.
+    path('about-us/', views.about_us, name='about-us'),
+    path('about-us', views.about_us),
+    path('career/', views.career, name='career'),
+    path('career', views.career),
+    path('career/detail/', views.job_detail_page, name='job-detail-page'),
+    path('career/detail', views.job_detail_page),
+    path('contact/', views.contact, name='contact'),
+    path('contact', views.contact),
+    path('projects/', views.projects, name='projects'),
+    path('projects', views.projects),
+    path('service/', views.service, name='service'),
+    path('service', views.service),
+    path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'),
+    path("admin-dashboard/subscribers",admin_subscribers,name="admin-subscribers"),
+    path("api/auth/change-password/",ChangePasswordView.as_view(),name="change-password"),
+    path("admin-dashboard/profile-settings",admin_profile_settings,name="admin-profile-settings"),
+    path("admin-dashboard/contact",admin_contact_page,name="admin-contact-page"),
+    path("unsubscribe/<str:token>/", unsubscribe_view, name="newsletter-unsubscribe"),
+    path("career/withdraw/<str:token>/", withdraw_application_view, name="application-withdraw"),
+
 ]
 
 if settings.DEBUG:

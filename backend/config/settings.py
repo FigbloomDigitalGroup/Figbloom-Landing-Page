@@ -49,12 +49,28 @@ RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-# Any custom domain(s) pointed at the service, comma separated.
+# Every *.onrender.com host, so the service works even when
+# RENDER_EXTERNAL_HOSTNAME is not present in the runtime environment.
+# Without this, a deploy where that variable is missing answers HTTP 400
+# (DisallowedHost) to *every* request — including Render's health check on "/",
+# so the deploy never goes live and is shut down. Relying on the variable alone
+# is a single point of failure for the whole service.
+ALLOWED_HOSTS.append('.onrender.com')
+
+# The production domain, defaulted here rather than left to the dashboard so a
+# missing env var can never take the site down again. DJANGO_ALLOWED_HOSTS below
+# still works for anything additional.
+ALLOWED_HOSTS += ['figbloom.org', 'www.figbloom.org']
+
+# Any further custom domain(s) pointed at the service, comma separated.
 ALLOWED_HOSTS += env_list('DJANGO_ALLOWED_HOSTS')
 
 # Django requires an explicit scheme here for cross-origin POSTs over HTTPS.
+# A leading-dot wildcard host ('.onrender.com') has to be written as
+# 'https://*.onrender.com' for CSRF — the bare dotted form is not accepted.
 CSRF_TRUSTED_ORIGINS = [
-    f'https://{host}' for host in ALLOWED_HOSTS
+    'https://{}'.format('*' + host if host.startswith('.') else host)
+    for host in ALLOWED_HOSTS
     if host not in ('127.0.0.1', 'localhost')
 ]
 CSRF_TRUSTED_ORIGINS += ['http://127.0.0.1:8000', 'http://localhost:8000']
@@ -204,19 +220,54 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
-MAILERS = {
-    "default": {
-        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
-        "OPTIONS": {
-            "host": os.getenv("EMAIL_HOST", "smtp.gmail.com"),
-            "port": int(os.getenv("EMAIL_PORT", "587")),
-            "username": os.getenv("EMAIL_HOST_USER"),
-            "password": os.getenv("EMAIL_HOST_PASSWORD"),
-            "use_tls": True,
-        },
-    },
-}
+# Back on IPv4-forced SMTP (see careers/mail_backends.py) rather than
+# Resend's HTTPS API. Render confirmed directly that ports 25/465/587 are
+# blocked on free instance types specifically — not the workspace plan —
+# and lifted entirely on a paid instance type. That's the path being taken
+# instead of Resend: the service's instance type needs upgrading (Render
+# dashboard → this service → the instance-type selector, not the workspace
+# billing plan) for this to actually work in production; the code alone
+# doesn't change anything until that happens. careers.mail_backends.
+# ResendBackend is left in place, proven working, as an easy fallback if
+# the upgrade doesn't pan out.
+EMAIL_BACKEND = "careers.mail_backends.EmailBackend"
 
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+
+# Sends go out through Gmail's SMTP relay, authenticated as a Gmail account
+# that has sales@figbloom.org verified as a "Send As" alias (Gmail →
+# Settings → Accounts and Import) — so mail shows up as sales@figbloom.org
+# without being flagged as spoofed, while riding on Gmail's sending
+# reputation. Direct-to-Truehost (lon105.truehost.cloud, port 465, implicit
+# SSL) was tried first, since that's figbloom.org's actual mail host per its
+# MX record, but a freshly-configured mailbox there got real messages
+# rejected outright with "550 Message discarded as high-probability spam"
+# after only a handful of sends — not something a hosting-side setting could
+# fix quickly. Gmail's port 587 needs STARTTLS, not implicit SSL, hence the
+# swapped defaults below. Both flags stay env-var-driven rather than
+# hardcoded, so a future provider change is a dashboard edit, not a deploy.
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "false").lower() == "true"
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() == "true"
+
+# Django leaves this unset by default, which means an SMTP connection/send
+# that never gets a response blocks forever — smtplib has no timeout of its
+# own. That's exactly what turned a flaky SMTP path into the contact form
+# hanging on "Sending..." for a full two minutes in production, until
+# gunicorn's own --timeout killed the worker. Bounding it here means a bad
+# connection fails fast and gets logged, instead of hanging.
+EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "10"))
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+# Used only by careers.mail_backends.ResendBackend — see that file for why
+# outbound SMTP had to be abandoned entirely rather than patched further.
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+
+# Most SMTP servers reject or flag a From address that doesn't match (or
+# share a domain with) the authenticated account, so this should track
+# whichever mailbox EMAIL_HOST_USER actually is.
 DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     "Figbloom Digital Group <support@figbloom.org>"

@@ -1,6 +1,7 @@
 <html lang="en">
    
        <head>
+           {% include "components/analytics.html" %}
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="theme-color" content="#FF9400" />
@@ -8,20 +9,24 @@
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta name="description" content="Browse selected Figbloom Digital Group projects that showcase connected, secure, and innovative technology solutions for businesses." />
         <meta name="keywords" content="Figbloom projects, technology implementation projects, software and networking solutions Kenya" />
-        <link rel="canonical" href="https://www.figbloomdigitalgroup.com/projects/" />
+        <link rel="canonical" href="https://figbloom.org/projects/" />
         <meta property="og:locale" content="en_KE" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Projects | Figbloom Digital Group" />
         <meta property="og:description" content="See examples of how Figbloom Digital Group helps businesses modernize operations with reliable technology." />
-        <meta property="og:url" content="https://www.figbloomdigitalgroup.com/projects/" />
+        <meta property="og:url" content="https://figbloom.org/projects/" />
         <meta property="og:site_name" content="Figbloom Digital Group" />
-        <meta property="og:image" content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png" />
+        <meta property="og:image" content="https://figbloom.org/assets/images/og-card.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Figbloom Digital Group — internet, security, software and AI" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Projects | Figbloom Digital Group" />
         <meta name="twitter:description" content="A portfolio of technology projects focused on connectivity, security, and digital growth." />
-        <meta name="twitter:image" content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png" />
+        <meta name="twitter:image" content="https://figbloom.org/assets/images/og-card.png" />
 
         <title>Projects | Figbloom Digital Group</title>
+        {% include "components/favicon.html" %}
 
         <link
             rel="stylesheet"
@@ -32,39 +37,41 @@
             rel="stylesheet"
             href="../assets/css/style.css"
         />
+        <link rel="stylesheet" href="/assets/css/motion.css" />
         <script type="application/ld+json">
             {
                 "@context": "https://schema.org",
                 "@type": "WebPage",
                 "name": "Figbloom Digital Group Projects",
-                "url": "https://www.figbloomdigitalgroup.com/projects/",
+                "url": "https://figbloom.org/projects/",
                 "description": "A showcase of Figbloom Digital Group's completed technology projects."
+            }
+        </script>
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://figbloom.org/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Projects",
+                        "item": "https://figbloom.org/projects/"
+                    }
+                ]
             }
         </script>
     </head>
     <body x-data="mainFunction()">
-        <div id="navbar"></div>
-        <div
-            class="relative"
-            x-data="{ isLoading: true }"
-            x-init="setTimeout(() => {isLoading = false }, 1500)" >
-            <div
-                id="preloader"
-                x-show="isLoading"
-                class="fixed inset-0 z-60 flex h-dvh w-full items-center justify-center bg-white"
-                style="display: none"  >
-                <span
-                    class="from-background to-background absolute inset-0 animate-pulse bg-linear-to-br via-white"
-                ></span>
-
-                <div
-                    class="border-t-gray/70 border-b-gray-light absolute top-1/2 left-1/2 grid size-10 -translate-1/2 animate-spin place-content-center rounded-full border-y-8 sm:size-14"
-                ></div>
-            </div>
-        </div>
+        {% include "components/navbar.html" %}
 
     
-    <div id="navbar"></div>
 
         <div class="grow">
             <div
@@ -149,7 +156,7 @@
                                 class="flex items-center justify-between gap-2"
                             >
                                 <a
-                                    href="/projects"
+                                    href="/projects/"
                                     x-text="project.category"
                                     class="h4 text-gray relative z-1 line-clamp-1 transition hover:text-black lg:text-lg"
                                 ></a>
@@ -199,7 +206,7 @@
                         </div>
                         <div class="space-y-2">
                             <div
-                                x-data="counter(10)"
+                                x-data="counter(35)"
                                 x-init="observe()"
                                 class="text-primary text-3xl sm:text-4xl xl:text-5xl/14"
                             >
@@ -261,7 +268,7 @@
                             Get a quote
                         </button>
                         <a
-                            href="/contact"
+                            href="/contact/"
                             class="btn btn-secondary bg-transparent px-2.5 whitespace-nowrap text-white sm:px-4.75"
                             >Book a free consultation</a
                         >
@@ -269,7 +276,7 @@
                 </div>
             </div>
         </div>
-        <div id="footer"></div>
+        {% include "components/footer.html" %}
                             
                  
                         

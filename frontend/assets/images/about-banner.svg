@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 400" width="1600" height="400" role="img" aria-label="Abstract software architecture diagram">
+    <title>Abstract software architecture diagram</title>
+    <!--
+        About-us banner art. Deliberately non-photographic: an abstract module
+        graph (editor window feeding services feeding a deploy target) rather
+        than stock photography. The ground is brand secondary #2c5322 so the
+        page's green gradient overlay blends into it with no visible seam, and
+        the composition sits right-of-centre because that overlay covers the
+        left ~28% on desktop.
+    -->
+    <defs>
+        <radialGradient id="glow" cx="72%" cy="46%" r="52%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity=".10" />
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+        </radialGradient>
+        <linearGradient id="depth" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#356328" />
+            <stop offset="100%" stop-color="#22401a" />
+        </linearGradient>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity=".055" stroke-width="1" />
+        </pattern>
+    </defs>
+
+    <rect width="1600" height="400" fill="url(#depth)" />
+    <rect width="1600" height="400" fill="url(#grid)" />
+    <rect width="1600" height="400" fill="url(#glow)" />
+
+    <!-- Connector traces. Orthogonal with round joins, like a dependency graph. -->
+    <g fill="none" stroke="#ffffff" stroke-opacity=".28" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M300 200H480" stroke-opacity=".12" />
+        <path d="M360 96H460V200" stroke-opacity=".12" />
+        <path d="M360 312H460V200" stroke-opacity=".12" />
+        <path d="M480 200H700" />
+        <path d="M1000 176H1048V104H1096" />
+        <path d="M1000 224H1048V296H1096" />
+        <path d="M1266 104H1314V200H1362" />
+        <path d="M1266 296H1314V200H1362" />
+    </g>
+    <!-- One live path in brand orange: the happy path through the system. -->
+    <path d="M1000 200H1362" fill="none" stroke="#FF9400" stroke-opacity=".85" stroke-width="2.5" stroke-linecap="round" />
+
+    <!-- Editor / source window -->
+    <g>
+        <rect x="700" y="118" width="300" height="164" rx="14" fill="#ffffff" fill-opacity=".07" stroke="#ffffff" stroke-opacity=".26" />
+        <path d="M700 148a14 14 0 0 1 14-14h272a14 14 0 0 1 14 14z" fill="#ffffff" fill-opacity=".10" />
+        <g fill="#ffffff" fill-opacity=".38">
+            <circle cx="724" cy="141" r="4.5" />
+            <circle cx="742" cy="141" r="4.5" />
+            <circle cx="760" cy="141" r="4.5" />
+        </g>
+        <!-- Abstract code lines, indented like a real block -->
+        <g fill="#ffffff" rx="3">
+            <rect x="724" y="168" width="118" height="7" rx="3.5" fill-opacity=".34" />
+            <rect x="740" y="188" width="164" height="7" rx="3.5" fill-opacity=".26" />
+            <rect x="740" y="208" width="96" height="7" rx="3.5" fill-opacity=".26" />
+            <rect x="756" y="228" width="140" height="7" rx="3.5" fill-opacity=".20" />
+            <rect x="724" y="248" width="74" height="7" rx="3.5" fill-opacity=".30" />
+        </g>
+        <rect x="854" y="168" width="46" height="7" rx="3.5" fill="#FF9400" fill-opacity=".9" />
+    </g>
+
+    <!-- Two service nodes -->
+    <g stroke="#ffffff" stroke-opacity=".24" fill="#ffffff" fill-opacity=".06">
+        <rect x="1096" y="66" width="170" height="76" rx="12" />
+        <rect x="1096" y="258" width="170" height="76" rx="12" />
+    </g>
+    <g fill="#ffffff">
+        <rect x="1120" y="88" width="90" height="6" rx="3" fill-opacity=".32" />
+        <rect x="1120" y="106" width="58" height="6" rx="3" fill-opacity=".20" />
+        <rect x="1120" y="280" width="76" height="6" rx="3" fill-opacity=".32" />
+        <rect x="1120" y="298" width="104" height="6" rx="3" fill-opacity=".20" />
+    </g>
+
+    <!-- Deploy target: concentric rings, orange core -->
+    <g fill="none" stroke="#ffffff">
+        <circle cx="1424" cy="200" r="62" stroke-opacity=".14" />
+        <circle cx="1424" cy="200" r="44" stroke-opacity=".22" />
+        <circle cx="1424" cy="200" r="26" stroke-opacity=".30" />
+    </g>
+    <circle cx="1424" cy="200" r="11" fill="#FF9400" />
+
+    <!-- Junction dots on the traces -->
+    <g fill="#ffffff" fill-opacity=".55">
+        <circle cx="480" cy="200" r="4" />
+        <circle cx="1048" cy="104" r="4" />
+        <circle cx="1048" cy="296" r="4" />
+        <circle cx="1314" cy="104" r="4" />
+        <circle cx="1314" cy="296" r="4" />
+    </g>
+</svg>

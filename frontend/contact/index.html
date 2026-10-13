@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
+        {% include "components/analytics.html" %}
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="theme-color" content="#FF9400" />
@@ -8,20 +9,24 @@
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta name="description" content="Contact Figbloom Digital Group for a quote on internet connectivity, CCTV security, AI automation, software solutions, and digital growth services." />
         <meta name="keywords" content="contact Figbloom Digital Group, technology quote Kenya, internet and software consultation" />
-        <link rel="canonical" href="https://www.figbloomdigitalgroup.com/contact/" />
+        <link rel="canonical" href="https://figbloom.org/contact/" />
         <meta property="og:locale" content="en_KE" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Contact Figbloom Digital Group" />
         <meta property="og:description" content="Get in touch with Figbloom Digital Group for tailored technology solutions and support." />
-        <meta property="og:url" content="https://www.figbloomdigitalgroup.com/contact/" />
+        <meta property="og:url" content="https://figbloom.org/contact/" />
         <meta property="og:site_name" content="Figbloom Digital Group" />
-        <meta property="og:image" content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png" />
+        <meta property="og:image" content="https://figbloom.org/assets/images/og-card.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Figbloom Digital Group — internet, security, software and AI" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Contact Figbloom Digital Group" />
         <meta name="twitter:description" content="Reach out to Figbloom Digital Group for reliable internet, security, AI, and software solutions." />
-        <meta name="twitter:image" content="https://www.figbloomdigitalgroup.com/assets/images/figbloom_logo.png" />
+        <meta name="twitter:image" content="https://figbloom.org/assets/images/og-card.png" />
 
         <title>Contact Figbloom Digital Group</title>
+        {% include "components/favicon.html" %}
 
         <link
             rel="stylesheet"
@@ -32,40 +37,40 @@
             rel="stylesheet"
             href="../assets/css/style.css"
         />
+        <link rel="stylesheet" href="/assets/css/motion.css" />
         <script type="application/ld+json">
             {
                 "@context": "https://schema.org",
                 "@type": "WebPage",
                 "name": "Contact Figbloom Digital Group",
-                "url": "https://www.figbloomdigitalgroup.com/contact/",
+                "url": "https://figbloom.org/contact/",
                 "description": "Contact Figbloom Digital Group for a quote and support."
+            }
+        </script>
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://figbloom.org/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Contact",
+                        "item": "https://figbloom.org/contact/"
+                    }
+                ]
             }
         </script>
     </head>
     <body x-data="mainFunction()">
-        <div id="navbar"></div>
-        <div
-            class="relative"
-            x-data="{ isLoading: true }"
-            x-init="setTimeout(() => {isLoading = false }, 1500)"
-        >
-            <div
-                id="preloader"
-                x-show="isLoading"
-                class="fixed inset-0 z-60 flex h-dvh w-full items-center justify-center bg-white"
-                style="display: none"
-            >
-                <span
-                    class="from-background to-background absolute inset-0 animate-pulse bg-linear-to-br via-white"
-                ></span>
+        {% include "components/navbar.html" %}
 
-                <div
-                    class="border-t-gray/70 border-b-gray-light absolute top-1/2 left-1/2 grid size-10 -translate-1/2 animate-spin place-content-center rounded-full border-y-8 sm:size-14"
-                ></div>
-            </div>
-        </div>
-
-       <div id="navbar"></div>
 
         <div class="grow" >
             <div
@@ -179,6 +184,21 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="space-y-4">
+                            <div class="text-black">Our Location:</div>
+                            <div class="h-75 overflow-hidden rounded-lg lg:h-104.5">
+                                <iframe
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.761163610021!2d36.86273307628536!3d-1.3189864986684974!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f11106d5a3af9%3A0x22ba9675e0a9144e!2sSMK%20Business%20Centre!5e0!3m2!1sen!2snl!4v1787563888807!5m2!1sen!2snl"
+                                    width="100%"
+                                    height="100%"
+                                    style="border:0;"
+                                    allowfullscreen=""
+                                    loading="lazy"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                ></iframe>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -220,6 +240,18 @@
                     </div>
 
                     <form @submit.prevent="submitForm" class="space-y-6 lg:space-y-8" novalidate>
+                        <!-- Honeypot: invisible to real visitors, bots fill every field they can find. -->
+                        <div class="absolute" style="left: -9999px" aria-hidden="true">
+                            <label for="website">Website</label>
+                            <input
+                                id="website"
+                                type="text"
+                                x-model="form.website"
+                                tabindex="-1"
+                                autocomplete="off"
+                            />
+                        </div>
+
                         <div class="flex flex-col gap-2.5 lg:gap-4">
                             <label for="fullName">Full name</label>
                             <input
@@ -386,7 +418,7 @@
             </div>
         </div>
 
-  <div id="footer"></div>
+  {% include "components/footer.html" %}
 
         <script src="/assets/js/lucide.min.js"></script>
         <script defer src="/assets/js/alpine.min.js"></script>
@@ -412,6 +444,7 @@
                         budget: '',
                         timeline: '',
                         agree: false,
+                        website: '', // honeypot — left blank by real visitors
                     },
                     sending: false,
                     success: false,
@@ -428,6 +461,7 @@
                             budget: '',
                             timeline: '',
                             agree: false,
+                            website: '',
                         }
                     },
 
@@ -456,14 +490,21 @@
                         this.sending = true
 
                         try {
-                            const response = await fetch('https://formspree.io/f/maqrbrpw', {
+                            const csrfToken = document.cookie
+                                .split('; ')
+                                .find((row) => row.startsWith('csrftoken='))
+                                ?.split('=')[1] || ''
+
+                            const response = await fetch('/api/contact/', {
                                 method: 'POST',
+                                credentials: 'same-origin',
                                 headers: {
                                     'Content-Type': 'application/json',
                                     Accept: 'application/json',
+                                    'X-CSRFToken': csrfToken,
                                 },
                                 body: JSON.stringify({
-                                    fullName: this.form.fullName,
+                                    full_name: this.form.fullName,
                                     company: this.form.company,
                                     email: this.form.email,
                                     phone: this.form.phone,
@@ -471,6 +512,7 @@
                                     brief: this.form.brief,
                                     budget: this.form.budget,
                                     timeline: this.form.timeline,
+                                    website: this.form.website,
                                 }),
                             })
 
@@ -482,9 +524,11 @@
                                 }, 2000)
                             } else {
                                 const data = await response.json().catch(() => null)
-                                this.errorMsg =
-                                    (data && data.errors && data.errors.map((e) => e.message).join(', ')) ||
-                                    'We couldn’t send your message. Please try again.'
+                                const firstError =
+                                    data && typeof data === 'object'
+                                        ? Object.values(data).flat().find((v) => typeof v === 'string')
+                                        : null
+                                this.errorMsg = firstError || 'We couldn’t send your message. Please try again.'
                             }
                         } catch (err) {
                             this.errorMsg = 'Network error — please check your connection and try again.'

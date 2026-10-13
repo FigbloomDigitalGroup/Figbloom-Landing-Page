@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include "components/analytics.html" %}
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#FF9400" />
+        <meta name="author" content="Figbloom Digital Group" />
+        <meta name="robots" content="noindex, nofollow" />
+
+        <title>Withdraw Application | Figbloom Digital Group</title>
+        {% include "components/favicon.html" %}
+
+        <link
+            rel="stylesheet"
+            href="/assets/css/style.css"
+        />
+    </head>
+    <body x-data="mainFunction()">
+        {% include "components/navbar.html" %}
+
+        <div class="grow">
+            <div
+                class="container flex flex-col items-center gap-6 py-20 text-center lg:py-28"
+                style="max-width: 640px;"
+            >
+                {% if state == "withdrawn" %}
+                    <h1>Your application has been withdrawn.</h1>
+                    <p>
+                        Your application for <strong>{{ job_title }}</strong> has been withdrawn.
+                        We've sent you a confirmation email. Changed your mind? You're welcome to
+                        submit a fresh application any time.
+                    </p>
+                {% elif state == "already_withdrawn" %}
+                    <h1>Already withdrawn.</h1>
+                    <p>
+                        Your application for <strong>{{ job_title }}</strong> was already withdrawn.
+                        No further action is needed.
+                    </p>
+                {% else %}
+                    <h1>This withdrawal link isn't valid.</h1>
+                    <p>
+                        It may have been mistyped or the application no longer exists. If you'd
+                        still like to withdraw an application, contact us at
+                        <a href="mailto:sales@figbloom.org" class="underline">sales@figbloom.org</a>
+                        and we'll take care of it directly.
+                    </p>
+                {% endif %}
+
+                <a href="/career/" class="btn">Back to open positions</a>
+            </div>
+        </div>
+
+        {% include "components/footer.html" %}
+
+        <script src="/assets/js/lucide.min.js"></script>
+        <script defer src="/assets/js/alpine.min.js"></script>
+
+        <script>
+            function mainFunction() {
+                return {
+                    init() {
+                        this.$nextTick(() => lucide.createIcons())
+                    },
+                }
+            }
+        </script>
+    </body>
+</html>

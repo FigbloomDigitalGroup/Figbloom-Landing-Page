@@ -1,0 +1,41 @@
+/* ==========================================================================
+   Site-wide motion. Loaded on every page.
+
+   Cross-document view transitions need BOTH the outgoing and the incoming
+   document to opt in, which is why this lives in its own shared file rather
+   than in landing.css (that one is homepage-only).
+
+   Progressive enhancement: browsers without the View Transitions API ignore
+   all of this and navigate normally.
+   ========================================================================== */
+
+@view-transition {
+  navigation: auto;
+}
+
+/* Cross-fade rather than the default slide, kept short so navigation still
+   feels instant rather than animated-at. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* The sticky/fixed header shouldn't cross-fade with the page body — naming it
+   lets it persist across the navigation instead of flickering. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(root) {
+    animation-duration: 240ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

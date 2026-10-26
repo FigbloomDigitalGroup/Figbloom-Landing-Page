@@ -4,6 +4,19 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.text import slugify
 
+
+def newsletter_cover_storage():
+    # The default Cloudinary storage is the "raw" one (fine for CVs), but
+    # cover images should be served as images so link previews pick them up.
+    if settings.USE_CLOUDINARY:
+        from cloudinary_storage.storage import MediaCloudinaryStorage
+
+        return MediaCloudinaryStorage()
+
+    from django.core.files.storage import default_storage
+
+    return default_storage
+
 # Create your models here.
 
 
@@ -152,6 +165,18 @@ class SentNewsletter(models.Model):
     # and never changed, so links already shared keep working.
     slug = models.SlugField(max_length=220, unique=True, null=True, blank=True)
     content = models.TextField()
+    # Optional image shown on top of the email and public page, and used
+    # as the link-preview image when the page is shared.
+    cover_image = models.ImageField(
+        upload_to='newsletters/',
+        storage=newsletter_cover_storage,
+        width_field='cover_width',
+        height_field='cover_height',
+        blank=True,
+        null=True,
+    )
+    cover_width = models.PositiveIntegerField(null=True, blank=True)
+    cover_height = models.PositiveIntegerField(null=True, blank=True)
     # Who it went to: "all" active subscribers or "selected" ones.
     audience = models.CharField(max_length=50, blank=True, default='all')
     total_recipients = models.PositiveIntegerField(default=0)

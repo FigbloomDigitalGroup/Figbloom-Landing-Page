@@ -1,8 +1,12 @@
+import io
+import shutil
+import tempfile
 from datetime import timedelta
 from unittest.mock import patch
 
 from django.core import mail, signing
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -526,6 +530,54 @@ class NewsletterSuspensionAndHistoryTests(TestCase):
         record = SentNewsletter.objects.get()
         self.assertEqual(record.audience, 'selected')
         self.assertEqual(record.total_recipients, 1)
+
+    def test_multipart_send_with_cover_image(self):
+        from PIL import Image
+
+        media_root = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, media_root, ignore_errors=True)
+
+        png = io.BytesIO()
+        Image.new('RGB', (1200, 630), 'orange').save(png, 'PNG')
+
+        with self.settings(MEDIA_ROOT=media_root):
+            response = self.client.post(
+                reverse('admin-newsletter-send-newsletter'),
+                {
+                    'subject': 'Cover issue',
+                    'content': '<p>Hello</p>',
+                    'audience': 'selected',
+                    'subscriber_ids': [self.active.id],
+                    'cover_image': SimpleUploadedFile('cover.png', png.getvalue(), 'image/png'),
+                },
+                format='multipart',
+            )
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual([m.to for m in mail.outbox], [['active@example.com']])
+            self.assertIn('cid:newsletter-cover', mail.outbox[0].alternatives[0][0])
+
+            record = SentNewsletter.objects.get()
+            self.assertTrue(record.cover_image.name.startswith('newsletters/'))
+            self.assertEqual((record.cover_width, record.cover_height), (1200, 630))
+
+            page = self.client.get(record.get_absolute_url(), secure=True).content.decode()
+            self.assertIn(f'og:image" content="https://testserver{record.cover_image.url}"', page)
+            self.assertIn('class="nl-cover"', page)
+
+    def test_cover_image_must_be_an_image(self):
+        response = self.client.post(
+            reverse('admin-newsletter-send-newsletter'),
+            {
+                'subject': 'Bad cover',
+                'content': '<p>Hello</p>',
+                'cover_image': SimpleUploadedFile('cover.png', b'not an image', 'image/png'),
+            },
+            format='multipart',
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_selected_send_skips_suspended_and_requires_a_selection(self):
         self._suspend(self.suspended)

@@ -727,6 +727,39 @@
       line-height: 1.7;
     }
 
+    .newsletter-cover-picker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .newsletter-cover-picker input[type="file"] {
+      display: none;
+    }
+
+    .newsletter-cover-thumb {
+      width: 96px;
+      height: 54px;
+      object-fit: cover;
+      border-radius: var(--radius-md, 8px);
+      border: 1px solid var(--fig-border);
+    }
+
+    .newsletter-cover-hint {
+      color: var(--fig-muted);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .email-preview-cover {
+      display: block;
+      width: 80%;
+      height: auto;
+      margin: 0 auto 24px;
+      border-radius: 10px;
+    }
+
     .newsletter-label-row {
       display: flex;
       align-items: center;
@@ -1719,6 +1752,51 @@
 
           <div class="newsletter-field">
 
+            <label for="newsletter-cover">
+              Cover Image <span style="font-weight: 600; color: var(--fig-muted);">(optional)</span>
+            </label>
+
+            <div class="newsletter-cover-picker">
+              <input
+                id="newsletter-cover"
+                type="file"
+                accept="image/jpeg,image/png,image/gif,image/webp"
+              />
+
+              <img
+                id="newsletter-cover-thumb"
+                class="newsletter-cover-thumb"
+                alt=""
+                hidden
+              />
+
+              <button
+                type="button"
+                class="db-btn-secondary"
+                id="newsletter-cover-choose"
+              >
+                Choose image
+              </button>
+
+              <button
+                type="button"
+                class="db-btn-secondary"
+                id="newsletter-cover-remove"
+                hidden
+              >
+                Remove
+              </button>
+            </div>
+
+            <div class="newsletter-cover-hint">
+              Shown on top of the newsletter and as the preview image when the link is shared. 1200×630 works best; max 5 MB.
+            </div>
+
+          </div>
+
+
+          <div class="newsletter-field">
+
             <div class="newsletter-label-row">
 
               <label>
@@ -1784,6 +1862,13 @@
 
 
             <div class="email-preview-content">
+
+              <img
+                id="preview-cover"
+                class="email-preview-cover"
+                alt=""
+                hidden
+              />
 
               <div class="email-preview-eyebrow">
                 Newsletter Update
@@ -4128,6 +4213,91 @@ if (subscriberCountCard) {
       );
 
 
+    /* Cover image: kept as a File until send; previewed via an object URL. */
+
+    const newsletterCoverInput =
+      document.getElementById("newsletter-cover");
+
+    const newsletterCoverThumb =
+      document.getElementById("newsletter-cover-thumb");
+
+    const newsletterCoverChoose =
+      document.getElementById("newsletter-cover-choose");
+
+    const newsletterCoverRemove =
+      document.getElementById("newsletter-cover-remove");
+
+    const previewCover =
+      document.getElementById("preview-cover");
+
+    const NEWSLETTER_COVER_MAX_BYTES = 5 * 1024 * 1024;
+
+    let newsletterCoverFile = null;
+
+    let newsletterCoverUrl = "";
+
+    function setNewsletterCover(file) {
+
+      if (newsletterCoverUrl) {
+        URL.revokeObjectURL(newsletterCoverUrl);
+      }
+
+      newsletterCoverFile = file || null;
+
+      newsletterCoverUrl = file ? URL.createObjectURL(file) : "";
+
+      for (const img of [newsletterCoverThumb, previewCover]) {
+        if (!img) continue;
+        img.hidden = !file;
+        if (file) img.src = newsletterCoverUrl;
+        else img.removeAttribute("src");
+      }
+
+      if (newsletterCoverChoose) {
+        newsletterCoverChoose.textContent = file ? "Change image" : "Choose image";
+      }
+
+      if (newsletterCoverRemove) {
+        newsletterCoverRemove.hidden = !file;
+      }
+
+      if (newsletterCoverInput) {
+        newsletterCoverInput.value = "";
+      }
+
+    }
+
+    newsletterCoverChoose?.addEventListener("click", () => {
+      newsletterCoverInput?.click();
+    });
+
+    newsletterCoverRemove?.addEventListener("click", () => {
+      setNewsletterCover(null);
+    });
+
+    newsletterCoverInput?.addEventListener("change", () => {
+
+      const file = newsletterCoverInput.files?.[0];
+
+      if (!file) return;
+
+      if (!file.type.startsWith("image/")) {
+        showToast("Please choose an image file.", "error");
+        newsletterCoverInput.value = "";
+        return;
+      }
+
+      if (file.size > NEWSLETTER_COVER_MAX_BYTES) {
+        showToast("Cover image must be 5 MB or smaller.", "error");
+        newsletterCoverInput.value = "";
+        return;
+      }
+
+      setNewsletterCover(file);
+
+    });
+
+
     function updateNewsletterPreview() {
 
       if (
@@ -4380,20 +4550,23 @@ if (subscriberCountCard) {
                 {
                   method: "POST",
 
-                  headers: {
-                    "Content-Type":
-                      "application/json"
-                  },
-
-                  body: JSON.stringify({
-                    subject,
-                    content,
-                    audience: newsletterAudience,
-                    subscriber_ids:
-                      newsletterAudience === "selected"
-                        ? recipients.map(subscriber => subscriber.id)
-                        : [],
-                  })
+                  // Multipart so the cover image can ride along; the
+                  // browser sets the Content-Type boundary itself.
+                  body: (() => {
+                    const form = new FormData();
+                    form.append("subject", subject);
+                    form.append("content", content);
+                    form.append("audience", newsletterAudience);
+                    if (newsletterAudience === "selected") {
+                      recipients.forEach(subscriber =>
+                        form.append("subscriber_ids", subscriber.id)
+                      );
+                    }
+                    if (newsletterCoverFile) {
+                      form.append("cover_image", newsletterCoverFile);
+                    }
+                    return form;
+                  })(),
                 }
               );
 
@@ -4434,6 +4607,9 @@ if (subscriberCountCard) {
 
 
             newsletterQuill.setText("");
+
+
+            setNewsletterCover(null);
 
 
             updateNewsletterPreview();

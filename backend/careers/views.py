@@ -16,6 +16,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django import forms
 from django.utils.html import strip_tags
 from django.utils.text import Truncator
 from django.core.mail import EmailMultiAlternatives
@@ -79,7 +80,7 @@ def newsletter_content_html(content):
     )
 
 
-def build_branded_email_html(*, eyebrow, title, body_html, preheader='', footer_note_html='', footer_action_html=''):
+def build_branded_email_html(*, eyebrow, title, body_html, preheader='', footer_note_html='', footer_action_html='', cover_src=''):
     """Shared HTML wrapper for every outbound email (newsletter, application
     received, application withdrawn) — same header/logo/accent-bar/footer
     shell, different eyebrow/title/body/footer content per caller."""
@@ -162,6 +163,14 @@ def build_branded_email_html(*, eyebrow, title, body_html, preheader='', footer_
             <div style="
                 padding:44px 42px 40px;
             ">
+
+                {f'''
+                <img
+                    src="{escape(cover_src)}"
+                    alt=""
+                    style="display:block; width:80%; max-width:80%; height:auto; margin:0 auto 32px; border:0; border-radius:10px;"
+                />
+                ''' if cover_src else ''}
 
                 <div style="
                     font-family:Arial, Helvetica, sans-serif;
@@ -654,6 +663,9 @@ class ApplicationAdminViewSet(viewsets.ModelViewSet):
             ).start()
 
 
+NEWSLETTER_COVER_MAX_BYTES = 5 * 1024 * 1024
+
+
 class NewsletterAdminViewSet(viewsets.ModelViewSet):
     queryset = NewsletterSubscriber.objects.all().order_by('-subscribed_at')
     serializer_class = NewsletterSubscriberSerializer
@@ -701,7 +713,14 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
         # "all" sends to every active subscriber; "selected" only to the
         # subscriber_ids picked in the dashboard.
         audience = request.data.get("audience", "all")
-        subscriber_ids = request.data.get("subscriber_ids") or []
+        # The dashboard posts multipart (for the cover image), where each
+        # id is its own form value; JSON callers send a plain list.
+        if hasattr(request.data, "getlist"):
+            subscriber_ids = request.data.getlist("subscriber_ids")
+        else:
+            subscriber_ids = request.data.get("subscriber_ids") or []
+
+        cover_image = request.FILES.get("cover_image")
 
         if audience not in ("all", "selected"):
             return Response(
@@ -735,6 +754,27 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
                 {"detail": "Newsletter content is required."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        cover_bytes = None
+
+        if cover_image:
+            if cover_image.size > NEWSLETTER_COVER_MAX_BYTES:
+                return Response(
+                    {"detail": "Cover image must be 5 MB or smaller."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            try:
+                forms.ImageField().clean(cover_image)
+            except ValidationError:
+                return Response(
+                    {"detail": "Cover image must be a JPG, PNG, GIF or WebP image."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            cover_image.seek(0)
+            cover_bytes = cover_image.read()
+            cover_image.seek(0)
 
         # ---------------------------------------------------------
         # GET ACTIVE SUBSCRIBERS
@@ -808,6 +848,7 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
                 title=subject,
                 preheader='Figbloom Digital Group • Newsletter',
                 body_html=newsletter_content_html(html_content),
+                cover_src="cid:newsletter-cover" if cover_bytes else "",
                 footer_note_html=(
                     "You're receiving this email because you subscribed to updates from "
                     "figbloom.org. Thank you for being part of our community."
@@ -884,6 +925,14 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
                         )
                         message.attach(logo_image)
 
+                    if cover_bytes:
+                        cover = MIMEImage(cover_bytes)
+                        cover.add_header("Content-ID", "<newsletter-cover>")
+                        cover.add_header(
+                            "Content-Disposition", "inline", filename=cover_image.name
+                        )
+                        message.attach(cover)
+
                     message.send(
                         fail_silently=False
                     )
@@ -914,6 +963,7 @@ class NewsletterAdminViewSet(viewsets.ModelViewSet):
         record = SentNewsletter.objects.create(
             subject=subject,
             content=html_content,
+            cover_image=cover_image,
             audience=audience,
             total_recipients=len(recipients),
             sent_count=sent,
@@ -1074,6 +1124,10 @@ def newsletter_public_view(request, slug):
         'reading_minutes': max(1, round(word_count / 200)),
         'description': Truncator(plain_text).words(30, truncate='…'),
         'page_url': request.build_absolute_uri(newsletter.get_absolute_url()),
+        'cover_url': (
+            request.build_absolute_uri(newsletter.cover_image.url)
+            if newsletter.cover_image else ''
+        ),
     })
 
 

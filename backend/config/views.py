@@ -27,6 +27,9 @@ def projects(request):
 def service(request):
     return render(request, 'service/index.html')
 
+def privacy_policy(request):
+    return render(request, 'privacy-policy/index.html')
+
 
 # --- Admin dashboard auth + pages ---
 

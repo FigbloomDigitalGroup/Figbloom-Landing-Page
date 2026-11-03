@@ -60,6 +60,8 @@ urlpatterns = [
     path('service', views.service),
     path('privacy-policy/', views.privacy_policy, name='privacy-policy'),
     path('privacy-policy', views.privacy_policy),
+    path('figillance/privacy/', views.figillance_privacy, name='figillance-privacy'),
+    path('figillance/privacy', views.figillance_privacy),
     path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'),
     path("admin-dashboard/subscribers",admin_subscribers,name="admin-subscribers"),
     path("api/auth/change-password/",ChangePasswordView.as_view(),name="change-password"),

@@ -30,6 +30,10 @@ def service(request):
 def privacy_policy(request):
     return render(request, 'privacy-policy/index.html')
 
+def figillance_privacy(request):
+    # The Figillance Android app's policy: the URL its Google Play listing links to.
+    return render(request, 'figillance/privacy/index.html')
+
 
 # --- Admin dashboard auth + pages ---
 

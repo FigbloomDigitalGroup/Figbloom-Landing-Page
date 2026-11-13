@@ -33,7 +33,7 @@
                     />
                 </a>
 
-                <a href="/" class="nav-link active">Home</a>
+                <a href="/" class="nav-link{% if request.path == '/' %} active{% endif %}">Home</a>
 
 
                 <div
@@ -88,6 +88,10 @@
 
                 <a href="/projects/" class="nav-link">
                     Projects
+                </a>
+
+                <a href="/activities/" class="nav-link{% if request.path|slice:':11' == '/activities' %} active{% endif %}">
+                    Activities
                 </a>
 
                 <a href="/contact/" class="nav-link">

@@ -1,0 +1,61 @@
+{% comment %}
+    One project card, shared by the /projects/ grid and the homepage carousel.
+    Expects: p (the Project).
+
+    The card is only a link when the project has a link_url. Before projects
+    came from the dashboard every card linked to "/", which went nowhere.
+{% endcomment %}<div
+    class="project-card border-gray-light group relative flex flex-col gap-4 overflow-hidden rounded-lg border bg-white p-4 lg:p-6"
+    data-project
+    data-category="{{ p.category }}"
+>
+    <div class="space-y-2 sm:space-y-4">
+        <h3 class="text-xl font-medium text-black lg:text-2xl">{{ p.title }}</h3>
+        <p class="line-clamp-2">{{ p.description }}</p>
+    </div>
+
+    <div class="relative mt-auto h-60 overflow-hidden rounded-lg sm:h-75 xl:h-105">
+        {% if p.image_src %}
+            <img
+                src="{{ p.image_src }}"
+                alt="{{ p.title }}"
+                loading="lazy"
+                class="size-full object-cover"
+            />
+        {% else %}
+            <div class="bg-primary-light text-primary grid size-full place-content-center text-5xl font-medium" aria-hidden="true">
+                {{ p.title|slice:":1" }}
+            </div>
+        {% endif %}
+
+        {% if p.link_url %}
+            <!-- No colour over the picture: only the button shows on hover (see project-card.css). -->
+            <div class="absolute inset-0 grid place-content-center">
+                <span class="btn project-card__cta">
+                    View Project
+                </span>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="flex items-center justify-between gap-2">
+        <a
+            href="/projects/?category={{ p.category|urlencode:'' }}"
+            class="h4 text-gray relative z-1 line-clamp-1 transition hover:text-black lg:text-lg"
+        >{{ p.category }}</a>
+
+        {% if p.highlight %}
+            <div class="bg-primary-light text-primary ring-primary/20 shrink-0 rounded p-1 text-xs font-medium ring-1 sm:px-2 sm:text-sm">{{ p.highlight }}</div>
+        {% endif %}
+    </div>
+
+    {% if p.link_url %}
+        <a
+            href="{{ p.link_url }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="absolute inset-0"
+            aria-label="View project: {{ p.title }}"
+        ></a>
+    {% endif %}
+</div>

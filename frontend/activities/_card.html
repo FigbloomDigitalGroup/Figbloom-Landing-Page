@@ -1,0 +1,42 @@
+{% comment %}
+    One activity card. Shared by the list page and the "keep exploring" row on
+    the detail page.
+
+    Expects: a (the Activity)
+    Optional: index (1-based position in the list — cards past the first page
+              start hidden; the list page's script reveals them on demand).
+
+    The data-* attributes are what the list page filters and searches on.
+{% endcomment %}<article
+    class="act-card"
+    data-activity
+    data-cat="{{ a.category }}"
+    data-category="{{ a.category }}"
+    data-search="{{ a.title|lower }} {{ a.summary|lower }} {{ a.location|lower }} {{ a.category_label|lower }}"
+    {% if index > 9 %}hidden{% endif %}
+>
+    <a class="act-card__media" href="{{ a.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+        {% if a.cover_image %}
+            <img src="{{ a.cover_image.url }}" alt="" loading="lazy" decoding="async" />
+        {% else %}
+            <span class="act-art"><i data-lucide="{{ a.category_info.icon }}"></i></span>
+        {% endif %}
+        <span class="act-date">
+            <b>{{ a.activity_date|date:"j" }}</b>
+            <span>{{ a.activity_date|date:"M" }}</span>
+            <small>{{ a.activity_date|date:"Y" }}</small>
+        </span>
+    </a>
+
+    <div class="act-card__body">
+        <span class="act-pill"><i data-lucide="{{ a.category_info.icon }}"></i>{{ a.category_label }}</span>
+        <h3 class="act-card__title"><a href="{{ a.get_absolute_url }}">{{ a.title }}</a></h3>
+        <p class="act-card__summary">{{ a.summary }}</p>
+        <div class="act-card__foot">
+            {% if a.location %}
+                <span class="act-card__where"><i data-lucide="map-pin"></i><span>{{ a.location }}</span></span>
+            {% endif %}
+            <span class="act-card__more">Read more <i data-lucide="arrow-right"></i></span>
+        </div>
+    </div>
+</article>

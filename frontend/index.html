@@ -48,6 +48,10 @@
             rel="stylesheet"
             href="/assets/css/motion.css"
         />
+        <link
+            rel="stylesheet"
+            href="/assets/css/project-card.css"
+        />
         <!--
             Gate for all entrance/reveal animations. Runs before first paint so
             there is no flash, and only opts in when JS is alive and the visitor
@@ -356,8 +360,9 @@
 
 
 
+            {% if home_projects %}
             <div
-                x-data="projectsList()"
+                x-data="projectsCarousel()"
                 class="border-gray-light overflow-hidden border-t py-14 lg:py-16"
             >
                 <div class="container space-y-8 lg:space-y-12">
@@ -367,66 +372,11 @@
                     </div>
                     <div class="swiper project-swiper overflow-visible!">
                         <div class="swiper-wrapper">
-                            <template x-for="project in filteredProjects">
-                                <div class="swiper-slide" :key="project.id">
-                                    <div
-                                        class="border-gray-light group relative flex flex-col gap-4 overflow-hidden rounded-lg border bg-white p-4 lg:p-6"
-                                    >
-                                        <div class="space-y-2 sm:space-y-4">
-                                            <h3
-                                                class="text-xl font-medium text-black lg:text-2xl"
-                                                x-text="project.title"
-                                            ></h3>
-                                            <p
-                                                x-text="project.description"
-                                                class="line-clamp-2"
-                                            ></p>
-                                        </div>
-
-                                        <div
-                                            class="relative mt-auto h-60 overflow-hidden rounded-lg sm:h-75 xl:h-105"
-                                        >
-                                            <img
-                                                :src="project.image"
-                                                :alt="project.title"
-                                                loading="lazy"
-                                                class="size-full object-cover"
-                                            />
-                                            <div
-                                                class="bg-primary/0 group-hover:bg-primary/50 absolute inset-0 grid place-content-center duration-300"
-                                            >
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-secondary invisible opacity-0 duration-300 group-hover:visible group-hover:opacity-100"
-                                                >
-                                                    View Project
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            class="flex items-center justify-between gap-2"
-                                        >
-                                            <a
-                                                href="/projects/"
-                                                x-text="project.category"
-                                                class="h4 text-gray relative z-1 line-clamp-1 transition hover:text-black lg:text-lg"
-                                            ></a>
-
-                                            <div
-                                                class="bg-primary-light text-primary ring-primary/20 shrink-0 rounded p-1 text-xs font-medium ring-1 sm:px-2 sm:text-sm"
-                                                x-text="project.tag"
-                                            ></div>
-                                        </div>
-
-                                        <a
-                                            :href="project.url"
-                                            class="absolute inset-0"
-                                            aria-label="View project"
-                                        ></a>
-                                    </div>
+                            {% for p in home_projects %}
+                                <div class="swiper-slide">
+                                    {% include "components/project-card.html" with p=p %}
                                 </div>
-                            </template>
+                            {% endfor %}
                         </div>
                     </div>
                     <div class="text-center">
@@ -436,6 +386,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
 
             <section class="fb fb-clients">
                 <div class="container">
@@ -994,106 +945,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            function projectsList() {
+            function projectsCarousel() {
                 return {
-                    activeCategory: 'All',
-                    projects: [
-                        {
-                            id: 1,
-                            title: 'MovecConnect Ecommerce Platform',
-                            description:
-                            'MovecConnect provides reliable Starlink-powered internet solutions, connecting homes and businesses with fast, affordable, and dependable broadband access.',
-                            image: 'assets/images/project-1.jpg',
-                            url: '/',
-                            category: 'Web Development',
-                            tag: '+42% conversion',
-                        },
-                        {
-                            id: 2,
-                            title: 'Figbloom Ecommerce App',
-                            description:
-                            'Figbloom E-commerce supplies Starlink kits, security cameras, networking equipment, and smart technology solutions for homes and businesses.',
-                            image: 'assets/images/project-2.jpg',
-                            url: '/',
-                            category: 'Web App Development',
-                            tag: '−38% user drop-off',
-                        },
-                        {
-                            id: 3,
-                            title: 'Bloomly Brand Identity',
-                            description:
-                                'A modern visual identity crafted to reflect trust and innovation.',
-                            image: 'assets/images/project-3.jpg',
-                            url: '/',
-                            category: 'Branding',
-                            tag: '2× brand recall',
-                        },
-                        {
-                            id: 4,
-                            title: 'GrowFast Campaign',
-                            description:
-                                'A performance-driven digital campaign optimized for qualified leads.',
-                            image: 'assets/images/project-4.jpg',
-                            url: '/',
-                            category: 'Digital Marketing',
-                            tag: '+61% lead growth',
-                        },
-                        {
-                            id: 5,
-                            title: 'NovaCommerce Platform',
-                            description:
-                                'A scalable e-commerce platform built for speed, security, and growth.',
-                            image: 'assets/images/project-1.jpg',
-                            url: '/',
-                            category: 'Web Development',
-                            tag: '+42% conversion',
-                        },
-                        {
-                            id: 6,
-                            title: 'Finly App Redesign',
-                            description:
-                                'A user-focused mobile experience redesigned for clarity and ease of use.',
-                            image: 'assets/images/project-2.jpg',
-                            url: '/',
-                            category: 'App Development',
-                            tag: '−38% user drop-off',
-                        },
-                        {
-                            id: 7,
-                            title: 'Bloomly Brand Identity',
-                            description:
-                                'A modern visual identity crafted to reflect trust and innovation.',
-                            image: 'assets/images/project-3.jpg',
-                            url: '/',
-                            category: 'Branding',
-                            tag: '2× brand recall',
-                        },
-                        {
-                            id: 8,
-                            title: 'GrowFast Campaign',
-                            description:
-                                'A performance-driven digital campaign optimized for qualified leads.',
-                            image: 'assets/images/project-4.jpg',
-                            url: '/',
-                            category: 'Digital Marketing',
-                            tag: '+61% lead growth',
-                        },
-                    ],
-
                     init() {
-                        this.initSwiper()
-
-                        this.$watch('filteredProjects', () => {
-                            this.initSwiper()
-                        })
-                    },
-
-                    initSwiper() {
                         this.$nextTick(() => {
-                            if (this.swiper) {
-                                this.swiper.destroy(true, true)
-                            }
-
                             this.swiper = new Swiper('.project-swiper', {
                                 spaceBetween: 16,
                                 speed: 1000,
@@ -1118,13 +973,6 @@ document.addEventListener("DOMContentLoaded", () => {
                                 },
                             })
                         })
-                    },
-
-                    get filteredProjects() {
-                        if (this.activeCategory === 'All') return this.projects
-                        return this.projects.filter(
-                            (p) => p.category === this.activeCategory,
-                        )
                     },
                 }
             }

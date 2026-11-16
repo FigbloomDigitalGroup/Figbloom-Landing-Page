@@ -4,13 +4,15 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
+from projects.views import homepage_projects, published_projects
+
 
 @ensure_csrf_cookie
 def job_detail_page(request):
     return render(request, 'career/detail.html')
 
 def home(request):
-    return render(request, 'index.html')
+    return render(request, 'index.html', {'home_projects': homepage_projects()})
 
 def about_us(request):
     return render(request, 'about-us/index.html')
@@ -22,7 +24,15 @@ def contact(request):
     return render(request, 'contact/index.html')
 
 def projects(request):
-    return render(request, 'projects/index.html')
+    items = published_projects()
+
+    # Filter tabs, in the order the categories first appear in the list.
+    categories = list(dict.fromkeys(project.category for project in items))
+
+    return render(request, 'projects/index.html', {
+        'projects': items,
+        'project_categories': categories,
+    })
 
 def service(request):
     return render(request, 'service/index.html')

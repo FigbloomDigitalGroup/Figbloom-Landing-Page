@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include "components/analytics.html" %}
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#FF9400" />
+        <meta name="author" content="Figbloom Digital Group" />
+        <meta name="robots" content="noindex, nofollow" />
+
+        <title>Page Not Found | Figbloom Digital Group</title>
+        {% include "components/favicon.html" %}
+
+        <link rel="stylesheet" href="/assets/css/style.css" />
+
+        <style>
+            .error-404__icon {
+                display: grid;
+                place-content: center;
+                width: 3.75rem;
+                height: 3.75rem;
+                border-radius: 9999px;
+                background: color-mix(in oklab, var(--color-primary) 12%, transparent);
+                color: var(--color-primary);
+            }
+            .error-404__code {
+                font-size: clamp(5rem, 16vw, 8.5rem);
+                font-weight: 800;
+                line-height: 1;
+                letter-spacing: -0.02em;
+                background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+            .error-404__quicklinks {
+                border-top: 1px solid color-mix(in oklab, var(--color-secondary) 15%, transparent);
+            }
+            .error-404__quicklinks a:hover {
+                color: var(--color-primary);
+            }
+        </style>
+    </head>
+    <body x-data="mainFunction()">
+        {% include "components/navbar.html" %}
+
+        <div class="grow">
+            <div
+                class="container flex flex-col items-center gap-6 py-20 text-center lg:py-28"
+                style="max-width: 640px;"
+            >
+                <span class="error-404__icon">
+                    <i data-lucide="compass" class="size-7"></i>
+                </span>
+
+                <div class="error-404__code">404</div>
+
+                <h1>We couldn't find that page.</h1>
+                <p>
+                    The page you're looking for may have been moved, renamed, or never
+                    existed. Let's get you back on track.
+                </p>
+
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <a href="/" class="btn">Back to Home</a>
+                    <a href="/contact/" class="hover:text-primary font-medium transition">Contact us</a>
+                </div>
+
+                <div class="error-404__quicklinks mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-6 text-base">
+                    <a href="/service/" class="hover:text-primary transition">Our Services</a>
+                    <a href="/projects/" class="hover:text-primary transition">Projects</a>
+                    <a href="/career/" class="hover:text-primary transition">Career</a>
+                    <a href="/about-us/" class="hover:text-primary transition">About Us</a>
+                </div>
+            </div>
+        </div>
+
+        {% include "components/footer.html" %}
+
+        <script src="/assets/js/lucide.min.js"></script>
+        <script defer src="/assets/js/alpine.min.js"></script>
+
+        <script>
+            function mainFunction() {
+                return {
+                    init() {
+                        this.$nextTick(() => lucide.createIcons())
+                    },
+                }
+            }
+        </script>
+    </body>
+</html>

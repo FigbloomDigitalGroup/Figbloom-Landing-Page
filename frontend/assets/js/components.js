@@ -1,138 +1,24 @@
 // ============================================================
-// SHARED COMPONENT LOADER
+// SHARED PAGE BEHAVIOUR
+//
+// The navbar, footer and prices partials used to be fetched here and injected
+// with innerHTML. They are now server-rendered via Django {% include %}, which
+// removes two round trips and the layout shift, and means the <script> blocks
+// inside those partials actually execute (innerHTML never runs scripts — that
+// is why the footer's newsletter handler had to be duplicated here, and why the
+// navbar's staff "Admin" link never appeared at all).
+//
+// Consequences of that move, handled below:
+//   - Alpine now initialises the partials itself on load; no initTree needed.
+//   - Lucide icons still need one createIcons() call, which used to live in the
+//     component loader. Without it every data-lucide icon renders as nothing.
+//   - The newsletter form is bound by footer.html's own script now, so binding
+//     it here too would attach two submit handlers and double-post.
 // ============================================================
-
-async function loadComponent(elementId, componentPath) {
-    const element = document.getElementById(elementId);
-
-    if (!element) return;
-
-    try {
-        const response = await fetch(componentPath);
-
-        if (!response.ok) {
-            throw new Error(`Failed to load ${componentPath}`);
-        }
-
-        element.innerHTML = await response.text();
-
-        // Reinitialize Alpine.js after inserting the component
-        if (window.Alpine) {
-            window.Alpine.initTree(element);
-        }
-
-        // Reinitialize Lucide icons
-        if (window.lucide) {
-            lucide.createIcons();
-        }
-
-    } catch (error) {
-        console.error("Component loading error:", error);
-    }
-}
 
 
 // ============================================================
-// NEWSLETTER FORM
-// Must run AFTER footer.html is injected, and must be attached
-// here (not inside footer.html) because <script> tags inserted
-// via innerHTML never execute in the browser.
-// ============================================================
-
-function initNewsletterForm() {
-    const form = document.getElementById('newsletter-form');
-
-    if (!form || form.dataset.bound) return;
-    form.dataset.bound = 'true';
-
-    const success = document.getElementById('newsletter-success');
-    const error = document.getElementById('newsletter-error');
-
-    form.addEventListener('submit', async function (event) {
-        event.preventDefault();
-
-        const name = document.getElementById('newsletter-name').value.trim();
-        const email = document.getElementById('newsletter-email').value.trim();
-
-        success.classList.add('hidden');
-        error.classList.add('hidden');
-        error.textContent = '';
-
-        if (!name || !email) {
-            error.textContent = 'Please enter your name and email address.';
-            error.classList.remove('hidden');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('email', email);
-
-        try {
-            const csrfToken = document.cookie
-                .split('; ')
-                .find((row) => row.startsWith('csrftoken='))
-                ?.split('=')[1] || '';
-
-            const response = await fetch('/api/newsletter/subscribe/', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'X-CSRFToken': csrfToken
-                },
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error('Unable to submit subscription');
-            }
-
-            form.reset();
-            success.classList.remove('hidden');
-        } catch (fetchError) {
-            console.error('Newsletter subscription error:', fetchError);
-            error.textContent = 'Unable to subscribe right now. Please try again later.';
-            error.classList.remove('hidden');
-        }
-    });
-}
-
-
-// ============================================================
-// LOAD NAVBAR + FOOTER (every page that has these containers)
-// ============================================================
-
-document.addEventListener("DOMContentLoaded", async () => {
-    await loadComponent("navbar", "/components/navbar.html");
-    await loadComponent("footer", "/components/footer.html");
-    initNewsletterForm();
-});
-
-
-// ============================================================
-// LOAD HEADER
-// ============================================================
-
-document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        const response = await fetch("/components/header.html");
-
-        if (!response.ok) {
-            throw new Error("Could not load components/header.html");
-        }
-
-        const headerHTML = await response.text();
-
-        document.head.insertAdjacentHTML("beforeend", headerHTML);
-
-    } catch (error) {
-        console.error("Header component error:", error);
-    }
-});
-
-
-// ============================================================
-// LOAD PRICES COMPONENT (only present on pages with #prices)
+// ALPINE ROOT DATA (body x-data="mainFunction()")
 // ============================================================
 
 function mainFunction() {
@@ -141,8 +27,124 @@ function mainFunction() {
     };
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadComponent("prices", "/components/prices.html");
+
+// ============================================================
+// "GET A QUOTE" MODAL FORM (footer.html, opened via contactModal)
+// Posts to the same /api/contact/ endpoint as the /contact/ page form.
+// ============================================================
+
+function quoteForm() {
+    return {
+        form: {
+            fullName: '',
+            email: '',
+            service: '',
+            brief: '',
+            budget: '',
+            timeline: '',
+            agree: false,
+            website: '', // honeypot — left blank by real visitors
+        },
+        sending: false,
+        success: false,
+        errorMsg: '',
+
+        resetForm() {
+            this.form = {
+                fullName: '',
+                email: '',
+                service: '',
+                brief: '',
+                budget: '',
+                timeline: '',
+                agree: false,
+                website: '',
+            };
+        },
+
+        validate() {
+            if (!this.form.fullName.trim()) return 'Please enter your full name.';
+            if (!this.form.email.trim()) return 'Please enter your work email.';
+            if (!this.form.service) return 'Please select a service you’re interested in.';
+            if (!this.form.budget) return 'Please select a project budget.';
+            if (!this.form.timeline) return 'Please select an expected timeline.';
+            if (!this.form.agree) return 'Please agree to be contacted before submitting.';
+            return null;
+        },
+
+        async submitForm() {
+            this.success = false;
+            this.errorMsg = '';
+
+            const validationError = this.validate();
+            if (validationError) {
+                this.errorMsg = validationError;
+                return;
+            }
+
+            this.sending = true;
+
+            try {
+                const csrfToken = document.cookie
+                    .split('; ')
+                    .find((row) => row.startsWith('csrftoken='))
+                    ?.split('=')[1] || '';
+
+                const response = await fetch('/api/contact/', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        full_name: this.form.fullName,
+                        email: this.form.email,
+                        service: this.form.service,
+                        brief: this.form.brief,
+                        budget: this.form.budget,
+                        timeline: this.form.timeline,
+                        website: this.form.website,
+                    }),
+                });
+
+                if (response.ok) {
+                    this.success = true;
+                    this.resetForm();
+                    setTimeout(() => {
+                        this.success = false;
+                        this.contactModal = false;
+                    }, 2000);
+                } else {
+                    const data = await response.json().catch(() => null);
+                    const firstError =
+                        data && typeof data === 'object'
+                            ? Object.values(data).flat().find((v) => typeof v === 'string')
+                            : null;
+                    this.errorMsg = firstError || 'We couldn’t send your message. Please try again.';
+                }
+            } catch (err) {
+                this.errorMsg = 'Network error — please check your connection and try again.';
+            } finally {
+                this.sending = false;
+            }
+        },
+    };
+}
+
+
+// ============================================================
+// LUCIDE ICONS
+// Renders every static data-lucide element once the DOM is parsed.
+// Icons created later by Alpine (x-for / x-if) are handled by the
+// $nextTick(() => lucide.createIcons()) calls on the individual pages.
+// ============================================================
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 });
 
 
@@ -181,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 alt="Scroll to top"
             />
         </button>
-        
+
     `;
 
     document.body.appendChild(floatingButtons);
@@ -194,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             scrollTopButton.classList.remove("is-visible");
         }
-    });
+    }, { passive: true });
 
     scrollTopButton.addEventListener("click", function () {
         window.scrollTo({
@@ -284,6 +286,13 @@ floatingButtonStyles.innerHTML = `
 
     .floating-admin:hover {
         transform: translateY(-4px) scale(1.02);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .floating-whatsapp,
+        .floating-scroll-top {
+            transition-duration: 0.01ms;
+        }
     }
 
     @media (max-width: 640px) {

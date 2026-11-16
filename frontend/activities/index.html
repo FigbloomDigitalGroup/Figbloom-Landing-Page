@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% include "components/analytics.html" %}
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#FF9400" />
+        <meta name="author" content="Figbloom Digital Group" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="description" content="Events, workshops, community work, team activities and milestones — see what Figbloom Digital Group has been up to." />
+        <meta name="keywords" content="Figbloom activities, Figbloom events, tech workshops Kenya, community impact, team activities, company news" />
+        <link rel="canonical" href="https://figbloom.org/activities/" />
+        <meta property="og:locale" content="en_KE" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Activities | Figbloom Digital Group" />
+        <meta property="og:description" content="Events, workshops, community work and milestones from the Figbloom Digital Group team." />
+        <meta property="og:url" content="https://figbloom.org/activities/" />
+        <meta property="og:site_name" content="Figbloom Digital Group" />
+        <meta property="og:image" content="{% if og_image %}{{ og_image }}{% else %}https://figbloom.org/assets/images/og-card.png{% endif %}" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Activities | Figbloom Digital Group" />
+        <meta name="twitter:description" content="Events, workshops, community work and milestones from the Figbloom Digital Group team." />
+        <meta name="twitter:image" content="{% if og_image %}{{ og_image }}{% else %}https://figbloom.org/assets/images/og-card.png{% endif %}" />
+
+        <title>Activities | Figbloom Digital Group</title>
+        {% include "components/favicon.html" %}
+
+        <link rel="stylesheet" href="/assets/css/style.css" />
+        <link rel="stylesheet" href="/assets/css/motion.css" />
+        <link rel="stylesheet" href="/assets/css/activities.css" />
+        <noscript>
+            <style>
+                /* Without JavaScript there is no "show more" button, so show everything. */
+                .act-card[hidden] { display: flex !important; }
+            </style>
+        </noscript>
+
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "CollectionPage",
+                "name": "Figbloom Digital Group Activities",
+                "url": "https://figbloom.org/activities/",
+                "description": "Events, workshops, community work, team activities and milestones from Figbloom Digital Group."
+            }
+        </script>
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://figbloom.org/" },
+                    { "@type": "ListItem", "position": 2, "name": "Activities", "item": "https://figbloom.org/activities/" }
+                ]
+            }
+        </script>
+    </head>
+    <body x-data="mainFunction()" class="act-page">
+        {% include "components/navbar.html" %}
+
+        <div class="grow">
+            <!-- HERO -->
+            <section class="act-hero">
+                <div class="act-wide act-hero__inner">
+                    <div class="act-hero__copy">
+                        <span class="act-eyebrow"><i data-lucide="calendar-days"></i> Our Activities</span>
+                        <h1>Our Journey in <em>Action</em></h1>
+                        <p class="act-hero__lead">
+                            From events, team activities, workshops to community work and milestones&nbsp;
+                            see what we’ve been up to at Figbloom.
+                        </p>
+
+                        {% if total %}
+                            <ul class="act-hero__stats" aria-label="At a glance">
+                                <li><strong>{{ total }}</strong><span>{{ total|pluralize:"story,stories" }} shared</span></li>
+                                {% for c in categories|slice:":2" %}
+                                    <li><strong>{{ c.count }}</strong><span>{{ c.plural }}</span></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        <a class="act-btn act-btn--pill act-hero__cta" href="#browse">
+                            Explore Our Activities <i data-lucide="arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <!-- The photo collage. Purely decorative, so hidden from screen readers;
+                         every piece of it moves (see "Hero collage" in activities.css). -->
+                    <div class="act-collage" aria-hidden="true">
+                        <!-- The leaf grows up from behind the photos -->
+                        <svg class="act-collage__leaf" viewBox="0 0 170 130" focusable="false">
+                            <defs>
+                                <linearGradient id="act-leaf-fill" x1="0" y1="1" x2="1" y2="0">
+                                    <stop offset="0" stop-color="#2c5322" />
+                                    <stop offset="1" stop-color="#4a8a3a" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M0 130 C28 74 84 22 168 0 C150 56 112 104 72 130 Z" fill="url(#act-leaf-fill)" />
+                        </svg>
+
+                        {% for photo in hero_images %}
+                            <div class="act-collage__item act-collage__item--{{ forloop.counter }}">
+                                <div class="act-collage__frame">
+                                    <div class="act-collage__photo">
+                                        <img src="{{ photo }}" alt="" decoding="async"{% if not forloop.first %} loading="lazy"{% endif %} />
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <!-- Three little rays bursting out beside the big photo -->
+                        <svg class="act-collage__spark" viewBox="0 0 60 56" focusable="false">
+                            <g fill="none" stroke="#ff9400" stroke-width="4" stroke-linecap="round">
+                                <path d="M38 50 H8" />
+                                <path d="M41.5 41.5 L20.3 20.3" />
+                                <path d="M50 38 V8" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SHORTCUTS: each one filters the list below -->
+            <div class="act-wide act-strip-wrap">
+                <nav class="act-strip" aria-label="Browse activities by theme">
+                    {% for h in highlights %}
+                        <a class="act-strip__item" href="/activities/?category={{ h.key }}#browse" data-filter="{{ h.key }}">
+                            <span class="act-strip__icon" aria-hidden="true"><i data-lucide="{{ h.icon }}"></i></span>
+                            <span class="act-strip__text">
+                                <span class="act-strip__title">{{ h.title }}</span>
+                                <span class="act-strip__blurb">{{ h.blurb }}</span>
+                            </span>
+                        </a>
+                    {% endfor %}
+                </nav>
+            </div>
+
+            <!-- BROWSER -->
+            <main class="act-main" id="browse">
+                <div class="container">
+                    {% if activities %}
+                        <div x-data="activitiesBrowser()" @activities-filter.window="filterTo($event.detail.category)">
+                            <div class="act-toolbar">
+                                <div class="act-chips" role="group" aria-label="Filter activities by category">
+                                    <button
+                                        type="button"
+                                        class="act-chip"
+                                        :class="{ 'is-active': category === 'all' }"
+                                        :aria-pressed="category === 'all'"
+                                        @click="category = 'all'"
+                                    >
+                                        <i data-lucide="layout-grid"></i> All Activities
+                                        <span class="act-chip__count">{{ total }}</span>
+                                    </button>
+                                    {% for c in categories %}
+                                        <button
+                                            type="button"
+                                            class="act-chip"
+                                            data-cat="{{ c.key }}"
+                                            :class="{ 'is-active': category === '{{ c.key }}' }"
+                                            :aria-pressed="category === '{{ c.key }}'"
+                                            @click="category = '{{ c.key }}'"
+                                        >
+                                            <i data-lucide="{{ c.icon }}"></i> {{ c.plural }}
+                                            <span class="act-chip__count">{{ c.count }}</span>
+                                        </button>
+                                    {% endfor %}
+                                </div>
+
+                                <label class="act-search">
+                                    <span class="sr-only">Search activities</span>
+                                    <i data-lucide="search"></i>
+                                    <input
+                                        type="search"
+                                        placeholder="Search activities…"
+                                        autocomplete="off"
+                                        x-model.debounce.150ms="query"
+                                    />
+                                </label>
+                            </div>
+
+                            <p class="act-status" aria-live="polite" x-cloak x-show="ready" x-text="statusText"></p>
+
+                            <div class="act-grid">
+                                {% for a in activities %}
+                                    {% include "activities/_card.html" with a=a index=forloop.counter %}
+                                {% endfor %}
+                            </div>
+
+                            <div class="act-empty" x-cloak x-show="ready && matchCount === 0">
+                                <i data-lucide="search"></i>
+                                <h3>Nothing matches that</h3>
+                                <p>Try a different word, or switch back to all activities.</p>
+                                <button type="button" class="act-btn act-btn--ghost" @click="reset()">Clear filters</button>
+                            </div>
+
+                            <div class="act-more-wrap" x-cloak x-show="hasMore">
+                                <button type="button" class="act-btn act-btn--ghost" @click="limit += pageSize">
+                                    Show more activities <i data-lucide="arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="act-empty">
+                            <i data-lucide="rocket"></i>
+                            <h2>Stories are on the way</h2>
+                            <p>
+                                We’re getting our latest events, workshops and milestones ready to share.
+                                Check back soon — or follow us to see them first.
+                            </p>
+                            <a class="act-btn" href="/contact/">Get in touch</a>
+                        </div>
+                    {% endif %}
+
+                    <!-- CALL TO ACTION -->
+                    <section class="act-cta" aria-labelledby="act-cta-title">
+                        <div class="act-cta__text">
+                            <span class="act-cta__icon" aria-hidden="true"><i data-lucide="rocket"></i></span>
+                            <div>
+                                <h2 id="act-cta-title">Be part of our journey</h2>
+                                <p>Stay updated with our latest activities, events and innovations.</p>
+                            </div>
+                        </div>
+                        <div class="act-cta__actions">
+                            <ul class="act-social">
+                                <li>
+                                    <a href="https://www.instagram.com/figbloomdigital/" target="_blank" rel="noopener noreferrer">
+                                        <i data-lucide="instagram"></i><span class="sr-only">Instagram</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.facebook.com/figbloomdigital/" target="_blank" rel="noopener noreferrer">
+                                        <i data-lucide="facebook"></i><span class="sr-only">Facebook</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.linkedin.com/company/figbloom-digital-group/" target="_blank" rel="noopener noreferrer">
+                                        <i data-lucide="linkedin"></i><span class="sr-only">LinkedIn</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://x.com/FigbloomDigital/" target="_blank" rel="noopener noreferrer">
+                                        <i data-lucide="x"></i><span class="sr-only">X</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <a class="act-btn act-btn--light" href="/contact/">
+                                Work with us <i data-lucide="arrow-right"></i>
+                            </a>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+
+        {% include "components/footer.html" %}
+
+        <script defer src="/assets/js/alpine.min.js"></script>
+        <script src="/assets/js/lucide.min.js"></script>
+        <script>
+            function activitiesBrowser() {
+                const PAGE_SIZE = 9;
+                const params = new URLSearchParams(window.location.search);
+
+                return {
+                    category: 'all',
+                    query: '',
+                    pageSize: PAGE_SIZE,
+                    limit: PAGE_SIZE,
+                    matchCount: 0,
+                    shownCount: 0,
+                    hasMore: false,
+                    ready: false,
+                    cards: [],
+                    keys: [],
+
+                    init() {
+                        this.cards = Array.from(this.$root.querySelectorAll('[data-activity]'));
+                        this.keys = Array.from(this.$root.querySelectorAll('.act-chip[data-cat]'))
+                            .map((chip) => chip.dataset.cat);
+
+                        // Deep links like /activities/?category=workshop (the
+                        // detail page's "more like this" link uses them).
+                        const wanted = params.get('category');
+                        if (wanted && this.keys.includes(wanted)) this.category = wanted;
+
+                        this.$watch('category', () => {
+                            this.limit = PAGE_SIZE;
+                            this.syncUrl();
+                            this.apply();
+                        });
+                        this.$watch('query', () => {
+                            this.limit = PAGE_SIZE;
+                            this.apply();
+                        });
+                        this.$watch('limit', () => this.apply());
+
+                        this.apply();
+                        this.ready = true;
+                    },
+
+                    get statusText() {
+                        const total = this.matchCount;
+                        if (total === 0) return '';
+                        const noun = total === 1 ? 'activity' : 'activities';
+                        return this.shownCount < total
+                            ? `Showing ${this.shownCount} of ${total} ${noun}`
+                            : `${total} ${noun}`;
+                    },
+
+                    apply() {
+                        const q = this.query.trim().toLowerCase();
+                        let matches = 0;
+                        let shown = 0;
+
+                        this.cards.forEach((card) => {
+                            const inCategory = this.category === 'all' || card.dataset.category === this.category;
+                            const inSearch = !q || card.dataset.search.includes(q);
+                            const matched = inCategory && inSearch;
+
+                            if (matched) matches += 1;
+                            const visible = matched && matches <= this.limit;
+                            card.hidden = !visible;
+                            if (visible) shown += 1;
+                        });
+
+                        this.matchCount = matches;
+                        this.shownCount = shown;
+                        this.hasMore = matches > this.limit;
+                    },
+
+                    reset() {
+                        this.query = '';
+                        this.category = 'all';
+                    },
+
+                    // Called by the shortcut strip under the hero. A theme with
+                    // no tab (nothing published in it yet) just shows everything.
+                    filterTo(key) {
+                        this.query = '';
+                        this.category = this.keys.includes(key) ? key : 'all';
+                    },
+
+                    syncUrl() {
+                        const url = new URL(window.location.href);
+                        if (this.category === 'all') url.searchParams.delete('category');
+                        else url.searchParams.set('category', this.category);
+                        history.replaceState(null, '', url);
+                    },
+                };
+            }
+        </script>
+        <script>
+            // The strip's links work as plain addresses too (?category=…#browse);
+            // with JavaScript they filter in place and glide down to the list.
+            document.querySelectorAll('[data-filter]').forEach((link) => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+
+                    window.dispatchEvent(new CustomEvent('activities-filter', {
+                        detail: { category: link.dataset.filter },
+                    }));
+
+                    const list = document.getElementById('browse');
+                    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    if (list) list.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+                });
+            });
+        </script>
+        <script src="/assets/js/components.js"></script>
+    </body>
+</html>

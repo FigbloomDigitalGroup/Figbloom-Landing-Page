@@ -1,0 +1,1374 @@
+/* ==========================================================================
+   ACTIVITIES — public pages (/activities/ and /activities/<slug>/)
+
+   Hand-written rather than Tailwind: style.css is a prebuilt, purged bundle
+   with no live build step in this repo, so a utility class that isn't already
+   in its compiled output silently does nothing. Everything here is prefixed
+   `act-` so it can't collide with the rest of the site.
+
+   Palette is the site's own (green #2c5322, orange #ff9400, ink #12151e).
+   Each category gets its own accent via --cat / --cat-bg, set once on
+   [data-cat="…"] and inherited by pills, placeholders and icon tiles — a new
+   category needs one block here and nothing else.
+   ========================================================================== */
+
+.act-page {
+    --act-green: #2c5322;
+    --act-green-dark: #1c3616;
+    --act-orange: #ff9400;
+    --act-orange-deep: #d97a00;
+    --act-ink: #12151e;
+    --act-body: #3c4658;
+    --act-muted: #67788f;
+    --act-line: #e0e5eb;
+    --act-soft: #f6f8f5;
+    --act-radius: 18px;
+    --act-shadow: 0 1px 2px rgba(18, 21, 30, 0.05), 0 10px 30px -14px rgba(18, 21, 30, 0.18);
+    --act-shadow-lift: 0 2px 4px rgba(18, 21, 30, 0.06), 0 22px 44px -18px rgba(18, 21, 30, 0.28);
+    --cat: var(--act-green);
+    --cat-bg: #e6f2e1;
+}
+
+.act-page [x-cloak],
+.act-page [hidden] {
+    display: none !important;
+}
+
+/* Category accents. Text colours are the dark shade so a pill clears WCAG AA
+   against its own tint. */
+[data-cat="event"] { --cat: #a85a00; --cat-bg: #fff1dc; --cat-mid: #ffc674; }
+[data-cat="update"] { --cat: #2d5d97; --cat-bg: #e8f0fa; --cat-mid: #9fc1e8; }
+[data-cat="community"] { --cat: #2c5322; --cat-bg: #e6f2e1; --cat-mid: #9fcf8f; }
+[data-cat="achievement"] { --cat: #6d3bd0; --cat-bg: #f0e9fd; --cat-mid: #c3a8f4; }
+[data-cat="workshop"] { --cat: #0b6b63; --cat-bg: #dff4f1; --cat-mid: #86d4cb; }
+
+/* Lucide replaces each <i data-lucide> with an <svg> that keeps the data-lucide
+   attribute, so styling by that attribute works both before and after it runs
+   (styling the <i> element itself would silently stop applying). */
+.act-page [data-lucide] {
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+}
+
+/* --- Draft preview strip (staff only) -------------------------------- */
+
+.act-draft-banner {
+    background: #fff4de;
+    border-bottom: 1px solid #f3d9a4;
+    color: #7a4a00;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    padding: 10px 16px;
+}
+
+/* --- Hero ------------------------------------------------------------- */
+
+/* The hero spans nearly the whole width of the page, wider than the page column
+   used for the list below it: a small margin each side, and a very wide limit
+   on big screens. */
+.act-wide {
+    width: min(100% - 32px, 1560px);
+    margin-inline: auto;
+}
+
+@media (min-width: 640px) {
+    .act-wide {
+        width: min(100% - 48px, 1560px);
+    }
+}
+
+.act-hero {
+    position: relative;
+    isolation: isolate;
+    /* Keeps the collage's leaf and the floating photos inside the hero. */
+    overflow: hidden;
+    /* The bottom padding leaves room for the shortcut strip that overlaps the
+       hero's lower edge. */
+    padding: 40px 0 120px;
+    background:
+        radial-gradient(58% 85% at 84% 14%, #dcebd4 0%, rgba(220, 235, 212, 0) 70%),
+        radial-gradient(42% 50% at 6% 55%, #fdefd9 0%, rgba(253, 239, 217, 0) 70%),
+        linear-gradient(180deg, #f2f8ef 0%, #fbfcfa 100%);
+}
+
+/* Text on the left, photo collage on the right (stacked on small screens). */
+.act-hero__inner {
+    display: grid;
+    gap: 44px;
+    align-items: center;
+    padding-inline: 18px;
+}
+
+.act-hero__inner > * {
+    min-width: 0;
+}
+
+.act-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 17px;
+    border-radius: 999px;
+    background: #e2efdc;
+    color: var(--act-green);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+}
+
+.act-eyebrow [data-lucide] {
+    font-size: 1.15em;
+}
+
+.act-hero h1 {
+    margin: 18px 0 0;
+    color: var(--act-ink);
+    /* One line, always: the title is just under 10 times its font size wide, so
+       the size follows the width of the screen (and is capped on big ones). */
+    font-size: clamp(1.55rem, 8vw, 3.4rem);
+    line-height: 1.05;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    white-space: nowrap;
+}
+
+.act-hero h1 em {
+    position: relative;
+    display: inline-block;
+    font-style: normal;
+    color: var(--act-orange-deep);
+}
+
+/* A hand-drawn style curve under "Action" rather than a straight rule. */
+.act-hero h1 em::after {
+    content: "";
+    position: absolute;
+    left: 1%;
+    right: -1%;
+    bottom: -0.3em;
+    height: 0.32em;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M4 14 C48 3 132 2 196 10' fill='none' stroke='%23ff9400' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+}
+
+.act-hero__lead {
+    margin: 30px 0 0;
+    max-width: 36rem;
+    color: var(--act-body);
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+    line-height: 1.6;
+}
+
+.act-hero__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 0;
+    margin: 34px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.act-hero__stats li {
+    display: flex;
+    flex-direction: column;
+    /* Tighter on phones, so all three numbers share one row. */
+    padding: 0 clamp(14px, 4vw, 36px);
+    border-left: 1px solid var(--act-line);
+    line-height: 1.15;
+}
+
+.act-hero__stats li:first-child {
+    padding-left: 0;
+    border-left: 0;
+}
+
+.act-hero__stats strong {
+    font-size: clamp(1.6rem, 6vw, 2.1rem);
+    font-weight: 700;
+    color: var(--act-green);
+}
+
+.act-hero__stats span {
+    margin-top: 4px;
+    font-size: clamp(0.82rem, 3.2vw, 0.95rem);
+    color: var(--act-muted);
+}
+
+.act-hero__cta {
+    margin-top: 36px;
+}
+
+@media (min-width: 640px) {
+    .act-hero__inner {
+        padding-inline: 30px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .act-hero {
+        padding: 72px 0 132px;
+    }
+
+    .act-hero__inner {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+        gap: 48px;
+        padding-inline: 46px;
+    }
+
+    /* Sized to the narrower text column, so the title still fits on one line. */
+    .act-hero h1 {
+        font-size: clamp(2.4rem, 3.9vw, 4.1rem);
+    }
+}
+
+/* --- Hero collage: three tilted photos that drift gently ------------------- */
+
+/* Each photo is nested layers, so the animations never fight over one property:
+   the ITEM is placed, tilted and fades in on load; the FRAME (the white-bordered
+   card) floats up and down forever AND takes its turn zooming in; the PHOTO just
+   clips the picture to the card's shape.
+
+   The zoom is a relay: in a 9s loop each card is enlarged for its third while
+   the other two sit smaller, and as one shrinks back the next one grows. The
+   cards share one animation, started a third of a loop apart (--turn-delay). */
+
+.act-collage {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    margin-inline: auto;
+    aspect-ratio: 1 / 0.92;
+}
+
+@media (min-width: 1024px) {
+    .act-collage {
+        max-width: none;
+        aspect-ratio: 1.5 / 1;
+    }
+}
+
+.act-collage__item {
+    position: absolute;
+    /* On the item rather than the frame: a clip-path (the notched corner below)
+       would cut a box-shadow off, but a drop-shadow follows the clipped shape. */
+    filter: drop-shadow(0 22px 24px rgba(18, 21, 30, 0.2));
+    animation: act-pop 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* The big photo on the left, with a notch cut out of its top-left corner. */
+.act-collage__item--1 {
+    --notch-x: 20%;
+    --notch-y: 16%;
+    left: 0;
+    top: 11%;
+    width: 59%;
+    height: 84%;
+    rotate: -4deg;
+    z-index: 1;
+    animation-delay: 0.05s;
+}
+
+/* The two smaller ones stacked on the right, overlapping the big one. */
+.act-collage__item--2 {
+    right: 1.5%;
+    top: 0;
+    width: 43%;
+    height: 50%;
+    rotate: 6deg;
+    z-index: 2;
+    animation-delay: 0.25s;
+}
+
+.act-collage__item--3 {
+    right: 0;
+    bottom: 0;
+    width: 42.5%;
+    height: 50%;
+    rotate: 3.5deg;
+    z-index: 3;
+    animation-delay: 0.45s;
+}
+
+.act-collage__frame {
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    border-radius: 24px;
+    background: #fff;
+    /* float moves it (translate, rotate); turn resizes it (scale). */
+    animation:
+        act-float var(--float-time, 7s) ease-in-out var(--float-delay, 0s) infinite,
+        act-turn 9s ease-in-out var(--turn-delay, 0s) infinite;
+}
+
+.act-collage__item--1 .act-collage__frame {
+    --turn-delay: 0s;
+    --float-time: 7s;
+    --bob: -12px;
+    --tilt: 0.8deg;
+    clip-path: polygon(
+        0 var(--notch-y), var(--notch-x) var(--notch-y), var(--notch-x) 0,
+        100% 0, 100% 100%, 0 100%
+    );
+}
+
+.act-collage__item--2 .act-collage__frame {
+    --turn-delay: -6s;
+    --float-time: 6s;
+    --float-delay: -1.5s;
+    --bob: -16px;
+    --tilt: -1.2deg;
+}
+
+.act-collage__item--3 .act-collage__frame {
+    --turn-delay: -3s;
+    --float-time: 8s;
+    --float-delay: -3.5s;
+    --bob: -10px;
+    --tilt: 1deg;
+}
+
+.act-collage__photo {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 17px;
+}
+
+/* The big photo's own notch, cut 7px (the frame's border) inside the frame's. The
+   calc() terms are that border's share of the box, so the white edge stays even. */
+.act-collage__item--1 .act-collage__photo {
+    clip-path: polygon(
+        0 calc(var(--notch-y) + 2.2px), calc(var(--notch-x) + 2.8px) calc(var(--notch-y) + 2.2px),
+        calc(var(--notch-x) + 2.8px) 0, 100% 0, 100% 100%, 0 100%
+    );
+}
+
+.act-collage__photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* The little rays beside the big photo. */
+.act-collage__spark {
+    position: absolute;
+    left: 1%;
+    top: 1%;
+    z-index: 4;
+    width: clamp(34px, 6vw, 56px);
+    height: auto;
+    overflow: visible;
+}
+
+.act-collage__spark path {
+    transform-origin: 50px 50px;
+    animation: act-twinkle 2.6s ease-in-out infinite;
+}
+
+.act-collage__spark path:nth-child(2) {
+    animation-delay: 0.35s;
+}
+
+.act-collage__spark path:nth-child(3) {
+    animation-delay: 0.7s;
+}
+
+/* The leaf peeking out from under the photos. */
+.act-collage__leaf {
+    position: absolute;
+    left: 14%;
+    bottom: -19%;
+    z-index: 0;
+    width: 22%;
+    height: auto;
+    transform-origin: 40% 100%;
+    animation: act-sway 7s ease-in-out infinite;
+}
+
+@keyframes act-pop {
+    from {
+        opacity: 0;
+        translate: 0 40px;
+        scale: 0.9;
+    }
+}
+
+@keyframes act-float {
+    0%, 100% {
+        translate: 0 0;
+        rotate: 0deg;
+    }
+    50% {
+        translate: 0 var(--bob, -12px);
+        rotate: var(--tilt, 1deg);
+    }
+}
+
+/* One card's share of the 9s relay: grow, stay big for a while, shrink, then sit
+   small while the other two take their turns. */
+@keyframes act-turn {
+    0% {
+        scale: 0.94;
+    }
+    12%, 33% {
+        scale: 1.08;
+    }
+    45%, 100% {
+        scale: 0.94;
+    }
+}
+
+@keyframes act-twinkle {
+    0%, 100% {
+        opacity: 0.35;
+        transform: scale(0.82);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.06);
+    }
+}
+
+@keyframes act-sway {
+    0%, 100% {
+        rotate: -2.5deg;
+    }
+    50% {
+        rotate: 3deg;
+    }
+}
+
+/* --- Shortcut strip: floats across the bottom edge of the hero ---------- */
+
+.act-strip-wrap {
+    position: relative;
+    z-index: 3;
+    margin-top: -58px;
+}
+
+.act-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* Inset from the banner's edges so it reads as a card resting on it. */
+    margin-inline: clamp(12px, 4vw, 72px);
+    padding: 20px 10px;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow:
+        0 2px 6px rgba(18, 21, 30, 0.05),
+        0 26px 50px -26px rgba(18, 21, 30, 0.32);
+}
+
+.act-strip__item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+    padding: 10px 24px;
+    border-left: 1px solid var(--act-line);
+    color: inherit;
+    transition: transform 0.2s ease;
+}
+
+.act-strip__item:first-child {
+    border-left: 0;
+}
+
+.act-strip__item:hover {
+    transform: translateY(-2px);
+}
+
+.act-strip__item:focus-visible {
+    outline: 3px solid rgba(255, 148, 0, 0.55);
+    outline-offset: -3px;
+    border-radius: 18px;
+}
+
+.act-strip__icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #e5f0df;
+    color: var(--act-green);
+    font-size: 26px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.act-strip__item:hover .act-strip__icon {
+    background: var(--act-green);
+    color: #fff;
+}
+
+.act-strip__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.act-strip__title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--act-ink);
+}
+
+.act-strip__blurb {
+    margin-top: 3px;
+    font-size: 0.95rem;
+    line-height: 1.35;
+    color: var(--act-muted);
+}
+
+@media (max-width: 960px) {
+    .act-strip {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 12px 8px;
+    }
+
+    .act-strip__item {
+        border-left: 0;
+    }
+
+    .act-strip__item:nth-child(n + 3) {
+        border-top: 1px solid var(--act-line);
+    }
+}
+
+@media (max-width: 560px) {
+    .act-strip {
+        grid-template-columns: 1fr;
+    }
+
+    .act-strip__item {
+        padding: 12px 16px;
+    }
+
+    .act-strip__item:nth-child(n + 2) {
+        border-top: 1px solid var(--act-line);
+    }
+
+    .act-strip__icon {
+        width: 52px;
+        height: 52px;
+        font-size: 23px;
+    }
+}
+
+/* --- Main panel (the list sits below the strip) ------------------------ */
+
+.act-main {
+    position: relative;
+    z-index: 1;
+    padding: 48px 0 72px;
+    background: #fff;
+    /* The strip's links scroll here; keep the sticky navbar off the filters. */
+    scroll-margin-top: 80px;
+}
+
+/* The pill-shaped call-to-action under the hero text. */
+.act-btn--pill {
+    padding: 16px 30px;
+    border-radius: 999px;
+    font-size: 16.5px;
+    box-shadow: 0 16px 26px -14px rgba(44, 83, 34, 0.7);
+}
+
+/* --- Filter bar --------------------------------------------------------- */
+
+.act-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.act-chips {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 4px 2px 8px;
+    margin: 0 -2px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.act-chips::-webkit-scrollbar {
+    display: none;
+}
+
+.act-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 10px 16px;
+    border: 1px solid var(--act-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--act-ink);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+.act-chip [data-lucide] {
+    font-size: 1.05rem;
+    color: var(--cat, var(--act-green));
+}
+
+.act-chip:hover {
+    border-color: var(--act-orange);
+    transform: translateY(-1px);
+}
+
+.act-chip:focus-visible,
+.act-search input:focus-visible,
+.act-btn:focus-visible,
+.act-more:focus-visible,
+.act-card a:focus-visible,
+.act-share a:focus-visible,
+.act-share button:focus-visible {
+    outline: 3px solid rgba(255, 148, 0, 0.55);
+    outline-offset: 2px;
+}
+
+.act-chip__count {
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--act-soft);
+    color: var(--act-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.act-chip.is-active {
+    background: var(--act-green);
+    border-color: var(--act-green);
+    color: #fff;
+}
+
+.act-chip.is-active [data-lucide] {
+    color: var(--act-orange);
+}
+
+.act-chip.is-active .act-chip__count {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+}
+
+.act-search {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.act-search [data-lucide] {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--act-muted);
+    pointer-events: none;
+    font-size: 1.05rem;
+}
+
+.act-search input {
+    width: 100%;
+    height: 46px;
+    padding: 0 16px 0 44px;
+    border: 1px solid var(--act-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--act-ink);
+    font: inherit;
+    font-size: 15px;
+    transition: border-color 0.2s;
+}
+
+.act-search input::placeholder {
+    color: var(--act-muted);
+}
+
+.act-search input:hover,
+.act-search input:focus {
+    border-color: var(--act-orange);
+}
+
+@media (min-width: 900px) {
+    .act-toolbar {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .act-chips {
+        flex-wrap: wrap;
+        overflow: visible;
+    }
+
+    .act-search {
+        width: 300px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+}
+
+.act-status {
+    margin: 22px 0 0;
+    color: var(--act-muted);
+    font-size: 14px;
+}
+
+/* --- Pills, date badge, placeholder art ------------------------------- */
+
+.act-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: var(--cat-bg);
+    color: var(--cat);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+}
+
+.act-pill [data-lucide] {
+    font-size: 0.95rem;
+}
+
+.act-date {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+    min-width: 54px;
+    padding: 7px 8px 6px;
+    border-radius: 12px;
+    background: #fff;
+    color: var(--act-ink);
+    text-align: center;
+    line-height: 1;
+    box-shadow: 0 6px 16px -6px rgba(18, 21, 30, 0.35);
+}
+
+.act-date b {
+    display: block;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.act-date span {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--act-orange-deep);
+}
+
+.act-date small {
+    display: block;
+    margin-top: 2px;
+    font-size: 10px;
+    color: var(--act-muted);
+}
+
+/* When an activity has no photo, its card still looks intentional: a soft
+   wash of the category colour with a large faded icon. */
+.act-art {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(circle at 78% 22%, var(--cat-mid, var(--cat-bg)) 0%, transparent 55%),
+        linear-gradient(135deg, var(--cat-bg), #fff);
+    color: var(--cat);
+}
+
+.act-art [data-lucide] {
+    font-size: 64px;
+    opacity: 0.28;
+}
+
+/* --- Cards -------------------------------------------------------------- */
+
+.act-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 28px;
+}
+
+@media (min-width: 680px) {
+    .act-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1040px) {
+    .act-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+    }
+}
+
+.act-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--act-line);
+    border-radius: var(--act-radius);
+    background: #fff;
+    box-shadow: var(--act-shadow);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    animation: act-rise 0.45s ease both;
+}
+
+.act-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--act-shadow-lift);
+    border-color: transparent;
+}
+
+.act-card__media {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--cat-bg);
+}
+
+.act-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.act-card:hover .act-card__media img {
+    transform: scale(1.05);
+}
+
+.act-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 22px 22px;
+}
+
+.act-card__body .act-pill {
+    align-self: flex-start;
+}
+
+.act-card__title {
+    margin: 2px 0 0;
+    font-size: 1.28rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--act-ink);
+}
+
+/* The whole card is the click target: the title link stretches over it. */
+.act-card__title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.act-card__title a:hover {
+    color: var(--act-green);
+}
+
+.act-card__summary {
+    margin: 0;
+    color: var(--act-body);
+    font-size: 15.5px;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.act-card__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 12px;
+    font-size: 14px;
+}
+
+.act-card__where {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: var(--act-muted);
+}
+
+.act-card__where span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.act-card__more {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    white-space: nowrap;
+    gap: 6px;
+    margin-left: auto;
+    color: var(--act-green);
+    font-weight: 600;
+}
+
+.act-card__more [data-lucide] {
+    transition: transform 0.2s ease;
+}
+
+.act-card:hover .act-card__more [data-lucide] {
+    transform: translateX(4px);
+}
+
+@keyframes act-rise {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* The small icon + text line under an activity's title (used on the detail page). */
+.act-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--act-muted);
+    font-size: 14.5px;
+}
+
+.act-meta li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.act-meta [data-lucide] {
+    color: var(--act-orange-deep);
+}
+
+/* --- Buttons -------------------------------------------------------------- */
+
+.act-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: var(--act-green);
+    color: #fff;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.act-btn:hover {
+    background: var(--act-green-dark);
+    transform: translateY(-1px);
+}
+
+.act-btn--ghost {
+    background: #fff;
+    border-color: var(--act-line);
+    color: var(--act-ink);
+}
+
+.act-btn--ghost:hover {
+    background: #fff;
+    border-color: var(--act-orange);
+    color: var(--act-ink);
+}
+
+.act-btn--light {
+    background: #fff;
+    color: var(--act-green-dark);
+}
+
+.act-btn--light:hover {
+    background: #fff4e2;
+    color: var(--act-green-dark);
+}
+
+.act-more-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 38px;
+}
+
+/* --- Empty states ------------------------------------------------------- */
+
+.act-empty {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    margin-top: 28px;
+    padding: 56px 24px;
+    border: 1.5px dashed var(--act-line);
+    border-radius: var(--act-radius);
+    background: var(--act-soft);
+    text-align: center;
+}
+
+.act-empty [data-lucide] {
+    font-size: 2.4rem;
+    color: var(--act-orange-deep);
+}
+
+.act-empty h2,
+.act-empty h3 {
+    margin: 4px 0 0;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--act-ink);
+}
+
+.act-empty p {
+    margin: 0;
+    max-width: 30rem;
+    color: var(--act-body);
+    line-height: 1.6;
+}
+
+/* --- Call to action ------------------------------------------------------- */
+
+.act-cta {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    gap: 24px;
+    align-items: center;
+    margin-top: 64px;
+    padding: 34px 28px;
+    border-radius: 26px;
+    background: linear-gradient(120deg, var(--act-green-dark), var(--act-green) 60%, #3d6d2e);
+    color: #fff;
+}
+
+.act-cta::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    right: -60px;
+    top: -80px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 148, 0, 0.45), transparent 68%);
+}
+
+.act-cta__text {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.act-cta__icon {
+    display: none;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.12);
+    place-items: center;
+    color: var(--act-orange);
+    font-size: 30px;
+}
+
+.act-cta h2 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(1.45rem, 2.6vw, 2rem);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.act-cta p {
+    margin: 8px 0 0;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.55;
+}
+
+.act-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+}
+
+.act-social {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.act-social a {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 20px;
+    transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.act-social a:hover {
+    background: var(--act-orange);
+    border-color: var(--act-orange);
+    color: #1d1200;
+    transform: translateY(-2px);
+}
+
+@media (min-width: 900px) {
+    .act-cta {
+        grid-template-columns: 1fr auto;
+        padding: 38px 44px;
+    }
+
+    .act-cta__icon {
+        display: grid;
+    }
+}
+
+/* ==========================================================================
+   DETAIL PAGE
+   ========================================================================== */
+
+.act-crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 28px 0 0;
+    list-style: none;
+    color: var(--act-muted);
+    font-size: 14px;
+}
+
+.act-crumbs a:hover {
+    color: var(--act-green);
+    text-decoration: underline;
+}
+
+.act-crumbs li + li::before {
+    content: "/";
+    margin-right: 8px;
+    color: var(--act-line);
+}
+
+.act-article {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 24px 0 8px;
+}
+
+.act-article h1 {
+    margin: 16px 0 0;
+    font-size: clamp(2rem, 4.4vw, 3.2rem);
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--act-ink);
+}
+
+.act-article__lead {
+    margin: 18px 0 0;
+    font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+    line-height: 1.6;
+    color: var(--act-body);
+}
+
+.act-article .act-meta {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--act-line);
+}
+
+.act-figure {
+    margin: 30px 0 0;
+}
+
+.act-figure img {
+    display: block;
+    width: 100%;
+    max-height: 560px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 22px;
+    box-shadow: var(--act-shadow);
+}
+
+.act-prose {
+    margin-top: 34px;
+}
+
+.act-prose p {
+    margin: 0 0 1.3em;
+    color: #2b3342;
+    font-size: 1.14rem;
+    line-height: 1.85;
+}
+
+.act-share {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 36px;
+    padding-top: 26px;
+    border-top: 1px solid var(--act-line);
+}
+
+.act-share__label {
+    margin-right: 6px;
+    color: var(--act-muted);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.act-share a,
+.act-share button {
+    display: inline-grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--act-line);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--act-ink);
+    font-size: 19px;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+.act-share a:hover,
+.act-share button:hover {
+    border-color: var(--act-orange);
+    background: #fff8ee;
+    transform: translateY(-2px);
+}
+
+.act-share button.is-done {
+    border-color: var(--act-green);
+    background: #eef7ec;
+    color: var(--act-green);
+}
+
+.act-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+    color: var(--act-green);
+    font-weight: 600;
+}
+
+.act-back:hover [data-lucide] {
+    transform: translateX(-4px);
+}
+
+.act-back [data-lucide] {
+    transition: transform 0.2s ease;
+}
+
+.act-related {
+    margin-top: 72px;
+    padding-top: 56px;
+    border-top: 1px solid var(--act-line);
+}
+
+.act-related__head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.act-related h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    font-weight: 600;
+    color: var(--act-ink);
+}
+
+.act-related__all {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--act-green);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* --- Motion preferences ------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+    .act-card,
+    .act-collage__item,
+    .act-collage__frame,
+    .act-collage__spark path,
+    .act-collage__leaf {
+        animation: none;
+    }
+
+    .act-card,
+    .act-card__media img,
+    .act-chip,
+    .act-btn,
+    .act-card__more [data-lucide] {
+        transition: none;
+    }
+
+    .act-card:hover,
+    .act-card:hover .act-card__media img {
+        transform: none;
+    }
+}

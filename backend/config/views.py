@@ -4,13 +4,15 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
+from projects.views import homepage_projects, published_projects
+
 
 @ensure_csrf_cookie
 def job_detail_page(request):
     return render(request, 'career/detail.html')
 
 def home(request):
-    return render(request, 'index.html')
+    return render(request, 'index.html', {'home_projects': homepage_projects()})
 
 def about_us(request):
     return render(request, 'about-us/index.html')
@@ -22,10 +24,25 @@ def contact(request):
     return render(request, 'contact/index.html')
 
 def projects(request):
-    return render(request, 'projects/index.html')
+    items = published_projects()
+
+    # Filter tabs, in the order the categories first appear in the list.
+    categories = list(dict.fromkeys(project.category for project in items))
+
+    return render(request, 'projects/index.html', {
+        'projects': items,
+        'project_categories': categories,
+    })
 
 def service(request):
     return render(request, 'service/index.html')
+
+def privacy_policy(request):
+    return render(request, 'privacy-policy/index.html')
+
+def figillance_privacy(request):
+    # The Figillance Android app's policy: the URL its Google Play listing links to.
+    return render(request, 'figillance/privacy/index.html')
 
 
 # --- Admin dashboard auth + pages ---
@@ -56,7 +73,7 @@ def admin_logout_api(request):
 
 @login_required(login_url='/admin-dashboard/login')
 def admin_dashboard_page(request):
-    return render(request, 'admin-dashboard/index.html')
+    return render(request, 'admin-dashboard/index.html', {'active_nav': 'dashboard'})
 
 
 @ensure_csrf_cookie
@@ -68,4 +85,5 @@ def admin_user_api(request):
         'is_authenticated': is_auth,
         'is_staff': user.is_staff if is_auth else False,
         'username': user.username if is_auth else '',
+        'email': user.email if is_auth else '',
     })

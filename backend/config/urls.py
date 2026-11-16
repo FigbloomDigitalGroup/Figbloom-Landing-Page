@@ -18,13 +18,25 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
-from careers.views import admin_application_detail
+from careers.views import (
+    admin_subscribers,
+    admin_application_detail,
+    admin_profile_settings,
+    admin_contact_page,
+    unsubscribe_view,
+    newsletter_public_view,
+    withdraw_application_view,
+    ChangePasswordView,
+)
+from activities import views as activity_views
+from projects import views as project_views
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('careers.urls')),
+    path('api/', include('activities.urls')),
+    path('api/', include('projects.urls')),
 
     # Admin dashboard (separate from Django's built-in /admin/)
     path('admin-dashboard/login', views.admin_login_page, name='admin-login-page'),
@@ -32,16 +44,44 @@ urlpatterns = [
     path('api/auth/logout/', views.admin_logout_api, name='admin-logout-api'),
     path('api/auth/user/', views.admin_user_api, name='admin-user-api'),
     path('admin-dashboard/', views.admin_dashboard_page, name='admin-dashboard'),
-
     path('', views.home, name='home'),
-    path('about-us', views.about_us, name='about-us'),
-    path('career', views.career, name='career'),
-    path('career/detail', views.job_detail_page, name='job-detail-page'),
-    path('contact', views.contact, name='contact'),
-    path('projects', views.projects, name='projects'),
-    path('service', views.service, name='service'),
-    path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'
-),
+    # Each page answers on BOTH /x and /x/ with a 200 instead of redirecting between
+    # them. A redirect in either direction keeps breaking links whenever one form
+    # or the other gets normalised. The sitemap and rel=canonical advertise the
+    # trailing-slash form, so that pattern carries the URL name and is what
+    # reverse() returns; the bare pattern is an unnamed alias.
+    path('about-us/', views.about_us, name='about-us'),
+    path('about-us', views.about_us),
+    path('career/', views.career, name='career'),
+    path('career', views.career),
+    path('career/detail/', views.job_detail_page, name='job-detail-page'),
+    path('career/detail', views.job_detail_page),
+    path('contact/', views.contact, name='contact'),
+    path('contact', views.contact),
+    path('projects/', views.projects, name='projects'),
+    path('projects', views.projects),
+    path('service/', views.service, name='service'),
+    path('service', views.service),
+    path('activities/', activity_views.activities_page, name='activities'),
+    path('activities', activity_views.activities_page),
+    path('activities/<slug:slug>/', activity_views.activity_detail_page, name='activity-detail'),
+    path('activities/<slug:slug>', activity_views.activity_detail_page),
+    path('privacy-policy/', views.privacy_policy, name='privacy-policy'),
+    path('privacy-policy', views.privacy_policy),
+    path('figillance/privacy/', views.figillance_privacy, name='figillance-privacy'),
+    path('figillance/privacy', views.figillance_privacy),
+    path('admin-dashboard/application-detail', admin_application_detail,name='admin-application-detail'),
+    path("admin-dashboard/subscribers",admin_subscribers,name="admin-subscribers"),
+    path("api/auth/change-password/",ChangePasswordView.as_view(),name="change-password"),
+    path("admin-dashboard/profile-settings",admin_profile_settings,name="admin-profile-settings"),
+    path("admin-dashboard/contact",admin_contact_page,name="admin-contact-page"),
+    path("admin-dashboard/activities", activity_views.admin_activities_page, name="admin-activities-page"),
+    path("admin-dashboard/projects", project_views.admin_projects_page, name="admin-projects-page"),
+    path("unsubscribe/<str:token>/", unsubscribe_view, name="newsletter-unsubscribe"),
+    path("newsletters/<slug:slug>/", newsletter_public_view, name="newsletter-public"),
+    path("newsletters/<slug:slug>", newsletter_public_view),
+    path("career/withdraw/<str:token>/", withdraw_application_view, name="application-withdraw"),
+
 ]
 
 if settings.DEBUG:

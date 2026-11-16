@@ -1,8 +1,10 @@
 from rest_framework import serializers
-from .models import Job, JobApplication, NewsletterSubscriber
+from .models import Job, JobApplication, NewsletterSubscriber, SentNewsletter, ContactInquiry
 
 
 class JobSerializer(serializers.ModelSerializer):
+    is_currently_open = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = Job
         fields = [
@@ -18,12 +20,13 @@ class JobSerializer(serializers.ModelSerializer):
             'requirements',
             'deadline',
             'is_open',
+            'is_currently_open',
             'created_at',
         ]
 
 
 class JobApplicationSerializer(serializers.ModelSerializer):
-    job = serializers.PrimaryKeyRelatedField(queryset=Job.objects.filter(is_open=True))
+    job = serializers.PrimaryKeyRelatedField(queryset=Job.objects.open())
 
     class Meta:
         model = JobApplication
@@ -51,8 +54,55 @@ ApplicationSerializer = JobApplicationSerializer
 class NewsletterSubscriberSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsletterSubscriber
-        fields = ["id", "email", "is_active", "subscribed_at"]
-        read_only_fields = ["id", "subscribed_at"]
+        fields = ["id", "email", "is_active", "is_suspended", "suspended_at", "subscribed_at"]
+        # Suspension only changes through the admin suspend/unsuspend actions.
+        read_only_fields = ["id", "is_suspended", "suspended_at", "subscribed_at"]
+
+
+class SentNewsletterSerializer(serializers.ModelSerializer):
+    sent_by = serializers.CharField(source="sent_by.username", default="", read_only=True)
+    public_url = serializers.SerializerMethodField()
+
+    def get_public_url(self, obj):
+        request = self.context.get("request")
+        path = obj.get_absolute_url()
+        return request.build_absolute_uri(path) if request else path
+
+    class Meta:
+        model = SentNewsletter
+        fields = [
+            "id",
+            "subject",
+            "slug",
+            "public_url",
+            "content",
+            "audience",
+            "total_recipients",
+            "sent_count",
+            "failed_count",
+            "failed_emails",
+            "sent_by",
+            "sent_at",
+        ]
+        read_only_fields = fields
+
+
+class ContactInquirySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInquiry
+        fields = [
+            'id',
+            'full_name',
+            'company',
+            'email',
+            'phone',
+            'service',
+            'budget',
+            'timeline',
+            'brief',
+            'created_at',
+        ]
+        read_only_fields = ['id', 'created_at']
 
 
 # --- Admin-facing serializers ---
@@ -65,4 +115,10 @@ class JobApplicationAdminSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobApplication
+        fields = '__all__'
+
+
+class ContactInquiryAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInquiry
         fields = '__all__'

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include "components/analytics.html" %}
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#FF9400" />
+        <meta name="author" content="Figbloom Digital Group" />
+        <meta name="robots" content="index, follow" />
+        <meta name="description" content="What the Figillance app collects, why, who sees it, how long it is kept, and the choices and rights you have." />
+        <link rel="canonical" href="https://figbloom.org/figillance/privacy/" />
+        <meta property="og:locale" content="en_KE" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Figillance privacy policy | Figbloom Digital Group" />
+        <meta property="og:description" content="What the Figillance app collects, why, and who sees it." />
+        <meta property="og:url" content="https://figbloom.org/figillance/privacy/" />
+        <meta property="og:site_name" content="Figbloom Digital Group" />
+
+        <title>Figillance privacy policy | Figbloom Digital Group</title>
+        {% include "components/favicon.html" %}
+
+        <link
+            rel="stylesheet"
+            href="/assets/css/style.css"
+        />
+
+        <!--
+            Same approach as /privacy-policy/: plain CSS, because the prebuilt stylesheet
+            only has the Tailwind classes the original source used. The table styles are
+            new; .prose doesn't style tables.
+        -->
+        <style>
+            .policy h3 {
+                margin-top: 2rem;
+            }
+            .policy ul {
+                margin-bottom: 1.5rem;
+                padding-left: 1.25rem;
+                list-style: disc;
+            }
+            .policy li {
+                margin-bottom: 0.5rem;
+            }
+            .policy strong {
+                color: var(--color-black);
+                font-weight: 600;
+            }
+            .policy a {
+                color: var(--color-primary);
+                text-decoration: underline;
+                overflow-wrap: anywhere;
+            }
+            .policy .table-wrap {
+                margin-bottom: 1.5rem;
+                overflow-x: auto;
+            }
+            .policy table {
+                width: 100%;
+                min-width: 640px;
+                border-collapse: collapse;
+                font-size: 0.95rem;
+            }
+            .policy th,
+            .policy td {
+                padding: 0.6rem 0.75rem;
+                border-bottom: 1px solid #e5e5e5;
+                text-align: left;
+                vertical-align: top;
+            }
+            .policy th {
+                color: var(--color-black);
+                font-weight: 600;
+            }
+            .policy .note {
+                padding: 1rem 1.25rem;
+                margin-bottom: 1.5rem;
+                border-left: 4px solid var(--color-primary);
+                background: #fff7ec;
+            }
+        </style>
+    </head>
+    <body x-data="mainFunction()">
+        {% include "components/navbar.html" %}
+
+        <div class="grow">
+            <article
+                class="policy prose container py-20 lg:py-28"
+                style="max-width: 860px;"
+            >
+                <h1>Figillance privacy policy</h1>
+                <p>Effective 3 November 2026</p>
+                <p>Figillance ("the app") is published by Figbloom Digital Group ("Figbloom", "we"). This policy explains what the app collects, why, who sees it, and what you can do about it. Questions: <a href="mailto:privacy@figbloom.org">privacy@figbloom.org</a>.</p>
+                <p>This policy covers the Figillance app for Android. Figbloom's website has <a href="/privacy-policy/">its own privacy policy</a>.</p>
+
+                <h2>The short version</h2>
+                <ul>
+                    <li>Your location is used to show help and risks near you. It goes to Google only when you search for a place or ask for directions.</li>
+                    <li>Your Medical ID and emergency contacts stay on your phone, encrypted. They are shared only when you send an SOS, and only with the people helping you.</li>
+                    <li>Faces in photos and clips are blurred on your phone before anything is posted.</li>
+                    <li>You can post anonymously. Other users then see "Anonymous resident", not your name.</li>
+                    <li>You never see camera footage, and nobody sees your camera unless you take a photo or clip to report something.</li>
+                    <li>We don't sell your data or show ads.</li>
+                </ul>
+
+                <h2>Early preview</h2>
+                <p class="note">This version is a test build. Accounts, reports, clips, alerts, SOS and the people and places near you are sample data kept on your phone. In this build, an SOS doesn't reach responders and nothing you post leaves your phone. Map tiles, place search, directions and Google sign-in are real and work as described below. In an emergency, call 999.</p>
+
+                <h2>What we collect and why</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>Data</th><th>When</th><th>Where it goes</th><th>Why</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Precise and approximate location</td><td>While the app is open; in the background only during an SOS, a walk with Walk with me, or turn-by-turn navigation, with a notification showing</td><td>Google Maps Platform, when you search for a place or ask for a route. Figbloom's servers, to find incidents near you, once accounts are live</td><td>Show help and risks near you, route you, send help to the right place</td></tr>
+                            <tr><td>Place searches</td><td>When you type in the search box</td><td>Google Places, to find the place</td><td>Search</td></tr>
+                            <tr><td>Name, email address, password</td><td>When you create an account</td><td>Figbloom's servers, once accounts are live. In the preview, your phone only</td><td>Your account</td></tr>
+                            <tr><td>Google account name and email</td><td>When you choose Continue with Google</td><td>Google confirms who you are. Figbloom's servers, once accounts are live</td><td>Sign-in</td></tr>
+                            <tr><td>Phone number</td><td>If you sign in with your phone number</td><td>Figbloom's servers and an SMS provider, to send the code</td><td>Sign-in</td></tr>
+                            <tr><td>Reports, replies, photos, clips</td><td>When you post</td><td>Figbloom's servers and other users, once posting is live. Faces are blurred first</td><td>Community safety reports</td></tr>
+                            <tr><td>Medical ID, emergency contacts</td><td>When you add them</td><td>Your phone, encrypted. Shared with responders and your contacts only when you send an SOS</td><td>Emergency help</td></tr>
+                            <tr><td>Walk with me and your Circle</td><td>When you start a walk</td><td>Your Circle, who can follow the walk, once Walk with me is live</td><td>Getting home safely</td></tr>
+                            <tr><td>Footage requests</td><td>When you ask for footage to be kept</td><td>Figbloom and the camera's owner, once requests are live</td><td>Preserving evidence</td></tr>
+                            <tr><td>Notification token</td><td>If you allow notifications</td><td>Google Firebase Cloud Messaging and Figbloom's servers, once alerts are live</td><td>Sending you alerts</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Google's map and face-detection components also send Google technical data to keep them working: device model, Android version, app version, crash reports and an identifier for that component. They don't identify you. See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's privacy policy</a>.</p>
+
+                <h2>What stays on your phone</h2>
+                <ul>
+                    <li>Your Medical ID and emergency contacts, encrypted with a key held by Android's secure hardware.</li>
+                    <li>Your sign-in session, encrypted the same way. Fingerprint unlock uses Android's biometrics; we never see your fingerprint.</li>
+                    <li>Report drafts and your settings.</li>
+                    <li>Face detection: photos and clips are checked and blurred by a model on your phone. They are never sent anywhere for blurring.</li>
+                </ul>
+
+                <h2>Who we share with</h2>
+                <ul>
+                    <li><strong>Service providers working for us:</strong> Google (maps, place search, directions, sign-in, notifications) and our hosting provider. They may use data only to provide their service.</li>
+                    <li><strong>Responders and your contacts, when you send an SOS:</strong> your location, the service you asked for and, if you saved them, your Medical ID and emergency contacts.</li>
+                    <li><strong>Other users:</strong> what you post, with your name or as "Anonymous resident". Our moderators can still see who posted, to stop abuse.</li>
+                    <li><strong>The law:</strong> when the law requires it, for example a valid police or court request.</li>
+                </ul>
+                <p>We don't sell your data and we don't use it for advertising.</p>
+
+                <h2>How long we keep it</h2>
+                <ul>
+                    <li>Account data: until you delete your account.</li>
+                    <li>Reports and clips: as long as they're useful to the community, and at most 12 months, unless they're part of a footage request or a legal case.</li>
+                    <li>SOS and location history: 90 days, then deleted.</li>
+                    <li>Data on your phone: until you delete it, log out, or uninstall the app.</li>
+                </ul>
+
+                <h2>Security</h2>
+                <p>Everything the app sends goes over HTTPS. Sensitive data on your phone is encrypted. Only staff who need user data to run the service can see it.</p>
+
+                <h2 id="delete">Your choices and rights</h2>
+                <ul>
+                    <li><strong>Permissions:</strong> location, camera, notifications and biometrics are optional. You can turn each one off in Android settings; the features that need it then stop working.</li>
+                    <li><strong>Delete your data:</strong> use Profile &rarr; Log out, or uninstall the app, to clear everything on your phone. To delete your account and what's on our servers, email <a href="mailto:privacy@figbloom.org">privacy@figbloom.org</a>. We'll do it within 30 days.</li>
+                    <li><strong>Your rights:</strong> under Kenya's Data Protection Act, 2019, you can ask to see, correct or delete your data, and object to how it's used. You can also complain to the <a href="https://www.odpc.go.ke/" target="_blank" rel="noopener">Office of the Data Protection Commissioner</a>.</li>
+                </ul>
+
+                <h2>Children</h2>
+                <p>The app is for people aged 18 and over. We don't knowingly collect data from anyone under 18. If you think a child has given us data, email <a href="mailto:privacy@figbloom.org">privacy@figbloom.org</a> and we'll delete it.</p>
+
+                <h2>Changes</h2>
+                <p>If this policy changes, we'll update the date at the top and tell you in the app before the change applies.</p>
+
+                <h2>Contact</h2>
+                <p>Figbloom Digital Group, SMK Business Center, 3rd Floor, Enterprise Road, Nairobi, Kenya &middot; <a href="mailto:privacy@figbloom.org">privacy@figbloom.org</a></p>
+            </article>
+        </div>
+
+        {% include "components/footer.html" %}
+
+        <script src="/assets/js/lucide.min.js"></script>
+        <script defer src="/assets/js/alpine.min.js"></script>
+
+        <script>
+            function mainFunction() {
+                return {
+                    init() {
+                        this.$nextTick(() => lucide.createIcons())
+                    },
+                }
+            }
+        </script>
+    </body>
+</html>

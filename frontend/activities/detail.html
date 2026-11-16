@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% include "components/analytics.html" %}
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#FF9400" />
+        <meta name="author" content="Figbloom Digital Group" />
+        {% if activity.is_published %}
+            <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        {% else %}
+            <meta name="robots" content="noindex, nofollow" />
+        {% endif %}
+        <meta name="description" content="{{ activity.summary }}" />
+        <link rel="canonical" href="{{ canonical_url }}" />
+        <meta property="og:locale" content="en_KE" />
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content="{{ activity.title }} | Figbloom Digital Group" />
+        <meta property="og:description" content="{{ activity.summary }}" />
+        <meta property="og:url" content="{{ canonical_url }}" />
+        <meta property="og:site_name" content="Figbloom Digital Group" />
+        <meta property="og:image" content="{% if og_image %}{{ og_image }}{% else %}https://figbloom.org/assets/images/og-card.png{% endif %}" />
+        <meta property="article:published_time" content="{{ activity.activity_date|date:'Y-m-d' }}" />
+        <meta property="article:section" content="{{ activity.category_label }}" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="{{ activity.title }} | Figbloom Digital Group" />
+        <meta name="twitter:description" content="{{ activity.summary }}" />
+        <meta name="twitter:image" content="{% if og_image %}{{ og_image }}{% else %}https://figbloom.org/assets/images/og-card.png{% endif %}" />
+
+        <title>{{ activity.title }} | Figbloom Digital Group</title>
+        {% include "components/favicon.html" %}
+
+        <link rel="stylesheet" href="/assets/css/style.css" />
+        <link rel="stylesheet" href="/assets/css/motion.css" />
+        <link rel="stylesheet" href="/assets/css/activities.css" />
+
+        <script type="application/ld+json">{{ json_ld|safe }}</script>
+    </head>
+    <body x-data="mainFunction()" class="act-page">
+        {% include "components/navbar.html" %}
+
+        <div class="grow">
+            {% if not activity.is_published %}
+                <div class="act-draft-banner" role="status">
+                    Draft preview — this activity isn’t published yet, so only signed-in staff can see this page.
+                </div>
+            {% endif %}
+
+            <main class="container" style="padding-bottom: 72px">
+                <nav aria-label="Breadcrumb">
+                    <ol class="act-crumbs">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/activities/">Activities</a></li>
+                        <li aria-current="page">{{ activity.category_label }}</li>
+                    </ol>
+                </nav>
+
+                <article class="act-article" data-cat="{{ activity.category }}">
+                    <span class="act-pill"><i data-lucide="{{ activity.category_info.icon }}"></i>{{ activity.category_label }}</span>
+                    <h1>{{ activity.title }}</h1>
+                    <p class="act-article__lead">{{ activity.summary }}</p>
+
+                    <ul class="act-meta">
+                        <li><i data-lucide="calendar-days"></i><time datetime="{{ activity.activity_date|date:'Y-m-d' }}">{{ activity.activity_date|date:"j F Y" }}</time></li>
+                        {% if activity.location %}
+                            <li><i data-lucide="map-pin"></i>{{ activity.location }}</li>
+                        {% endif %}
+                    </ul>
+
+                    {% if activity.cover_image %}
+                        <figure class="act-figure">
+                            <img src="{{ activity.cover_image.url }}" alt="{{ activity.title }}" decoding="async" />
+                        </figure>
+                    {% endif %}
+
+                    {% if activity.paragraphs %}
+                        <div class="act-prose">
+                            {% for paragraph in activity.paragraphs %}
+                                <p>{{ paragraph|linebreaksbr }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="act-share">
+                        <span class="act-share__label">Share</span>
+                        <a
+                            href="https://wa.me/?text={{ activity.title|urlencode:'' }}%20{{ canonical_url|urlencode:'' }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <i data-lucide="message-circle"></i><span class="sr-only">Share on WhatsApp</span>
+                        </a>
+                        <a
+                            href="https://x.com/intent/post?text={{ activity.title|urlencode:'' }}&url={{ canonical_url|urlencode:'' }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <i data-lucide="x"></i><span class="sr-only">Share on X</span>
+                        </a>
+                        <a
+                            href="https://www.facebook.com/sharer/sharer.php?u={{ canonical_url|urlencode:'' }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <i data-lucide="facebook"></i><span class="sr-only">Share on Facebook</span>
+                        </a>
+                        <a
+                            href="https://www.linkedin.com/sharing/share-offsite/?url={{ canonical_url|urlencode:'' }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <i data-lucide="linkedin"></i><span class="sr-only">Share on LinkedIn</span>
+                        </a>
+                        <button type="button" data-copy-link="{{ canonical_url }}">
+                            <i data-lucide="link"></i><span class="sr-only">Copy link</span>
+                        </button>
+                    </div>
+
+                    <a class="act-back" href="/activities/"><i data-lucide="arrow-left"></i> All activities</a>
+                </article>
+
+                {% if related %}
+                    <section class="act-related" aria-labelledby="act-related-title">
+                        <div class="act-related__head">
+                            <h2 id="act-related-title">Keep exploring</h2>
+                            {% if activity.category_info.tab %}
+                                <a class="act-related__all" href="/activities/?category={{ activity.category }}">
+                                    More {{ activity.category_info.plural|lower }} <i data-lucide="arrow-right"></i>
+                                </a>
+                            {% else %}
+                                <a class="act-related__all" href="/activities/">
+                                    All activities <i data-lucide="arrow-right"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                        <div class="act-grid">
+                            {% for r in related %}
+                                {% include "activities/_card.html" with a=r %}
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
+            </main>
+        </div>
+
+        {% include "components/footer.html" %}
+
+        <script defer src="/assets/js/alpine.min.js"></script>
+        <script src="/assets/js/lucide.min.js"></script>
+        <script>
+            // "Copy link" share button, with a visible confirmation.
+            document.querySelectorAll('[data-copy-link]').forEach((button) => {
+                button.addEventListener('click', async () => {
+                    const url = button.dataset.copyLink;
+
+                    try {
+                        await navigator.clipboard.writeText(url);
+                    } catch (error) {
+                        // Clipboard API unavailable (older browser, insecure
+                        // origin): let the person copy it by hand.
+                        window.prompt('Copy this link', url);
+                        return;
+                    }
+
+                    button.classList.add('is-done');
+                    button.querySelector('.sr-only').textContent = 'Link copied';
+                    setTimeout(() => {
+                        button.classList.remove('is-done');
+                        button.querySelector('.sr-only').textContent = 'Copy link';
+                    }, 2200);
+                });
+            });
+        </script>
+        <script src="/assets/js/components.js"></script>
+    </body>
+</html>

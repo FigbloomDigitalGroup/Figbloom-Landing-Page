@@ -1,0 +1,58 @@
+/* ==========================================================================
+   Project card hover — the /projects/ grid, the homepage carousel and the
+   projects carousel on the services page.
+
+   The picture stays clear: there is no colour wash over it. On hover (or when
+   the card's link has keyboard focus) a "View Project" button fades in with a
+   small rise. Deliberately subtle.
+
+   Hand-written rather than Tailwind: style.css is a prebuilt, purged bundle, so
+   a utility that isn't already in its compiled output silently does nothing.
+   ========================================================================== */
+
+.project-card__cta {
+    /* The button's colours. For a green one instead, use #2c5322 with #fff text. */
+    --cta-bg: var(--color-primary, #ff9400);
+    --cta-fg: #fff;
+    border-color: var(--cta-bg);
+    background-color: var(--cta-bg);
+    color: var(--cta-fg);
+    font-weight: 600;
+    /* White on this orange is on the faint side; a soft shadow keeps it crisp. */
+    text-shadow: 0 1px 2px rgba(120, 60, 0, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px) scale(0.96);
+    /* visibility waits for the fade-out so the button doesn't vanish early. */
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease,
+        visibility 0s linear 0.25s;
+    /* With no tint behind it, a soft shadow lifts it off any photo. */
+    box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Keyboard users reach the card through its link, so focus shows it too. On a
+   touch screen there is no hover, and the whole card is still the link. */
+.project-card:focus-within .project-card__cta {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+}
+
+@media (hover: hover) {
+    .project-card:hover .project-card__cta {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        transition-delay: 0s;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .project-card__cta {
+        transform: none;
+        transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+    }
+}

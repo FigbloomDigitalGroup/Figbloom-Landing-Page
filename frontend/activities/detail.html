@@ -123,9 +123,15 @@
                     <section class="act-related" aria-labelledby="act-related-title">
                         <div class="act-related__head">
                             <h2 id="act-related-title">Keep exploring</h2>
-                            <a class="act-related__all" href="/activities/?category={{ activity.category }}">
-                                More {{ activity.category_info.plural|lower }} <i data-lucide="arrow-right"></i>
-                            </a>
+                            {% if activity.category_info.tab %}
+                                <a class="act-related__all" href="/activities/?category={{ activity.category }}">
+                                    More {{ activity.category_info.plural|lower }} <i data-lucide="arrow-right"></i>
+                                </a>
+                            {% else %}
+                                <a class="act-related__all" href="/activities/">
+                                    All activities <i data-lucide="arrow-right"></i>
+                                </a>
+                            {% endif %}
                         </div>
                         <div class="act-grid">
                             {% for r in related %}

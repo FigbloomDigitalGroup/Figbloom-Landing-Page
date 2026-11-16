@@ -14,6 +14,25 @@ from .serializers import ActivityAdminSerializer, delete_stored_file
 SITE_URL = 'https://figbloom.org'
 RELATED_COUNT = 3
 
+# The hero shows a collage of this many photos. When fewer activities have a
+# cover picture, the gaps are filled from these (photos already used elsewhere
+# on the site), so the collage never has an empty frame.
+HERO_PHOTO_COUNT = 3
+HERO_FALLBACK_PHOTOS = [
+    '/assets/images/gallery1.jpg',
+    '/assets/images/gallery3.jpg',
+    '/assets/images/gallery4.jpg',
+]
+
+# The strip of shortcuts under the hero. Each one filters the list below to a
+# category that has a tab (see categories.py).
+HIGHLIGHTS = [
+    {'key': 'update', 'title': 'Stories', 'blurb': 'Read inspiring stories', 'icon': 'megaphone'},
+    {'key': 'event', 'title': 'Events', 'blurb': 'Discover upcoming events', 'icon': 'calendar-days'},
+    {'key': 'community', 'title': 'Community', 'blurb': 'See our community impact', 'icon': 'users'},
+    {'key': 'achievement', 'title': 'Impact', 'blurb': 'Celebrating achievements', 'icon': 'trophy'},
+]
+
 
 def _absolute(url):
     """An address usable in og:image / JSON-LD. Cloudinary already returns a
@@ -39,26 +58,32 @@ def activities_page(request):
     for activity in activities:
         counts[activity.category] = counts.get(activity.category, 0) + 1
 
-    # Only categories that have something to show get a filter chip — a row of
-    # dead chips on a young site just reads as broken.
+    # Only categories that have a tab AND something to show get a filter chip —
+    # a row of dead chips on a young site just reads as broken. Entries in a
+    # category without a tab are still listed under "All Activities".
     categories = [
         {**category, 'count': counts[category['key']]}
         for category in CATEGORIES
-        if counts.get(category['key'])
+        if category['tab'] and counts.get(category['key'])
     ]
 
-    # Newest first already (model ordering), so this is the latest featured one.
-    featured = next((a for a in activities if a.is_featured), None)
-    hero_images = [a for a in activities if a.cover_image][:3]
+    # The collage beside the hero text: covers of featured activities first (the
+    # big frame is the first one), then the newest. The list is newest first
+    # already and sorted() keeps that order within each group.
+    covers = [
+        a.cover_image.url
+        for a in sorted((a for a in activities if a.cover_image), key=lambda a: not a.is_featured)
+    ]
+    hero_images = (covers + HERO_FALLBACK_PHOTOS)[:HERO_PHOTO_COUNT]
+    first_with_photo = next((a for a in activities if a.cover_image), None)
 
     return render(request, 'activities/index.html', {
         'activities': activities,
         'categories': categories,
-        'all_categories': CATEGORIES,
-        'featured': featured,
+        'highlights': HIGHLIGHTS,
         'hero_images': hero_images,
         'total': len(activities),
-        'og_image': _absolute(hero_images[0].cover_image.url) if hero_images else '',
+        'og_image': _absolute(first_with_photo.cover_image.url) if first_with_photo else '',
     })
 
 

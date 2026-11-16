@@ -43,7 +43,6 @@
       --c-community-fg: #2c5322;   --c-community-bg: #e6f2e1;
       --c-achievement-fg: #6d3bd0; --c-achievement-bg: #f0e9fd;
       --c-workshop-fg: #0b6b63;    --c-workshop-bg: #dff4f1;
-      --c-team-fg: #a3194f;        --c-team-bg: #fde8f0;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -53,7 +52,6 @@
         --c-community-fg: #9bd08c;   --c-community-bg: #1f3319;
         --c-achievement-fg: #c4a6f7; --c-achievement-bg: #2c2140;
         --c-workshop-fg: #7fd3c9;    --c-workshop-bg: #15332f;
-        --c-team-fg: #f4a3c2;        --c-team-bg: #3d1a29;
       }
     }
 
@@ -63,7 +61,6 @@
       --c-community-fg: #9bd08c;   --c-community-bg: #1f3319;
       --c-achievement-fg: #c4a6f7; --c-achievement-bg: #2c2140;
       --c-workshop-fg: #7fd3c9;    --c-workshop-bg: #15332f;
-      --c-team-fg: #f4a3c2;        --c-team-bg: #3d1a29;
     }
 
     .cat {
@@ -81,7 +78,6 @@
     .cat[data-cat="community"]   { color: var(--c-community-fg);   background: var(--c-community-bg); }
     .cat[data-cat="achievement"] { color: var(--c-achievement-fg); background: var(--c-achievement-bg); }
     .cat[data-cat="workshop"]    { color: var(--c-workshop-fg);    background: var(--c-workshop-bg); }
-    .cat[data-cat="team"]        { color: var(--c-team-fg);        background: var(--c-team-bg); }
 
     /* Page */
 
@@ -710,6 +706,7 @@
                   <option value="{{ c.key }}">{{ c.label }}</option>
                 {% endfor %}
               </select>
+              <div class="field-hint"><span id="category-hint"></span></div>
               <div class="field-error"></div>
             </div>
 
@@ -1065,6 +1062,16 @@
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
   }
 
+  // Some categories have no filter tab on the public page; say so, so nobody
+  // wonders why a workshop isn't under any tab.
+  function updateCategoryHint() {
+    const category = CATEGORY_BY_KEY[$("f-category").value];
+
+    $("category-hint").textContent = category && !category.tab
+      ? "This category has no filter tab on the website. It shows under All Activities."
+      : "";
+  }
+
   function updateSummaryCount() {
     $("summary-count").textContent = `${$("f-summary").value.length} / 280`;
   }
@@ -1135,6 +1142,7 @@
     $("f-featured").checked = activity ? activity.is_featured : false;
 
     resetCoverState(activity ? activity.image_url : "");
+    updateCategoryHint();
     updateSummaryCount();
     setSaving(false);
 
@@ -1298,6 +1306,7 @@
   $("editor-cancel").addEventListener("click", closeEditor);
   $("editor-form").addEventListener("submit", saveActivity);
   $("f-summary").addEventListener("input", updateSummaryCount);
+  $("f-category").addEventListener("change", updateCategoryHint);
 
   ["input", "change"].forEach((type) => {
     $("editor-form").addEventListener(type, (event) => {

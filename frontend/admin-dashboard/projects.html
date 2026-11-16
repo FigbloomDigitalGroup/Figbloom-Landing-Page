@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <title>Projects | Figbloom Digital Group</title>
+  {% include "components/favicon.html" %}
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--fig-bg);
+      color: var(--fig-text);
+      font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* Page */
+
+    .page-container {
+      width: min(1400px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 38px 0 70px;
+    }
+
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .page-heading h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .page-heading p {
+      margin: 8px 0 0;
+      color: var(--fig-muted);
+      max-width: 46rem;
+    }
+
+    .page-heading a {
+      color: var(--fig-green);
+      font-weight: 600;
+    }
+
+    .btn-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* Toolbar */
+
+    .toolbar {
+      background: var(--surface-raised);
+      border: 1px solid var(--fig-border);
+      border-radius: 0.75rem;
+      padding: 18px;
+      display: flex;
+      align-items: flex-end;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .filter-group label {
+      font-size: 11px;
+      color: var(--fig-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 900;
+    }
+
+    .filter-group input,
+    .filter-group select {
+      height: 44px;
+      min-width: 200px;
+      padding: 0 13px;
+    }
+
+    .filter-group.grow {
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .filter-group.grow input {
+      width: 100%;
+    }
+
+    /* List */
+
+    .table-card {
+      background: var(--surface-raised);
+      border: 1px solid var(--fig-border);
+      border-radius: 0.75rem;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--fig-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .table-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .table-header span {
+      color: var(--fig-muted);
+      font-size: 13px;
+    }
+
+    .order-note {
+      color: var(--fig-faint);
+      font-size: 12.5px;
+      text-align: right;
+    }
+
+    .proj-table {
+      min-width: 900px;
+    }
+
+    .proj-table th {
+      background: var(--fig-bg);
+    }
+
+    .proj-table tbody tr:hover {
+      background: var(--fig-bg);
+    }
+
+    .order-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .order-btn {
+      width: 28px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--fig-border);
+      border-radius: 7px;
+      background: var(--surface-raised);
+      color: var(--fig-muted);
+      padding: 0;
+      transition: 0.15s ease;
+    }
+
+    .order-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .order-btn:hover:not(:disabled) {
+      border-color: rgba(255, 148, 0, 0.5);
+      color: var(--fig-orange);
+      background: var(--fig-orange-soft);
+    }
+
+    .order-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .proj-cell {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 300px;
+    }
+
+    .proj-thumb {
+      width: 64px;
+      height: 48px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--fig-bg);
+      border: 1px solid var(--fig-border);
+      display: grid;
+      place-items: center;
+      color: var(--fig-faint);
+    }
+
+    .proj-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .proj-thumb svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .proj-title {
+      font-weight: 800;
+      color: var(--fig-text);
+      line-height: 1.3;
+    }
+
+    .proj-sub {
+      margin-top: 3px;
+      color: var(--fig-muted);
+      font-size: 12.5px;
+      max-width: 360px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 11px 4px 9px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .status-btn::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-btn.is-on {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .status-btn.is-off {
+      background: var(--fig-bg);
+      color: var(--fig-muted);
+      border-color: var(--fig-border);
+    }
+
+    .status-btn:hover {
+      border-color: currentColor;
+    }
+
+    .status-btn:disabled {
+      opacity: 0.55;
+      cursor: wait;
+    }
+
+    .row-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid var(--fig-border);
+      border-radius: 9px;
+      background: var(--surface-raised);
+      color: var(--fig-muted);
+      text-decoration: none;
+      transition: 0.15s ease;
+    }
+
+    .icon-btn svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .icon-btn:hover {
+      border-color: rgba(255, 148, 0, 0.5);
+      color: var(--fig-orange);
+      background: var(--fig-orange-soft);
+    }
+
+    .icon-btn.danger:hover {
+      color: var(--danger);
+      background: var(--danger-soft);
+      border-color: rgba(220, 38, 38, 0.35);
+    }
+
+    .empty {
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-align: center;
+      color: var(--fig-muted);
+      padding: 40px;
+    }
+
+    .empty strong {
+      color: var(--fig-text);
+      font-size: 16px;
+    }
+
+    .empty .ad-btn-primary {
+      margin-top: 12px;
+    }
+
+    /* Editor */
+
+    .editor.ad-modal {
+      max-width: 780px;
+    }
+
+    .editor-form {
+      display: grid;
+      gap: 18px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .field > label,
+    .field > .label {
+      font-size: 11px;
+      color: var(--fig-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 900;
+    }
+
+    .field > label .req {
+      color: var(--danger);
+    }
+
+    .field input:not([type="checkbox"]):not([type="file"]),
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 11px 13px;
+      font-size: 14.5px;
+    }
+
+    .field textarea {
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field-hint {
+      color: var(--fig-faint);
+      font-size: 12.5px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .field-error {
+      display: none;
+      color: var(--danger);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .field.has-error .field-error {
+      display: block;
+    }
+
+    .field.has-error input,
+    .field.has-error select,
+    .field.has-error textarea {
+      border-color: var(--danger) !important;
+    }
+
+    .cover-box {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px;
+      border: 1.5px dashed var(--fig-border);
+      border-radius: 12px;
+      background: var(--fig-bg);
+    }
+
+    .cover-preview {
+      width: 148px;
+      height: 96px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--surface-raised);
+      border: 1px solid var(--fig-border);
+      display: grid;
+      place-items: center;
+      color: var(--fig-faint);
+    }
+
+    .cover-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cover-preview svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .cover-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cover-actions .ad-btn-secondary,
+    .cover-actions .ad-btn-danger {
+      padding: 8px 14px;
+      font-size: 13px;
+    }
+
+    .checks {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid var(--fig-border);
+      border-radius: 12px;
+    }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .check input {
+      margin-top: 3px;
+      width: 17px;
+      height: 17px;
+      accent-color: var(--fig-green);
+      flex-shrink: 0;
+    }
+
+    .check strong {
+      display: block;
+      font-size: 14.5px;
+    }
+
+    .check span {
+      display: block;
+      color: var(--fig-muted);
+      font-size: 12.5px;
+      margin-top: 2px;
+    }
+
+    .form-error {
+      display: none;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--danger-soft);
+      color: var(--danger);
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    .form-error.is-visible {
+      display: block;
+    }
+
+    .ad-modal-footer .ad-btn-primary:disabled {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    @media (max-width: 800px) {
+      .page-container {
+        width: min(100% - 28px, 1400px);
+        padding-top: 25px;
+      }
+
+      .page-heading {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .toolbar {
+        align-items: stretch;
+      }
+
+      .filter-group,
+      .filter-group input,
+      .filter-group select {
+        width: 100%;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .cover-box {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .order-note {
+        display: none;
+      }
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+<div class="ad-root">
+{% include "components/admin-header.html" %}
+
+<div class="ad-main">
+
+  <main class="page-container">
+
+    <!-- PAGE TITLE -->
+
+    <div class="page-heading">
+      <div>
+        <h1>Projects</h1>
+        <p>
+          The work shown on the public
+          <a href="/projects/" target="_blank" rel="noopener">Projects page</a>
+          and in the homepage carousel. Changes appear on the website as soon as you save.
+        </p>
+      </div>
+
+      <button type="button" class="ad-btn-primary" id="new-project-btn">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        New project
+      </button>
+    </div>
+
+
+    <!-- STATISTICS -->
+
+    <section class="ad-stat-grid">
+      <div class="ad-stat-tile">
+        <div class="ad-stat-value" id="stat-total">0</div>
+        <div class="ad-stat-label">Total projects</div>
+      </div>
+      <div class="ad-stat-tile">
+        <div class="ad-stat-value" id="stat-live">0</div>
+        <div class="ad-stat-label">Published</div>
+      </div>
+      <div class="ad-stat-tile">
+        <div class="ad-stat-value" id="stat-home">0</div>
+        <div class="ad-stat-label">On the homepage</div>
+      </div>
+      <div class="ad-stat-tile">
+        <div class="ad-stat-value" id="stat-categories">0</div>
+        <div class="ad-stat-label">Categories</div>
+      </div>
+    </section>
+
+
+    <!-- FILTERS -->
+
+    <section class="toolbar">
+      <div class="filter-group grow">
+        <label for="search">Search</label>
+        <input type="search" id="search" placeholder="Search by title, category or description..." autocomplete="off" />
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-category">Category</label>
+        <select id="filter-category">
+          <option value="">All categories</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-status">Status</label>
+        <select id="filter-status">
+          <option value="">All</option>
+          <option value="published">Published</option>
+          <option value="draft">Hidden</option>
+        </select>
+      </div>
+    </section>
+
+
+    <!-- LIST -->
+
+    <section class="table-card">
+      <div class="table-header">
+        <div>
+          <h2>All projects</h2>
+          <span id="table-summary">Loading projects...</span>
+        </div>
+        <div class="order-note" id="order-note">
+          Use the arrows to change the order projects appear in.
+        </div>
+      </div>
+
+      <div class="ad-table-wrap" id="project-list">
+        <div class="empty"><strong>Loading projects...</strong></div>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- EDITOR
+     Inside .ad-root on purpose: admin.css scopes the shared input / select /
+     textarea styling to that wrapper, and a modal outside it renders with raw
+     browser form controls. It's position:fixed, so it doesn't affect layout. -->
+
+<div class="ad-modal-backdrop" id="editor-backdrop" style="display: none;">
+  <div class="ad-modal editor" role="dialog" aria-modal="true" aria-labelledby="editor-title">
+
+    <div class="ad-modal-header" id="editor-title">New project</div>
+
+    <form id="editor-form" novalidate>
+      <div class="ad-modal-body">
+        <div class="editor-form">
+
+          <div class="form-error" id="form-error" role="alert"></div>
+
+          <div class="field" data-field="title">
+            <label for="f-title">Title <span class="req">*</span></label>
+            <input id="f-title" maxlength="200" placeholder="e.g. MovecConnect Ecommerce Platform" />
+            <div class="field-error"></div>
+          </div>
+
+          <div class="field" data-field="category">
+            <label for="f-category">Category <span class="req">*</span></label>
+            <input id="f-category" maxlength="80" list="category-options" autocomplete="off" placeholder="e.g. Web Development" />
+            <datalist id="category-options"></datalist>
+            <div class="field-hint">
+              <span>Pick an existing category or type a new one. Each category becomes a filter tab on the Projects page.</span>
+            </div>
+            <div class="field-error"></div>
+          </div>
+
+          <div class="field" data-field="description">
+            <label for="f-description">Description <span class="req">*</span></label>
+            <textarea id="f-description" rows="3" maxlength="500" placeholder="One or two sentences about the project."></textarea>
+            <div class="field-hint">
+              <span>Shown on the card (the first two lines).</span>
+              <span id="description-count">0 / 500</span>
+            </div>
+            <div class="field-error"></div>
+          </div>
+
+          <div class="field-row">
+            <div class="field" data-field="highlight">
+              <label for="f-highlight">Key result</label>
+              <input id="f-highlight" maxlength="80" placeholder="e.g. +42% conversion (optional)" />
+              <div class="field-hint"><span>Shown as a small badge on the card.</span></div>
+              <div class="field-error"></div>
+            </div>
+
+            <div class="field" data-field="link_url">
+              <label for="f-link">Project link</label>
+              <input id="f-link" type="url" maxlength="500" placeholder="https://example.com (optional)" />
+              <div class="field-hint"><span>If set, the card links here. If empty, the card isn't clickable.</span></div>
+              <div class="field-error"></div>
+            </div>
+          </div>
+
+          <div class="field" data-field="image">
+            <span class="label">Image</span>
+            <div class="cover-box">
+              <div class="cover-preview" id="cover-preview">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+              </div>
+              <div>
+                <div class="cover-actions">
+                  <button type="button" class="ad-btn-secondary" id="cover-choose">Choose image</button>
+                  <button type="button" class="ad-btn-danger" id="cover-remove" style="display: none;">Remove</button>
+                </div>
+                <div class="field-hint" style="margin-top: 8px;">
+                  <span>JPG, PNG, GIF or WebP, up to 5 MB. A tall screenshot or mockup works well.</span>
+                </div>
+              </div>
+              <input type="file" id="f-image" accept="image/jpeg,image/png,image/gif,image/webp" hidden />
+            </div>
+            <div class="field-error"></div>
+          </div>
+
+          <div class="checks">
+            <label class="check">
+              <input type="checkbox" id="f-published" />
+              <div>
+                <strong>Published</strong>
+                <span>Show this project on the website. Untick to hide it without deleting it.</span>
+              </div>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="f-home" />
+              <div>
+                <strong>Show on the homepage</strong>
+                <span>Include it in the "Our projects" carousel on the home page (the most recent 12 are shown).</span>
+              </div>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="ad-modal-footer">
+        <button type="button" class="ad-btn-secondary" id="editor-cancel">Cancel</button>
+        <button type="submit" class="ad-btn-primary" id="editor-save">Save project</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+</div><!-- /.ad-root -->
+
+<script src="/assets/js/admin.js"></script>
+<script>
+
+  /* =====================================================
+     STATE
+     ===================================================== */
+
+  const API = "/api/admin/projects/";
+  const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
+  let projects = [];          // always kept in display order
+  let editingId = null;       // null → creating
+  let pendingFile = null;     // newly chosen file (not yet uploaded)
+  let removeExisting = false; // "Remove" clicked on the current picture
+  let existingImageUrl = "";
+  let previewObjectUrl = null;
+  let saving = false;
+  let reordering = false;
+
+  const $ = (id) => document.getElementById(id);
+
+  const ICONS = {
+    up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
+    down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+    link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
+    image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>',
+  };
+
+
+  /* =====================================================
+     LOAD
+     ===================================================== */
+
+  // The same order the API (and the public pages) use.
+  function sortProjects() {
+    projects.sort((a, b) =>
+      a.sort_order - b.sort_order
+      || b.created_at.localeCompare(a.created_at)
+      || b.id - a.id
+    );
+  }
+
+  async function loadProjects() {
+    try {
+      const response = await apiFetch(API);
+
+      if (!response.ok) {
+        throw new Error(`Request failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      projects = Array.isArray(data) ? data : data.results || [];
+      sortProjects();
+
+      refresh();
+    } catch (error) {
+      console.error("Project loading error:", error);
+
+      $("table-summary").textContent = "Could not load projects";
+      $("project-list").innerHTML = `
+        <div class="empty">
+          <strong>Unable to load projects</strong>
+          <span>Please refresh the page and try again.</span>
+        </div>`;
+    }
+  }
+
+  function categories() {
+    return [...new Set(projects.map((p) => p.category))].sort((a, b) => a.localeCompare(b));
+  }
+
+  // Statistics, the category filter and the editor's suggestions all follow
+  // the data, so a new category appears everywhere as soon as it exists.
+  function refresh() {
+    updateStatistics();
+    updateCategoryOptions();
+    render();
+  }
+
+  function updateStatistics() {
+    $("stat-total").textContent = projects.length;
+    $("stat-live").textContent = projects.filter((p) => p.is_published).length;
+    $("stat-home").textContent = projects.filter((p) => p.is_published && p.show_on_home).length;
+    $("stat-categories").textContent = categories().length;
+  }
+
+  function updateCategoryOptions() {
+    const names = categories();
+    const select = $("filter-category");
+    const selected = select.value;
+
+    select.innerHTML = '<option value="">All categories</option>'
+      + names.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
+    select.value = names.includes(selected) ? selected : "";
+
+    $("category-options").innerHTML = names
+      .map((name) => `<option value="${escapeHtml(name)}"></option>`)
+      .join("");
+  }
+
+
+  /* =====================================================
+     FILTERS + LIST
+     ===================================================== */
+
+  function isFiltering() {
+    return Boolean($("search").value.trim() || $("filter-category").value || $("filter-status").value);
+  }
+
+  function filteredProjects() {
+    const query = $("search").value.trim().toLowerCase();
+    const category = $("filter-category").value;
+    const status = $("filter-status").value;
+
+    return projects.filter((p) => {
+      if (category && p.category !== category) return false;
+      if (status === "published" && !p.is_published) return false;
+      if (status === "draft" && p.is_published) return false;
+
+      if (query) {
+        const haystack = `${p.title} ${p.category} ${p.description} ${p.highlight}`.toLowerCase();
+        if (!haystack.includes(query)) return false;
+      }
+
+      return true;
+    });
+  }
+
+  function render() {
+    const list = $("project-list");
+    const rows = filteredProjects();
+    const filtering = isFiltering();
+
+    $("table-summary").textContent = filtering
+      ? `${rows.length} of ${projects.length} projects`
+      : `${projects.length} ${projects.length === 1 ? "project" : "projects"}`;
+
+    $("order-note").textContent = filtering
+      ? "Clear the filters to change the order."
+      : "Use the arrows to change the order projects appear in.";
+
+    if (!projects.length) {
+      list.innerHTML = `
+        <div class="empty">
+          <strong>No projects yet</strong>
+          <span>Add the first project to show on the website.</span>
+          <button type="button" class="ad-btn-primary" data-action="new">New project</button>
+        </div>`;
+      return;
+    }
+
+    if (!rows.length) {
+      list.innerHTML = `
+        <div class="empty">
+          <strong>No projects match your filters</strong>
+          <span>Try a different search or clear the filters.</span>
+        </div>`;
+      return;
+    }
+
+    const canReorder = !filtering && !reordering;
+
+    list.innerHTML = `
+      <table class="ad-table proj-table">
+        <thead>
+          <tr>
+            <th style="width:60px">Order</th>
+            <th>Project</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Homepage</th>
+            <th style="text-align:right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((p) => rowHtml(p, canReorder)).join("")}
+        </tbody>
+      </table>`;
+  }
+
+  function rowHtml(p, canReorder) {
+    const index = projects.indexOf(p);
+    const thumb = p.image_url
+      ? `<img src="${escapeHtml(p.image_url)}" alt="" loading="lazy" />`
+      : ICONS.image;
+
+    const sub = [p.highlight, p.description].filter(Boolean).join(" · ");
+    const upDisabled = !canReorder || index === 0 ? "disabled" : "";
+    const downDisabled = !canReorder || index === projects.length - 1 ? "disabled" : "";
+
+    return `
+      <tr data-id="${p.id}">
+        <td>
+          <div class="order-btns">
+            <button type="button" class="order-btn" data-action="up" title="Move up" aria-label="Move up" ${upDisabled}>${ICONS.up}</button>
+            <button type="button" class="order-btn" data-action="down" title="Move down" aria-label="Move down" ${downDisabled}>${ICONS.down}</button>
+          </div>
+        </td>
+        <td>
+          <div class="proj-cell">
+            <div class="proj-thumb">${thumb}</div>
+            <div>
+              <div class="proj-title">${escapeHtml(p.title)}</div>
+              <div class="proj-sub" title="${escapeHtml(sub)}">${escapeHtml(sub)}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="ad-badge ad-badge-neutral">${escapeHtml(p.category)}</span></td>
+        <td>
+          <button type="button" class="status-btn ${p.is_published ? "is-on" : "is-off"}"
+                  data-action="toggle-publish" title="${p.is_published ? "Click to hide from the website" : "Click to publish"}">
+            ${p.is_published ? "Published" : "Hidden"}
+          </button>
+        </td>
+        <td>
+          <button type="button" class="status-btn ${p.show_on_home ? "is-on" : "is-off"}"
+                  data-action="toggle-home" title="${p.show_on_home ? "Click to remove from the homepage" : "Click to show on the homepage"}">
+            ${p.show_on_home ? "Shown" : "Not shown"}
+          </button>
+        </td>
+        <td>
+          <div class="row-actions">
+            ${p.link_url ? `<a class="icon-btn" href="${escapeHtml(p.link_url)}" target="_blank" rel="noopener noreferrer" title="Open project link">${ICONS.link}</a>` : ""}
+            <button type="button" class="icon-btn" data-action="edit" title="Edit">${ICONS.edit}</button>
+            <button type="button" class="icon-btn danger" data-action="delete" title="Delete">${ICONS.trash}</button>
+          </div>
+        </td>
+      </tr>`;
+  }
+
+
+  /* =====================================================
+     QUICK ACTIONS (publish / homepage / order / delete)
+     ===================================================== */
+
+  async function patchProject(id, changes) {
+    const response = await apiFetch(`${API}${id}/`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(changes),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Update failed: ${response.status}`);
+    }
+
+    const updated = await response.json();
+    projects = projects.map((p) => (p.id === updated.id ? updated : p));
+    refresh();
+
+    return updated;
+  }
+
+  async function togglePublish(project, button) {
+    button.disabled = true;
+
+    try {
+      const updated = await patchProject(project.id, { is_published: !project.is_published });
+      showToast(updated.is_published ? "Published — it's now on the website." : "Hidden from the website.", "success");
+    } catch (error) {
+      console.error(error);
+      button.disabled = false;
+      showToast("Could not update the project. Please try again.", "error");
+    }
+  }
+
+  async function toggleHome(project, button) {
+    button.disabled = true;
+
+    try {
+      const updated = await patchProject(project.id, { show_on_home: !project.show_on_home });
+      showToast(updated.show_on_home ? "Now shown on the homepage." : "Removed from the homepage.", "success");
+    } catch (error) {
+      console.error(error);
+      button.disabled = false;
+      showToast("Could not update the project. Please try again.", "error");
+    }
+  }
+
+  async function moveProject(project, direction) {
+    if (reordering || isFiltering()) return;
+
+    const index = projects.indexOf(project);
+    const target = index + direction;
+
+    if (target < 0 || target >= projects.length) return;
+
+    const previous = projects.slice();
+    [projects[index], projects[target]] = [projects[target], projects[index]];
+
+    reordering = true;
+    render();
+
+    try {
+      const response = await apiFetch(`${API}reorder/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: projects.map((p) => p.id) }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error((data && data.detail) || `Reorder failed: ${response.status}`);
+      }
+
+      projects = await response.json();
+      sortProjects();
+      showToast("Order saved.", "success");
+    } catch (error) {
+      console.error(error);
+      projects = previous;
+      showToast(error.message || "Could not save the order. Please try again.", "error");
+    } finally {
+      reordering = false;
+      refresh();
+    }
+  }
+
+  async function deleteProject(project) {
+    const confirmed = await showConfirm(
+      `Delete “${project.title}”? It will be removed from the website and this can't be undone.`,
+      { confirmText: "Delete", danger: true }
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const response = await apiFetch(`${API}${project.id}/`, { method: "DELETE" });
+
+      if (!response.ok) {
+        throw new Error(`Delete failed: ${response.status}`);
+      }
+
+      projects = projects.filter((p) => p.id !== project.id);
+      refresh();
+      showToast("Project deleted.", "success");
+    } catch (error) {
+      console.error(error);
+      showToast("Could not delete the project. Please try again.", "error");
+    }
+  }
+
+
+  /* =====================================================
+     EDITOR
+     ===================================================== */
+
+  function updateDescriptionCount() {
+    $("description-count").textContent = `${$("f-description").value.length} / 500`;
+  }
+
+  function clearErrors() {
+    $("form-error").classList.remove("is-visible");
+    $("form-error").textContent = "";
+
+    document.querySelectorAll(".field.has-error").forEach((field) => {
+      field.classList.remove("has-error");
+      field.querySelector(".field-error").textContent = "";
+    });
+  }
+
+  function setFieldError(name, message) {
+    const field = document.querySelector(`.field[data-field="${name}"]`);
+
+    if (!field) {
+      const box = $("form-error");
+      box.textContent = message;
+      box.classList.add("is-visible");
+      return;
+    }
+
+    field.classList.add("has-error");
+    field.querySelector(".field-error").textContent = message;
+  }
+
+  function showCoverPreview() {
+    const preview = $("cover-preview");
+    const url = pendingFile
+      ? previewObjectUrl
+      : (removeExisting ? "" : existingImageUrl);
+
+    preview.innerHTML = url
+      ? `<img src="${escapeHtml(url)}" alt="Image preview" />`
+      : ICONS.image;
+
+    $("cover-remove").style.display = url ? "" : "none";
+    $("cover-choose").textContent = url ? "Replace image" : "Choose image";
+  }
+
+  function resetCoverState(imageUrl) {
+    if (previewObjectUrl) {
+      URL.revokeObjectURL(previewObjectUrl);
+    }
+
+    previewObjectUrl = null;
+    pendingFile = null;
+    removeExisting = false;
+    existingImageUrl = imageUrl || "";
+    $("f-image").value = "";
+    showCoverPreview();
+  }
+
+  function openEditor(project) {
+    editingId = project ? project.id : null;
+    clearErrors();
+
+    $("editor-title").textContent = project ? "Edit project" : "New project";
+    $("f-title").value = project ? project.title : "";
+    $("f-category").value = project ? project.category : "";
+    $("f-description").value = project ? project.description : "";
+    $("f-highlight").value = project ? project.highlight : "";
+    $("f-link").value = project ? project.link_url : "";
+    $("f-published").checked = project ? project.is_published : true;
+    $("f-home").checked = project ? project.show_on_home : true;
+
+    resetCoverState(project ? project.image_url : "");
+    updateDescriptionCount();
+    setSaving(false);
+
+    $("editor-backdrop").style.display = "flex";
+    document.body.style.overflow = "hidden";
+    $("f-title").focus();
+  }
+
+  function closeEditor() {
+    if (saving) return;
+
+    $("editor-backdrop").style.display = "none";
+    document.body.style.overflow = "";
+    resetCoverState("");
+    editingId = null;
+  }
+
+  function setSaving(value) {
+    saving = value;
+    const button = $("editor-save");
+    button.disabled = value;
+    button.textContent = value ? "Saving..." : "Save project";
+  }
+
+  function chooseImage(file) {
+    if (!file) return;
+
+    const field = document.querySelector('.field[data-field="image"]');
+    field.classList.remove("has-error");
+
+    if (!file.type.startsWith("image/") || file.type === "image/svg+xml") {
+      $("f-image").value = "";
+      setFieldError("image", "Please choose a JPG, PNG, GIF or WebP image.");
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_BYTES) {
+      $("f-image").value = "";
+      setFieldError("image", "That image is over 5 MB. Please choose a smaller one.");
+      return;
+    }
+
+    if (previewObjectUrl) {
+      URL.revokeObjectURL(previewObjectUrl);
+    }
+
+    pendingFile = file;
+    previewObjectUrl = URL.createObjectURL(file);
+    removeExisting = false;
+    showCoverPreview();
+  }
+
+  function validateForm() {
+    clearErrors();
+    let valid = true;
+
+    if (!$("f-title").value.trim()) {
+      setFieldError("title", "Please enter a title.");
+      valid = false;
+    }
+
+    if (!$("f-category").value.trim()) {
+      setFieldError("category", "Please choose or type a category.");
+      valid = false;
+    }
+
+    if (!$("f-description").value.trim()) {
+      setFieldError("description", "Please add a short description.");
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  async function saveProject(event) {
+    event.preventDefault();
+
+    if (saving || !validateForm()) return;
+
+    const body = new FormData();
+    body.append("title", $("f-title").value.trim());
+    body.append("category", $("f-category").value.trim());
+    body.append("description", $("f-description").value.trim());
+    body.append("highlight", $("f-highlight").value.trim());
+    body.append("link_url", $("f-link").value.trim());
+    body.append("is_published", $("f-published").checked ? "true" : "false");
+    body.append("show_on_home", $("f-home").checked ? "true" : "false");
+
+    if (pendingFile) {
+      body.append("image", pendingFile);
+    } else if (removeExisting) {
+      body.append("remove_image", "true");
+    }
+
+    setSaving(true);
+
+    try {
+      // No Content-Type header: the browser sets multipart with its boundary.
+      const response = await apiFetch(editingId ? `${API}${editingId}/` : API, {
+        method: editingId ? "PATCH" : "POST",
+        body,
+      });
+
+      if (response.ok) {
+        const saved = await response.json();
+        const wasEditing = editingId !== null;
+
+        projects = wasEditing
+          ? projects.map((p) => (p.id === saved.id ? saved : p))
+          : [saved, ...projects];
+        sortProjects();
+
+        setSaving(false);
+        closeEditor();
+        refresh();
+
+        showToast(
+          wasEditing
+            ? "Project updated."
+            : (saved.is_published ? "Project added to the website." : "Project saved (hidden)."),
+          "success"
+        );
+        return;
+      }
+
+      const data = await response.json().catch(() => null);
+      setSaving(false);
+
+      if (data && typeof data === "object") {
+        let shown = false;
+
+        Object.entries(data).forEach(([field, messages]) => {
+          const message = Array.isArray(messages) ? messages[0] : String(messages);
+          setFieldError(field === "detail" ? "" : field, message);
+          shown = true;
+        });
+
+        if (shown) return;
+      }
+
+      setFieldError("", "We couldn't save that. Please try again.");
+    } catch (error) {
+      console.error("Save error:", error);
+      setSaving(false);
+      setFieldError("", "Network error — please check your connection and try again.");
+    }
+  }
+
+
+  /* =====================================================
+     WIRING
+     ===================================================== */
+
+  $("new-project-btn").addEventListener("click", () => openEditor(null));
+  $("editor-cancel").addEventListener("click", closeEditor);
+  $("editor-form").addEventListener("submit", saveProject);
+  $("f-description").addEventListener("input", updateDescriptionCount);
+
+  ["input", "change"].forEach((type) => {
+    $("editor-form").addEventListener(type, (event) => {
+      // The file picker sets (and clears) its own error in chooseImage(); this
+      // listener would otherwise wipe a "not an image" message the moment it
+      // appears, since the change event bubbles up to the form after it.
+      if (event.target.type === "file") return;
+
+      const field = event.target.closest(".field.has-error");
+      if (!field) return;
+
+      field.classList.remove("has-error");
+      field.querySelector(".field-error").textContent = "";
+    });
+  });
+
+  $("cover-choose").addEventListener("click", () => $("f-image").click());
+  $("f-image").addEventListener("change", (event) => chooseImage(event.target.files[0]));
+  $("cover-remove").addEventListener("click", () => {
+    if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+    previewObjectUrl = null;
+    pendingFile = null;
+    $("f-image").value = "";
+    removeExisting = Boolean(existingImageUrl);
+    showCoverPreview();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && $("editor-backdrop").style.display !== "none") {
+      closeEditor();
+    }
+  });
+
+  ["search", "filter-category", "filter-status"].forEach((id) => {
+    $(id).addEventListener("input", render);
+  });
+
+  $("project-list").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-action]");
+    if (!button || button.disabled) return;
+
+    if (button.dataset.action === "new") {
+      openEditor(null);
+      return;
+    }
+
+    const row = button.closest("tr[data-id]");
+    const project = row && projects.find((p) => p.id === Number(row.dataset.id));
+    if (!project) return;
+
+    switch (button.dataset.action) {
+      case "edit": openEditor(project); break;
+      case "delete": deleteProject(project); break;
+      case "toggle-publish": togglePublish(project, button); break;
+      case "toggle-home": toggleHome(project, button); break;
+      case "up": moveProject(project, -1); break;
+      case "down": moveProject(project, 1); break;
+    }
+  });
+
+  loadProjects();
+
+</script>
+
+</body>
+</html>

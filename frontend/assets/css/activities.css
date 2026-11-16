@@ -41,7 +41,6 @@
 [data-cat="community"] { --cat: #2c5322; --cat-bg: #e6f2e1; --cat-mid: #9fcf8f; }
 [data-cat="achievement"] { --cat: #6d3bd0; --cat-bg: #f0e9fd; --cat-mid: #c3a8f4; }
 [data-cat="workshop"] { --cat: #0b6b63; --cat-bg: #dff4f1; --cat-mid: #86d4cb; }
-[data-cat="team"] { --cat: #a3194f; --cat-bg: #fde8f0; --cat-mid: #f2a1bf; }
 
 /* Lucide replaces each <i data-lucide> with an <svg> that keeps the data-lucide
    attribute, so styling by that attribute works both before and after it runs
@@ -66,99 +65,106 @@
 
 /* --- Hero ------------------------------------------------------------- */
 
+/* The hero spans nearly the whole width of the page, wider than the page column
+   used for the list below it: a small margin each side, and a very wide limit
+   on big screens. */
+.act-wide {
+    width: min(100% - 32px, 1560px);
+    margin-inline: auto;
+}
+
+@media (min-width: 640px) {
+    .act-wide {
+        width: min(100% - 48px, 1560px);
+    }
+}
+
 .act-hero {
     position: relative;
     isolation: isolate;
+    /* Keeps the collage's leaf and the floating photos inside the hero. */
     overflow: hidden;
-    background: var(--act-green);
-    color: #fff;
-    padding: 56px 0 84px;
-}
-
-.act-hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-    background: url("../images/main-banner.jpg") center / cover no-repeat;
-    opacity: 0.32;
-}
-
-.act-hero::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
+    /* The bottom padding leaves room for the shortcut strip that overlaps the
+       hero's lower edge. */
+    padding: 40px 0 120px;
     background:
-        radial-gradient(60% 90% at 88% 20%, rgba(255, 148, 0, 0.22), transparent 70%),
-        linear-gradient(100deg, var(--act-green-dark) 10%, rgba(44, 83, 34, 0.9) 48%, rgba(44, 83, 34, 0.6) 100%);
+        radial-gradient(58% 85% at 84% 14%, #dcebd4 0%, rgba(220, 235, 212, 0) 70%),
+        radial-gradient(42% 50% at 6% 55%, #fdefd9 0%, rgba(253, 239, 217, 0) 70%),
+        linear-gradient(180deg, #f2f8ef 0%, #fbfcfa 100%);
 }
 
+/* Text on the left, photo collage on the right (stacked on small screens). */
 .act-hero__inner {
     display: grid;
-    gap: 40px;
+    gap: 44px;
     align-items: center;
+    padding-inline: 18px;
+}
+
+.act-hero__inner > * {
+    min-width: 0;
 }
 
 .act-eyebrow {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 7px 14px;
+    gap: 9px;
+    padding: 9px 17px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(6px);
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.01em;
+    background: #e2efdc;
+    color: var(--act-green);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.005em;
 }
 
 .act-eyebrow [data-lucide] {
-    color: var(--act-orange);
+    font-size: 1.15em;
 }
 
 .act-hero h1 {
     margin: 18px 0 0;
-    color: #fff;
-    font-size: clamp(2.4rem, 5.4vw, 4.4rem);
-    line-height: 1.04;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-}
-
-.act-hero h1 em {
-    font-style: normal;
-    color: var(--act-orange);
-    position: relative;
+    color: var(--act-ink);
+    /* One line, always: the title is just under 10 times its font size wide, so
+       the size follows the width of the screen (and is capped on big ones). */
+    font-size: clamp(1.55rem, 8vw, 3.4rem);
+    line-height: 1.05;
+    font-weight: 700;
+    letter-spacing: -0.025em;
     white-space: nowrap;
 }
 
+.act-hero h1 em {
+    position: relative;
+    display: inline-block;
+    font-style: normal;
+    color: var(--act-orange-deep);
+}
+
+/* A hand-drawn style curve under "Action" rather than a straight rule. */
 .act-hero h1 em::after {
     content: "";
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -0.08em;
-    height: 0.12em;
-    border-radius: 999px;
-    background: currentColor;
-    opacity: 0.55;
+    left: 1%;
+    right: -1%;
+    bottom: -0.3em;
+    height: 0.32em;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M4 14 C48 3 132 2 196 10' fill='none' stroke='%23ff9400' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
 }
 
 .act-hero__lead {
-    margin: 22px 0 0;
-    max-width: 34rem;
-    color: rgba(255, 255, 255, 0.86);
-    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+    margin: 30px 0 0;
+    max-width: 36rem;
+    color: var(--act-body);
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
     line-height: 1.6;
 }
 
 .act-hero__stats {
     display: flex;
     flex-wrap: wrap;
-    gap: 14px 34px;
-    margin: 32px 0 0;
+    gap: 14px 0;
+    margin: 34px 0 0;
     padding: 0;
     list-style: none;
 }
@@ -166,140 +172,411 @@
 .act-hero__stats li {
     display: flex;
     flex-direction: column;
+    /* Tighter on phones, so all three numbers share one row. */
+    padding: 0 clamp(14px, 4vw, 36px);
+    border-left: 1px solid var(--act-line);
     line-height: 1.15;
 }
 
+.act-hero__stats li:first-child {
+    padding-left: 0;
+    border-left: 0;
+}
+
 .act-hero__stats strong {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #fff;
+    font-size: clamp(1.6rem, 6vw, 2.1rem);
+    font-weight: 700;
+    color: var(--act-green);
 }
 
 .act-hero__stats span {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.72);
+    margin-top: 4px;
+    font-size: clamp(0.82rem, 3.2vw, 0.95rem);
+    color: var(--act-muted);
 }
 
-/* Photo collage of the newest covers; falls back to category tiles. */
-
-.act-collage {
-    display: none;
+.act-hero__cta {
+    margin-top: 36px;
 }
 
-.act-collage__frame {
-    position: relative;
-    overflow: hidden;
-    border-radius: 22px;
-    border: 4px solid rgba(255, 255, 255, 0.92);
-    box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.55);
-    background: var(--cat-bg);
-}
-
-.act-collage__frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.act-collage--photos {
-    display: grid;
-    grid-template-columns: 1.15fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 16px;
-    height: 360px;
-}
-
-.act-collage--photos .act-collage__frame:first-child {
-    grid-row: 1 / span 2;
-    transform: rotate(-1.5deg);
-}
-
-.act-collage--photos .act-collage__frame:nth-child(2) {
-    transform: rotate(1.5deg);
-}
-
-.act-collage--photos .act-collage__frame:nth-child(3) {
-    transform: rotate(-0.8deg);
-}
-
-.act-collage--photos.is-single {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-}
-
-.act-collage--photos.is-single .act-collage__frame:first-child {
-    grid-row: auto;
-}
-
-.act-collage--photos.is-pair {
-    grid-template-rows: 1fr;
-}
-
-.act-collage--photos.is-pair .act-collage__frame:first-child {
-    grid-row: auto;
-}
-
-.act-collage--tiles {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-}
-
-.act-tile {
-    aspect-ratio: 1 / 1;
-    border-radius: 20px;
-    display: grid;
-    place-items: center;
-    gap: 6px;
-    align-content: center;
-    background: var(--cat-bg);
-    color: var(--cat);
-    font-size: 0.82rem;
-    font-weight: 600;
-    text-align: center;
-    box-shadow: 0 18px 36px -18px rgba(0, 0, 0, 0.5);
-}
-
-.act-tile [data-lucide] {
-    font-size: 2rem;
-}
-
-.act-tile:nth-child(even) {
-    transform: translateY(14px);
+@media (min-width: 640px) {
+    .act-hero__inner {
+        padding-inline: 30px;
+    }
 }
 
 @media (min-width: 1024px) {
     .act-hero {
-        padding: 72px 0 110px;
+        padding: 72px 0 132px;
     }
 
     .act-hero__inner {
-        grid-template-columns: 1.05fr 0.95fr;
-        gap: 56px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+        gap: 48px;
+        padding-inline: 46px;
     }
 
-    .act-collage {
-        display: block;
-    }
-
-    .act-collage--photos {
-        display: grid;
-    }
-
-    .act-collage--tiles {
-        display: grid;
+    /* Sized to the narrower text column, so the title still fits on one line. */
+    .act-hero h1 {
+        font-size: clamp(2.4rem, 3.9vw, 4.1rem);
     }
 }
 
-/* --- Main panel (overlaps the hero) ----------------------------------- */
+/* --- Hero collage: three tilted photos that drift gently ------------------- */
+
+/* Each photo is nested layers, so the animations never fight over one property:
+   the ITEM is placed, tilted and fades in on load; the FRAME (the white-bordered
+   card) floats up and down forever AND takes its turn zooming in; the PHOTO just
+   clips the picture to the card's shape.
+
+   The zoom is a relay: in a 9s loop each card is enlarged for its third while
+   the other two sit smaller, and as one shrinks back the next one grows. The
+   cards share one animation, started a third of a loop apart (--turn-delay). */
+
+.act-collage {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    margin-inline: auto;
+    aspect-ratio: 1 / 0.92;
+}
+
+@media (min-width: 1024px) {
+    .act-collage {
+        max-width: none;
+        aspect-ratio: 1.5 / 1;
+    }
+}
+
+.act-collage__item {
+    position: absolute;
+    /* On the item rather than the frame: a clip-path (the notched corner below)
+       would cut a box-shadow off, but a drop-shadow follows the clipped shape. */
+    filter: drop-shadow(0 22px 24px rgba(18, 21, 30, 0.2));
+    animation: act-pop 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* The big photo on the left, with a notch cut out of its top-left corner. */
+.act-collage__item--1 {
+    --notch-x: 20%;
+    --notch-y: 16%;
+    left: 0;
+    top: 11%;
+    width: 59%;
+    height: 84%;
+    rotate: -4deg;
+    z-index: 1;
+    animation-delay: 0.05s;
+}
+
+/* The two smaller ones stacked on the right, overlapping the big one. */
+.act-collage__item--2 {
+    right: 1.5%;
+    top: 0;
+    width: 43%;
+    height: 50%;
+    rotate: 6deg;
+    z-index: 2;
+    animation-delay: 0.25s;
+}
+
+.act-collage__item--3 {
+    right: 0;
+    bottom: 0;
+    width: 42.5%;
+    height: 50%;
+    rotate: 3.5deg;
+    z-index: 3;
+    animation-delay: 0.45s;
+}
+
+.act-collage__frame {
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    border-radius: 24px;
+    background: #fff;
+    /* float moves it (translate, rotate); turn resizes it (scale). */
+    animation:
+        act-float var(--float-time, 7s) ease-in-out var(--float-delay, 0s) infinite,
+        act-turn 9s ease-in-out var(--turn-delay, 0s) infinite;
+}
+
+.act-collage__item--1 .act-collage__frame {
+    --turn-delay: 0s;
+    --float-time: 7s;
+    --bob: -12px;
+    --tilt: 0.8deg;
+    clip-path: polygon(
+        0 var(--notch-y), var(--notch-x) var(--notch-y), var(--notch-x) 0,
+        100% 0, 100% 100%, 0 100%
+    );
+}
+
+.act-collage__item--2 .act-collage__frame {
+    --turn-delay: -6s;
+    --float-time: 6s;
+    --float-delay: -1.5s;
+    --bob: -16px;
+    --tilt: -1.2deg;
+}
+
+.act-collage__item--3 .act-collage__frame {
+    --turn-delay: -3s;
+    --float-time: 8s;
+    --float-delay: -3.5s;
+    --bob: -10px;
+    --tilt: 1deg;
+}
+
+.act-collage__photo {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 17px;
+}
+
+/* The big photo's own notch, cut 7px (the frame's border) inside the frame's. The
+   calc() terms are that border's share of the box, so the white edge stays even. */
+.act-collage__item--1 .act-collage__photo {
+    clip-path: polygon(
+        0 calc(var(--notch-y) + 2.2px), calc(var(--notch-x) + 2.8px) calc(var(--notch-y) + 2.2px),
+        calc(var(--notch-x) + 2.8px) 0, 100% 0, 100% 100%, 0 100%
+    );
+}
+
+.act-collage__photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* The little rays beside the big photo. */
+.act-collage__spark {
+    position: absolute;
+    left: 1%;
+    top: 1%;
+    z-index: 4;
+    width: clamp(34px, 6vw, 56px);
+    height: auto;
+    overflow: visible;
+}
+
+.act-collage__spark path {
+    transform-origin: 50px 50px;
+    animation: act-twinkle 2.6s ease-in-out infinite;
+}
+
+.act-collage__spark path:nth-child(2) {
+    animation-delay: 0.35s;
+}
+
+.act-collage__spark path:nth-child(3) {
+    animation-delay: 0.7s;
+}
+
+/* The leaf peeking out from under the photos. */
+.act-collage__leaf {
+    position: absolute;
+    left: 14%;
+    bottom: -19%;
+    z-index: 0;
+    width: 22%;
+    height: auto;
+    transform-origin: 40% 100%;
+    animation: act-sway 7s ease-in-out infinite;
+}
+
+@keyframes act-pop {
+    from {
+        opacity: 0;
+        translate: 0 40px;
+        scale: 0.9;
+    }
+}
+
+@keyframes act-float {
+    0%, 100% {
+        translate: 0 0;
+        rotate: 0deg;
+    }
+    50% {
+        translate: 0 var(--bob, -12px);
+        rotate: var(--tilt, 1deg);
+    }
+}
+
+/* One card's share of the 9s relay: grow, stay big for a while, shrink, then sit
+   small while the other two take their turns. */
+@keyframes act-turn {
+    0% {
+        scale: 0.94;
+    }
+    12%, 33% {
+        scale: 1.08;
+    }
+    45%, 100% {
+        scale: 0.94;
+    }
+}
+
+@keyframes act-twinkle {
+    0%, 100% {
+        opacity: 0.35;
+        transform: scale(0.82);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.06);
+    }
+}
+
+@keyframes act-sway {
+    0%, 100% {
+        rotate: -2.5deg;
+    }
+    50% {
+        rotate: 3deg;
+    }
+}
+
+/* --- Shortcut strip: floats across the bottom edge of the hero ---------- */
+
+.act-strip-wrap {
+    position: relative;
+    z-index: 3;
+    margin-top: -58px;
+}
+
+.act-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* Inset from the banner's edges so it reads as a card resting on it. */
+    margin-inline: clamp(12px, 4vw, 72px);
+    padding: 20px 10px;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow:
+        0 2px 6px rgba(18, 21, 30, 0.05),
+        0 26px 50px -26px rgba(18, 21, 30, 0.32);
+}
+
+.act-strip__item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+    padding: 10px 24px;
+    border-left: 1px solid var(--act-line);
+    color: inherit;
+    transition: transform 0.2s ease;
+}
+
+.act-strip__item:first-child {
+    border-left: 0;
+}
+
+.act-strip__item:hover {
+    transform: translateY(-2px);
+}
+
+.act-strip__item:focus-visible {
+    outline: 3px solid rgba(255, 148, 0, 0.55);
+    outline-offset: -3px;
+    border-radius: 18px;
+}
+
+.act-strip__icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #e5f0df;
+    color: var(--act-green);
+    font-size: 26px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.act-strip__item:hover .act-strip__icon {
+    background: var(--act-green);
+    color: #fff;
+}
+
+.act-strip__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.act-strip__title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--act-ink);
+}
+
+.act-strip__blurb {
+    margin-top: 3px;
+    font-size: 0.95rem;
+    line-height: 1.35;
+    color: var(--act-muted);
+}
+
+@media (max-width: 960px) {
+    .act-strip {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 12px 8px;
+    }
+
+    .act-strip__item {
+        border-left: 0;
+    }
+
+    .act-strip__item:nth-child(n + 3) {
+        border-top: 1px solid var(--act-line);
+    }
+}
+
+@media (max-width: 560px) {
+    .act-strip {
+        grid-template-columns: 1fr;
+    }
+
+    .act-strip__item {
+        padding: 12px 16px;
+    }
+
+    .act-strip__item:nth-child(n + 2) {
+        border-top: 1px solid var(--act-line);
+    }
+
+    .act-strip__icon {
+        width: 52px;
+        height: 52px;
+        font-size: 23px;
+    }
+}
+
+/* --- Main panel (the list sits below the strip) ------------------------ */
 
 .act-main {
     position: relative;
     z-index: 1;
-    margin-top: -34px;
+    padding: 48px 0 72px;
     background: #fff;
-    border-radius: 30px 30px 0 0;
-    padding: 44px 0 72px;
+    /* The strip's links scroll here; keep the sticky navbar off the filters. */
+    scroll-margin-top: 80px;
+}
+
+/* The pill-shaped call-to-action under the hero text. */
+.act-btn--pill {
+    padding: 16px 30px;
+    border-radius: 999px;
+    font-size: 16.5px;
+    box-shadow: 0 16px 26px -14px rgba(44, 83, 34, 0.7);
 }
 
 /* --- Filter bar --------------------------------------------------------- */
@@ -685,83 +962,7 @@
     }
 }
 
-/* --- Spotlight (featured) --------------------------------------------- */
-
-.act-spotlight {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr;
-    margin-top: 30px;
-    overflow: hidden;
-    border: 1px solid var(--act-line);
-    border-radius: 24px;
-    background: #fff;
-    box-shadow: var(--act-shadow);
-    animation: act-rise 0.45s ease both;
-}
-
-.act-spotlight__media {
-    position: relative;
-    display: block;
-    min-height: 240px;
-    background: var(--cat-bg);
-}
-
-.act-spotlight__media img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.act-spotlight__body {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 28px 26px 30px;
-}
-
-.act-spotlight__flags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.act-flag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 11px;
-    border-radius: 999px;
-    background: var(--act-orange);
-    color: #1d1200;
-    font-size: 12.5px;
-    font-weight: 700;
-}
-
-.act-spotlight h2 {
-    margin: 0;
-    font-size: clamp(1.6rem, 3vw, 2.3rem);
-    line-height: 1.15;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: var(--act-ink);
-}
-
-.act-spotlight h2 a:hover {
-    color: var(--act-green);
-}
-
-.act-spotlight p {
-    margin: 0;
-    max-width: 38rem;
-    color: var(--act-body);
-    font-size: 1.05rem;
-    line-height: 1.65;
-}
-
+/* The small icon + text line under an activity's title (used on the detail page). */
 .act-meta {
     display: flex;
     flex-wrap: wrap;
@@ -781,21 +982,6 @@
 
 .act-meta [data-lucide] {
     color: var(--act-orange-deep);
-}
-
-@media (min-width: 860px) {
-    .act-spotlight {
-        grid-template-columns: 1.1fr 1fr;
-    }
-
-    .act-spotlight__media {
-        min-height: 360px;
-    }
-
-    .act-spotlight__body {
-        justify-content: center;
-        padding: 40px 44px;
-    }
 }
 
 /* --- Buttons -------------------------------------------------------------- */
@@ -1166,7 +1352,10 @@
 
 @media (prefers-reduced-motion: reduce) {
     .act-card,
-    .act-spotlight {
+    .act-collage__item,
+    .act-collage__frame,
+    .act-collage__spark path,
+    .act-collage__leaf {
         animation: none;
     }
 

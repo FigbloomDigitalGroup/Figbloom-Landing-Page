@@ -61,54 +61,85 @@
         <div class="grow">
             <!-- HERO -->
             <section class="act-hero">
-                <div class="container act-hero__inner">
-                    <div>
+                <div class="act-wide act-hero__inner">
+                    <div class="act-hero__copy">
                         <span class="act-eyebrow"><i data-lucide="calendar-days"></i> Our Activities</span>
                         <h1>Our Journey in <em>Action</em></h1>
                         <p class="act-hero__lead">
-                            From events and workshops to community work and milestones —
+                            From events, team activities, workshops to community work and milestones&nbsp;
                             see what we’ve been up to at Figbloom.
                         </p>
 
                         {% if total %}
                             <ul class="act-hero__stats" aria-label="At a glance">
                                 <li><strong>{{ total }}</strong><span>{{ total|pluralize:"story,stories" }} shared</span></li>
-                                {% for c in categories|slice:":3" %}
+                                {% for c in categories|slice:":2" %}
                                     <li><strong>{{ c.count }}</strong><span>{{ c.plural }}</span></li>
                                 {% endfor %}
                             </ul>
                         {% endif %}
+
+                        <a class="act-btn act-btn--pill act-hero__cta" href="#browse">
+                            Explore Our Activities <i data-lucide="arrow-right"></i>
+                        </a>
                     </div>
 
-                    {% if hero_images %}
-                        <div
-                            class="act-collage act-collage--photos{% if hero_images|length == 1 %} is-single{% elif hero_images|length == 2 %} is-pair{% endif %}"
-                            aria-hidden="true"
-                        >
-                            {% for a in hero_images %}
-                                <div class="act-collage__frame" data-cat="{{ a.category }}">
-                                    <img src="{{ a.cover_image.url }}" alt="" {% if not forloop.first %}loading="lazy"{% endif %} decoding="async" />
+                    <!-- The photo collage. Purely decorative, so hidden from screen readers;
+                         every piece of it moves (see "Hero collage" in activities.css). -->
+                    <div class="act-collage" aria-hidden="true">
+                        <!-- The leaf grows up from behind the photos -->
+                        <svg class="act-collage__leaf" viewBox="0 0 170 130" focusable="false">
+                            <defs>
+                                <linearGradient id="act-leaf-fill" x1="0" y1="1" x2="1" y2="0">
+                                    <stop offset="0" stop-color="#2c5322" />
+                                    <stop offset="1" stop-color="#4a8a3a" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M0 130 C28 74 84 22 168 0 C150 56 112 104 72 130 Z" fill="url(#act-leaf-fill)" />
+                        </svg>
+
+                        {% for photo in hero_images %}
+                            <div class="act-collage__item act-collage__item--{{ forloop.counter }}">
+                                <div class="act-collage__frame">
+                                    <div class="act-collage__photo">
+                                        <img src="{{ photo }}" alt="" decoding="async"{% if not forloop.first %} loading="lazy"{% endif %} />
+                                    </div>
                                 </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="act-collage act-collage--tiles" aria-hidden="true">
-                            {% for c in all_categories %}
-                                <div class="act-tile" data-cat="{{ c.key }}">
-                                    <i data-lucide="{{ c.icon }}"></i>
-                                    <span>{{ c.plural }}</span>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                            </div>
+                        {% endfor %}
+
+                        <!-- Three little rays bursting out beside the big photo -->
+                        <svg class="act-collage__spark" viewBox="0 0 60 56" focusable="false">
+                            <g fill="none" stroke="#ff9400" stroke-width="4" stroke-linecap="round">
+                                <path d="M38 50 H8" />
+                                <path d="M41.5 41.5 L20.3 20.3" />
+                                <path d="M50 38 V8" />
+                            </g>
+                        </svg>
+                    </div>
                 </div>
             </section>
 
+            <!-- SHORTCUTS: each one filters the list below -->
+            <div class="act-wide act-strip-wrap">
+                <nav class="act-strip" aria-label="Browse activities by theme">
+                    {% for h in highlights %}
+                        <a class="act-strip__item" href="/activities/?category={{ h.key }}#browse" data-filter="{{ h.key }}">
+                            <span class="act-strip__icon" aria-hidden="true"><i data-lucide="{{ h.icon }}"></i></span>
+                            <span class="act-strip__text">
+                                <span class="act-strip__title">{{ h.title }}</span>
+                                <span class="act-strip__blurb">{{ h.blurb }}</span>
+                            </span>
+                        </a>
+                    {% endfor %}
+                </nav>
+            </div>
+
             <!-- BROWSER -->
-            <main class="act-main">
+            <main class="act-main" id="browse">
                 <div class="container">
                     {% if activities %}
-                        <div x-data="activitiesBrowser()">
+                        <div x-data="activitiesBrowser()" @activities-filter.window="filterTo($event.detail.category)">
                             <div class="act-toolbar">
                                 <div class="act-chips" role="group" aria-label="Filter activities by category">
                                     <button
@@ -150,42 +181,9 @@
 
                             <p class="act-status" aria-live="polite" x-cloak x-show="ready" x-text="statusText"></p>
 
-                            {% if featured %}
-                                <article
-                                    class="act-spotlight"
-                                    data-cat="{{ featured.category }}"
-                                    x-show="spotlightVisible"
-                                >
-                                    <a class="act-spotlight__media" href="{{ featured.get_absolute_url }}" tabindex="-1" aria-hidden="true">
-                                        {% if featured.cover_image %}
-                                            <img src="{{ featured.cover_image.url }}" alt="" decoding="async" />
-                                        {% else %}
-                                            <span class="act-art"><i data-lucide="{{ featured.category_info.icon }}"></i></span>
-                                        {% endif %}
-                                    </a>
-                                    <div class="act-spotlight__body">
-                                        <div class="act-spotlight__flags">
-                                            <span class="act-flag"><i data-lucide="sparkles"></i> Featured</span>
-                                            <span class="act-pill"><i data-lucide="{{ featured.category_info.icon }}"></i>{{ featured.category_label }}</span>
-                                        </div>
-                                        <h2><a href="{{ featured.get_absolute_url }}">{{ featured.title }}</a></h2>
-                                        <p>{{ featured.summary }}</p>
-                                        <ul class="act-meta">
-                                            <li><i data-lucide="calendar-days"></i>{{ featured.activity_date|date:"j F Y" }}</li>
-                                            {% if featured.location %}
-                                                <li><i data-lucide="map-pin"></i>{{ featured.location }}</li>
-                                            {% endif %}
-                                        </ul>
-                                        <a class="act-btn" href="{{ featured.get_absolute_url }}">
-                                            Read the story <i data-lucide="arrow-right"></i>
-                                        </a>
-                                    </div>
-                                </article>
-                            {% endif %}
-
                             <div class="act-grid">
                                 {% for a in activities %}
-                                    {% include "activities/_card.html" with a=a index=forloop.counter spotlight_pk=featured.pk %}
+                                    {% include "activities/_card.html" with a=a index=forloop.counter %}
                                 {% endfor %}
                             </div>
 
@@ -273,13 +271,11 @@
                     shownCount: 0,
                     hasMore: false,
                     ready: false,
-                    hasSpotlight: false,
                     cards: [],
                     keys: [],
 
                     init() {
                         this.cards = Array.from(this.$root.querySelectorAll('[data-activity]'));
-                        this.hasSpotlight = !!this.$root.querySelector('.act-spotlight');
                         this.keys = Array.from(this.$root.querySelectorAll('.act-chip[data-cat]'))
                             .map((chip) => chip.dataset.cat);
 
@@ -303,13 +299,6 @@
                         this.ready = true;
                     },
 
-                    // The featured story is shown big above the grid, but only
-                    // on the unfiltered view — once someone filters or searches
-                    // it has to compete with everything else like any card.
-                    get spotlightVisible() {
-                        return this.hasSpotlight && this.category === 'all' && !this.query.trim();
-                    },
-
                     get statusText() {
                         const total = this.matchCount;
                         if (total === 0) return '';
@@ -321,15 +310,13 @@
 
                     apply() {
                         const q = this.query.trim().toLowerCase();
-                        const spotlight = this.spotlightVisible;
                         let matches = 0;
                         let shown = 0;
 
                         this.cards.forEach((card) => {
                             const inCategory = this.category === 'all' || card.dataset.category === this.category;
                             const inSearch = !q || card.dataset.search.includes(q);
-                            const underSpotlight = spotlight && card.dataset.spotlighted === '1';
-                            const matched = inCategory && inSearch && !underSpotlight;
+                            const matched = inCategory && inSearch;
 
                             if (matched) matches += 1;
                             const visible = matched && matches <= this.limit;
@@ -337,17 +324,21 @@
                             if (visible) shown += 1;
                         });
 
-                        // The spotlight story is a match too — count it, so the
-                        // totals add up to what's on screen.
-                        const extra = spotlight ? 1 : 0;
-                        this.matchCount = matches + extra;
-                        this.shownCount = shown + extra;
+                        this.matchCount = matches;
+                        this.shownCount = shown;
                         this.hasMore = matches > this.limit;
                     },
 
                     reset() {
                         this.query = '';
                         this.category = 'all';
+                    },
+
+                    // Called by the shortcut strip under the hero. A theme with
+                    // no tab (nothing published in it yet) just shows everything.
+                    filterTo(key) {
+                        this.query = '';
+                        this.category = this.keys.includes(key) ? key : 'all';
                     },
 
                     syncUrl() {
@@ -358,6 +349,23 @@
                     },
                 };
             }
+        </script>
+        <script>
+            // The strip's links work as plain addresses too (?category=…#browse);
+            // with JavaScript they filter in place and glide down to the list.
+            document.querySelectorAll('[data-filter]').forEach((link) => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+
+                    window.dispatchEvent(new CustomEvent('activities-filter', {
+                        detail: { category: link.dataset.filter },
+                    }));
+
+                    const list = document.getElementById('browse');
+                    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    if (list) list.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+                });
+            });
         </script>
         <script src="/assets/js/components.js"></script>
     </body>

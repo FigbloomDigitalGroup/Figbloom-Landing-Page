@@ -38,6 +38,7 @@
             href="../assets/css/style.css"
         />
         <link rel="stylesheet" href="/assets/css/motion.css" />
+        <link rel="stylesheet" href="/assets/css/project-card.css" />
         <script type="application/ld+json">
             {
                 "@context": "https://schema.org",
@@ -91,90 +92,56 @@
                     </p>
                 </div>
             </div>
-            <div class="container py-14 lg:py-16" x-data="projectsList()">
-                <!-- FILTER TABS -->
-                <div
-                    class="flex items-center gap-6 overflow-x-auto pb-1.5 text-base/4 sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0"
-                >
-                    <template x-for="cat in categories" :key="cat">
+            <div class="container py-14 lg:py-16" x-data="projectsFilter()">
+                {% if projects %}
+                    <!-- FILTER TABS -->
+                    <div
+                        class="flex items-center gap-6 overflow-x-auto pb-1.5 text-base/4 sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0"
+                    >
                         <button
                             type="button"
-                            @click="activeCategory = cat"
+                            data-tab="All"
+                            @click="activeCategory = 'All'"
                             class="shrink-0 border-b-2 pb-2.5 font-medium uppercase transition"
-                            :class="activeCategory === cat
+                            :class="activeCategory === 'All'
                     ? 'border-primary text-primary'
                     : 'border-transparent hover:border-primary hover:text-primary'"
-                            x-text="cat"
-                        ></button>
-                    </template>
-                </div>
-
-                <!-- PROJECT GRID -->
-                <div
-                    class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:mt-12 xl:grid-cols-3"
-                >
-                    <template
-                        x-for="project in filteredProjects"
-                        :key="project.id"
-                    >
-                        <div
-                            class="border-gray-light group relative flex flex-col gap-4 overflow-hidden rounded-lg border bg-white p-4 lg:p-6"
                         >
-                            <div class="space-y-2 sm:space-y-4">
-                                <h3
-                                    class="text-xl font-medium text-black lg:text-2xl"
-                                    x-text="project.title"
-                                ></h3>
-                                <p
-                                    x-text="project.description"
-                                    class="line-clamp-2"
-                                ></p>
-                            </div>
-
-                            <div
-                                class="relative mt-auto h-60 overflow-hidden rounded-lg sm:h-75 xl:h-105"
+                            All
+                        </button>
+                        {% for category in project_categories %}
+                            <button
+                                type="button"
+                                data-tab="{{ category }}"
+                                @click="activeCategory = $el.dataset.tab"
+                                class="shrink-0 border-b-2 pb-2.5 font-medium uppercase transition"
+                                :class="activeCategory === $el.dataset.tab
+                    ? 'border-primary text-primary'
+                    : 'border-transparent hover:border-primary hover:text-primary'"
                             >
-                                <img
-                                    :src="project.image"
-                                    :alt="project.title"
-                                    loading="lazy"
-                                    class="size-full object-cover"
-                                />
-                                <div
-                                    class="bg-primary/0 group-hover:bg-primary/50 absolute inset-0 grid place-content-center duration-300"
-                                >
-                                    <button
-                                        type="button"
-                                        class="btn btn-secondary invisible opacity-0 duration-300 group-hover:visible group-hover:opacity-100"
-                                    >
-                                        View Project
-                                    </button>
-                                </div>
-                            </div>
+                                {{ category }}
+                            </button>
+                        {% endfor %}
+                    </div>
 
-                            <div
-                                class="flex items-center justify-between gap-2"
-                            >
-                                <a
-                                    href="/projects/"
-                                    x-text="project.category"
-                                    class="h4 text-gray relative z-1 line-clamp-1 transition hover:text-black lg:text-lg"
-                                ></a>
-
-                                <div
-                                    class="bg-primary-light text-primary ring-primary/20 shrink-0 rounded p-1 text-xs font-medium ring-1 sm:px-2 sm:text-sm"
-                                    x-text="project.tag"
-                                ></div>
-                            </div>
-
-                            <a
-                                :href="project.url"
-                                class="absolute inset-0"
-                                aria-label="View project"
-                            ></a>
-                        </div>
-                    </template>
-                </div>
+                    <!-- PROJECT GRID -->
+                    <div
+                        class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:mt-12 xl:grid-cols-3"
+                    >
+                        {% for p in projects %}
+                            {% include "components/project-card.html" with p=p %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="mx-auto max-w-xl py-10 text-center">
+                        <h2 class="text-2xl font-medium text-black">Projects are on the way</h2>
+                        <p class="mt-3">
+                            We’re getting our latest work ready to show. In the meantime,
+                            tell us what you’d like to build.
+                        </p>
+                        <a href="/contact/" class="btn mt-6">Get in touch</a>
+                    </div>
+                {% endif %}
             </div>
 
             <div
@@ -287,85 +254,39 @@
         <script src="/assets/js/lucide.min.js"></script>
 
         <script>
-            function projectsList() {
+            function projectsFilter() {
                 return {
                     activeCategory: 'All',
-                    projects: [
-                        {
-                            id: 1,
-                            title: 'Movecconnect ',
-                            description:
-                                'MovecConnect provides reliable Starlink-powered internet solutions, connecting homes and businesses with fast, affordable, and dependable broadband access',
-                            image: '/assets/images/project-1.jpg',
-                            url: '/',
-                            category: 'Web Development',
-                            tag: '+42% conversion',
-                        },
-                        {
-                            id: 2,
-                            title: 'Figbloom Ecommerce App',
-                            description:
-                                 'Figbloom E-commerce supplies Starlink kits, security cameras, networking equipment, and smart technology solutions for homes and businesses.',
-                            image: '/assets/images/project-2.jpg',
-                            url: '/',
-                            category: 'Web App Development',
-                            tag: '−38% user drop-off',
-                        },
-                        {
-                            id: 3,
-                            title: 'Figbloom Brand Identity',
-                            description:
-                                'A modern visual identity crafted to reflect trust and innovation.',
-                            image: '/assets/images/project-3.jpg',
-                            url: '/',
-                            category: 'Branding',
-                            tag: '2× brand recall',
-                        },
-                        {
-                            id: 4,
-                            title: 'GrowFast Campaign',
-                            description:
-                                'A performance-driven digital campaign optimized for qualified leads.',
-                            image: '/assets/images/project-4.jpg',
-                            url: '/',
-                            category: 'Digital Marketing',
-                            tag: '+61% lead growth',
-                        },
-                        {
-                            id: 5,
-                            title: 'Pulse SaaS Product',
-                            description:
-                                'An end-to-end SaaS product designed and developed from idea to launch.',
-                            image: '/assets/images/project-5.jpg',
-                            url: '/',
-                            category: 'Product Development',
-                            tag: 'Launched in 90 days',
-                        },
-                        {
-                            id: 6,
-                            title: 'SSa Flight Automation System',
-                            description:
-                                'Automated internal workflows to eliminate manual processes and delays.',
-                            image: '/assets/images/project-3.jpg',
-                            url: '/',
-                            category: 'Automation',
-                            tag: '−55% operational time',
-                        },
-                    ],
-                    get categories() {
-                        return [
-                            'All',
-                            ...new Set(this.projects.map((p) => p.category)),
-                        ]
+                    cards: [],
+
+                    init() {
+                        this.cards = Array.from(
+                            this.$root.querySelectorAll('[data-project]'),
+                        )
+
+                        // /projects/?category=Branding opens on that tab (the
+                        // category link on each card points here).
+                        const tabs = Array.from(
+                            this.$root.querySelectorAll('[data-tab]'),
+                        ).map((tab) => tab.dataset.tab)
+                        const wanted = new URLSearchParams(
+                            window.location.search,
+                        ).get('category')
+                        if (wanted && tabs.includes(wanted)) {
+                            this.activeCategory = wanted
+                        }
+
+                        this.$watch('activeCategory', () => this.apply())
+                        this.apply()
                     },
 
-                    get filteredProjects() {
-                        if (this.activeCategory === 'All') {
-                            return this.projects
-                        }
-                        return this.projects.filter(
-                            (p) => p.category === this.activeCategory,
-                        )
+                    apply() {
+                        this.cards.forEach((card) => {
+                            const show =
+                                this.activeCategory === 'All' ||
+                                card.dataset.category === this.activeCategory
+                            card.style.display = show ? '' : 'none'
+                        })
                     },
                 }
             }

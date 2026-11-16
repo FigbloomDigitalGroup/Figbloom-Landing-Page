@@ -29,12 +29,14 @@ from careers.views import (
     ChangePasswordView,
 )
 from activities import views as activity_views
+from projects import views as project_views
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('careers.urls')),
     path('api/', include('activities.urls')),
+    path('api/', include('projects.urls')),
 
     # Admin dashboard (separate from Django's built-in /admin/)
     path('admin-dashboard/login', views.admin_login_page, name='admin-login-page'),
@@ -74,6 +76,7 @@ urlpatterns = [
     path("admin-dashboard/profile-settings",admin_profile_settings,name="admin-profile-settings"),
     path("admin-dashboard/contact",admin_contact_page,name="admin-contact-page"),
     path("admin-dashboard/activities", activity_views.admin_activities_page, name="admin-activities-page"),
+    path("admin-dashboard/projects", project_views.admin_projects_page, name="admin-projects-page"),
     path("unsubscribe/<str:token>/", unsubscribe_view, name="newsletter-unsubscribe"),
     path("newsletters/<slug:slug>/", newsletter_public_view, name="newsletter-public"),
     path("newsletters/<slug:slug>", newsletter_public_view),

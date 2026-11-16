@@ -39,6 +39,7 @@
             href="../assets/css/style.css"
         />
         <link rel="stylesheet" href="/assets/css/motion.css" />
+        <link rel="stylesheet" href="/assets/css/project-card.css" />
         <script type="application/ld+json">
             {
                 "@context": "https://schema.org",
@@ -400,7 +401,7 @@
                             <template x-for="project in filteredProjects">
                                 <div class="swiper-slide" :key="project.id">
                                     <div
-                                        class="border-gray-light group relative flex flex-col gap-4 overflow-hidden rounded-lg border bg-white p-4 lg:p-6"
+                                        class="project-card border-gray-light group relative flex flex-col gap-4 overflow-hidden rounded-lg border bg-white p-4 lg:p-6"
                                     >
                                         <div class="space-y-2 sm:space-y-4">
                                             <h3
@@ -423,11 +424,11 @@
                                                 class="size-full object-cover"
                                             />
                                             <div
-                                                class="bg-primary/0 group-hover:bg-primary/50 absolute inset-0 grid place-content-center duration-300"
+                                                class="absolute inset-0 grid place-content-center"
                                             >
                                                 <button
                                                     type="button"
-                                                    class="btn btn-secondary invisible opacity-0 duration-300 group-hover:visible group-hover:opacity-100"
+                                                    class="btn project-card__cta"
                                                 >
                                                     View Project
                                                 </button>

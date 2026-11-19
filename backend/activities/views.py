@@ -14,14 +14,13 @@ from .serializers import ActivityAdminSerializer, delete_stored_file
 SITE_URL = 'https://figbloom.org'
 RELATED_COUNT = 3
 
-# The hero shows a collage of this many photos. When fewer activities have a
-# cover picture, the gaps are filled from these (photos already used elsewhere
-# on the site), so the collage never has an empty frame.
-HERO_PHOTO_COUNT = 3
-HERO_FALLBACK_PHOTOS = [
+# The three photos in the hero collage. They are fixed site images, not activity
+# covers: adding an activity, or editing or replacing its cover in the
+# dashboard, never changes the hero. To change the hero, edit this list.
+HERO_PHOTOS = [
     '/assets/images/gallery1.jpg',
-    '/assets/images/gallery3.jpg',
-    '/assets/images/gallery4.jpg',
+    '/assets/images/gallery7.jpg',
+    '/assets/images/teams9.jpeg',
 ]
 
 # The strip of shortcuts under the hero. Each one filters the list below to a
@@ -67,21 +66,15 @@ def activities_page(request):
         if category['tab'] and counts.get(category['key'])
     ]
 
-    # The collage beside the hero text: covers of featured activities first (the
-    # big frame is the first one), then the newest. The list is newest first
-    # already and sorted() keeps that order within each group.
-    covers = [
-        a.cover_image.url
-        for a in sorted((a for a in activities if a.cover_image), key=lambda a: not a.is_featured)
-    ]
-    hero_images = (covers + HERO_FALLBACK_PHOTOS)[:HERO_PHOTO_COUNT]
+    # Only the link-preview picture (og:image) follows the newest cover. The hero
+    # collage does not: it always shows HERO_PHOTOS.
     first_with_photo = next((a for a in activities if a.cover_image), None)
 
     return render(request, 'activities/index.html', {
         'activities': activities,
         'categories': categories,
         'highlights': HIGHLIGHTS,
-        'hero_images': hero_images,
+        'hero_images': HERO_PHOTOS,
         'total': len(activities),
         'og_image': _absolute(first_with_photo.cover_image.url) if first_with_photo else '',
     })

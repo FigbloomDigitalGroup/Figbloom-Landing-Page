@@ -1232,16 +1232,21 @@
     border-top: 1px solid var(--act-line);
 }
 
+/* The whole photo is shown, never cropped: it keeps its own shape, shrinks to fit
+   the column and 80% of the screen height, and is centred when it is narrower
+   than the column (portrait photos). Do not give it a fixed aspect ratio or
+   object-fit: cover, which trims most of a portrait photo away. */
 .act-figure {
     margin: 30px 0 0;
 }
 
 .act-figure img {
     display: block;
-    width: 100%;
-    max-height: 560px;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 80vh;
+    margin: 0 auto;
     border-radius: 22px;
     box-shadow: var(--act-shadow);
 }

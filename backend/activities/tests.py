@@ -211,63 +211,61 @@ class PublicPageTests(TestCase):
         self.assertEqual(collage.count('class="act-collage__item '), 3)
         self.assertEqual(len(collage_photos(body)), 3)
 
-    def test_hero_collage_shows_the_newest_covers(self):
+    def test_hero_collage_always_shows_the_same_fixed_site_photos(self):
+        from .views import HERO_PHOTOS
+
         made, body = self.page_with_covers(
             ('Oldest', {'activity_date': date(2026, 1, 1)}),
-            ('Middle', {'activity_date': date(2026, 5, 1)}),
-            ('Newer', {'activity_date': date(2026, 8, 1)}),
+            ('Featured', {'is_featured': True, 'activity_date': date(2026, 6, 1)}),
             ('Newest', {'activity_date': date(2026, 9, 1)}),
         )
-        oldest, middle, newer, newest = made
 
-        self.assertEqual(
-            collage_photos(body),
-            [newest.cover_image.url, newer.cover_image.url, middle.cover_image.url],
-        )
-        self.assertNotIn(oldest.cover_image.url, hero_html(body))
+        self.assertEqual(collage_photos(body), HERO_PHOTOS)
+        for activity in made:
+            self.assertNotIn(activity.cover_image.url, hero_html(body))
 
-    def test_hero_collage_puts_the_featured_activity_in_the_big_frame(self):
-        made, body = self.page_with_covers(
-            ('Newer but ordinary', {'activity_date': date(2026, 10, 1)}),
-            ('The featured one', {'is_featured': True, 'activity_date': date(2026, 6, 1)}),
-        )
-        ordinary, featured = made
+    def test_replacing_an_activity_cover_does_not_change_the_hero(self):
+        from .views import HERO_PHOTOS
 
-        self.assertEqual(collage_photos(body)[:2], [featured.cover_image.url, ordinary.cover_image.url])
+        with tempfile.TemporaryDirectory() as media, override_settings(MEDIA_ROOT=media):
+            activity = make_activity(title='Vision Expo')
+            activity.cover_image.save('first.png', make_image(), save=True)
+            before = collage_photos(self.client.get('/activities/').content.decode())
 
-    def test_hero_collage_leads_with_the_newest_featured_activity_when_there_are_several(self):
-        made, body = self.page_with_covers(
-            ('Featured long ago', {'is_featured': True, 'activity_date': date(2026, 1, 1)}),
-            ('Featured recently', {'is_featured': True, 'activity_date': date(2026, 8, 1)}),
-        )
-        long_ago, recently = made
+            activity.cover_image.save('second.png', make_image(), save=True)
+            body = self.client.get('/activities/').content.decode()
 
-        self.assertEqual(collage_photos(body)[:2], [recently.cover_image.url, long_ago.cover_image.url])
+        self.assertEqual(before, HERO_PHOTOS)
+        self.assertEqual(collage_photos(body), HERO_PHOTOS)
+        self.assertNotIn(activity.cover_image.url, hero_html(body))
+        # ...while the activity's own card further down does show the new cover
+        self.assertIn(activity.cover_image.url, body)
 
-    def test_hero_collage_fills_missing_frames_with_site_photos(self):
-        from .views import HERO_FALLBACK_PHOTOS
-
-        made, body = self.page_with_covers(('Only one cover', {}))
-        photos = collage_photos(body)
-
-        self.assertEqual(photos, [made[0].cover_image.url] + HERO_FALLBACK_PHOTOS[:2])
-
-    def test_hero_collage_is_all_site_photos_when_there_are_no_activities(self):
-        from .views import HERO_FALLBACK_PHOTOS
+    def test_hero_collage_is_the_same_when_there_are_no_activities(self):
+        from .views import HERO_PHOTOS
 
         body = self.client.get('/activities/').content.decode()
 
-        self.assertEqual(collage_photos(body), HERO_FALLBACK_PHOTOS)
+        self.assertEqual(collage_photos(body), HERO_PHOTOS)
         self.assertNotIn('aria-label="At a glance"', hero_html(body))  # no numbers to show yet
 
-    def test_activities_without_a_cover_are_skipped_by_the_collage(self):
-        from .views import HERO_FALLBACK_PHOTOS
+    def test_activities_without_a_cover_do_not_change_the_hero(self):
+        from .views import HERO_PHOTOS
 
         make_activity(title='No picture here')
 
         photos = collage_photos(self.client.get('/activities/').content.decode())
 
-        self.assertEqual(photos, HERO_FALLBACK_PHOTOS)
+        self.assertEqual(photos, HERO_PHOTOS)
+
+    def test_the_hero_photos_are_real_site_images(self):
+        from django.conf import settings
+
+        from .views import HERO_PHOTOS
+
+        for photo in HERO_PHOTOS:
+            self.assertTrue(photo.startswith('/assets/images/'), photo)
+            self.assertTrue((Path(settings.FRONTEND_DIR) / photo.lstrip('/')).is_file(), photo)
 
     def test_hero_carries_no_text_about_a_single_activity(self):
         made, body = self.page_with_covers(
@@ -280,13 +278,15 @@ class PublicPageTests(TestCase):
         self.assertNotIn(made[0].get_absolute_url(), hero)
 
     def test_an_unpublished_featured_activity_never_reaches_the_hero(self):
+        from .views import HERO_PHOTOS
+
         made, body = self.page_with_covers(
             ('Secret star', {'is_featured': True, 'is_published': False}),
             ('Public one', {}),
         )
         secret, public = made
 
-        self.assertEqual(collage_photos(body)[0], public.cover_image.url)
+        self.assertEqual(collage_photos(body), HERO_PHOTOS)
         self.assertNotIn(secret.cover_image.url, body)
         self.assertNotContains(self.client.get('/activities/'), 'Secret star')
 
